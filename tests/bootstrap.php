@@ -42,7 +42,7 @@ define( 'REST_TESTS_IMPOSSIBLY_HIGH_NUMBER', 99999999 );
 define( 'REST_REQUEST', true );
 
 // Helper classes
-if ( ! class_exists( 'WP_Test_REST_TestCase' ) ) {
+if ( ! class_exists( 'WP_Test_rest_TestCase' ) ) {
 	require_once dirname( __FILE__ ) . '/class-wp-test-rest-testcase.php';
 }
 function test_rest_expand_compact_links( $links ) {

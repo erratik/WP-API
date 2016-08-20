@@ -1,12 +1,12 @@
 <?php
 
 /**
- * Unit tests covering WP_REST_Terms_Controller functionality, used for Tags.
+ * Unit tests covering CUTV_REST_Terms_Controller functionality, used for Tags.
  *
  * @package WordPress
  * @subpackage JSON API
  */
-class WP_Test_REST_Tags_Controller extends WP_Test_REST_Controller_Testcase {
+class WP_Test_rest_Tags_Controller extends WP_Test_rest_Controller_Testcase {
 
 	public function setUp() {
 		parent::setUp();
@@ -20,20 +20,20 @@ class WP_Test_REST_Tags_Controller extends WP_Test_REST_Controller_Testcase {
 
 	public function test_register_routes() {
 		$routes = $this->server->get_routes();
-		$this->assertArrayHasKey( '/wp/v2/tags', $routes );
-		$this->assertArrayHasKey( '/wp/v2/tags/(?P<id>[\d]+)', $routes );
+		$this->assertArrayHasKey( '/cutv/v2/tags', $routes );
+		$this->assertArrayHasKey( '/cutv/v2/tags/(?P<id>[\d]+)', $routes );
 	}
 
 	public function test_context_param() {
 		// Collection
-		$request = new WP_REST_Request( 'OPTIONS', '/wp/v2/tags' );
+		$request = new CUTV_REST_Request( 'OPTIONS', '/cutv/v2/tags' );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
 		$this->assertEquals( 'view', $data['endpoints'][0]['args']['context']['default'] );
 		$this->assertEqualSets( array( 'view', 'embed', 'edit' ), $data['endpoints'][0]['args']['context']['enum'] );
 		// Single
 		$tag1 = $this->factory->tag->create( array( 'name' => 'Season 5' ) );
-		$request = new WP_REST_Request( 'OPTIONS', '/wp/v2/tags/' . $tag1 );
+		$request = new CUTV_REST_Request( 'OPTIONS', '/cutv/v2/tags/' . $tag1 );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
 		$this->assertEquals( 'view', $data['endpoints'][0]['args']['context']['default'] );
@@ -41,7 +41,7 @@ class WP_Test_REST_Tags_Controller extends WP_Test_REST_Controller_Testcase {
 	}
 
 	public function test_registered_query_params() {
-		$request = new WP_REST_Request( 'OPTIONS', '/wp/v2/tags' );
+		$request = new CUTV_REST_Request( 'OPTIONS', '/cutv/v2/tags' );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
 		$keys = array_keys( $data['endpoints'][0]['args'] );
@@ -64,14 +64,14 @@ class WP_Test_REST_Tags_Controller extends WP_Test_REST_Controller_Testcase {
 
 	public function test_get_items() {
 		$this->factory->tag->create();
-		$request = new WP_REST_Request( 'GET', '/wp/v2/tags' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/tags' );
 		$response = $this->server->dispatch( $request );
 		$this->check_get_taxonomy_terms_response( $response );
 	}
 
 	public function test_get_items_invalid_permission_for_context() {
 		wp_set_current_user( 0 );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/tags' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/tags' );
 		$request->set_param( 'context', 'edit' );
 		$response = $this->server->dispatch( $request );
 		$this->assertErrorResponse( 'rest_forbidden_context', $response, 401 );
@@ -82,7 +82,7 @@ class WP_Test_REST_Tags_Controller extends WP_Test_REST_Controller_Testcase {
 		$tag1 = $this->factory->tag->create( array( 'name' => 'Season 5' ) );
 		$tag2 = $this->factory->tag->create( array( 'name' => 'The Be Sharps' ) );
 		wp_set_object_terms( $post_id, array( $tag1, $tag2 ), 'post_tag' );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/tags' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/tags' );
 		$request->set_param( 'hide_empty', true );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
@@ -95,7 +95,7 @@ class WP_Test_REST_Tags_Controller extends WP_Test_REST_Controller_Testcase {
 		$id1 = $this->factory->tag->create();
 		$id2 = $this->factory->tag->create();
 		$id3 = $this->factory->tag->create();
-		$request = new WP_REST_Request( 'GET', '/wp/v2/tags' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/tags' );
 		// Orderby=>asc
 		$request->set_param( 'include', array( $id3, $id1 ) );
 		$response = $this->server->dispatch( $request );
@@ -113,7 +113,7 @@ class WP_Test_REST_Tags_Controller extends WP_Test_REST_Controller_Testcase {
 	public function test_get_items_exclude_query() {
 		$id1 = $this->factory->tag->create();
 		$id2 = $this->factory->tag->create();
-		$request = new WP_REST_Request( 'GET', '/wp/v2/tags' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/tags' );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
 		$this->assertTrue( in_array( $id1, wp_list_pluck( $data, 'id' ) ) );
@@ -130,7 +130,7 @@ class WP_Test_REST_Tags_Controller extends WP_Test_REST_Controller_Testcase {
 		$id2 = $this->factory->tag->create();
 		$id3 = $this->factory->tag->create();
 		$id4 = $this->factory->tag->create();
-		$request = new WP_REST_Request( 'GET', '/wp/v2/tags' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/tags' );
 		$request->set_param( 'offset', 1 );
 		$response = $this->server->dispatch( $request );
 		$this->assertCount( 3, $response->get_data() );
@@ -154,7 +154,7 @@ class WP_Test_REST_Tags_Controller extends WP_Test_REST_Controller_Testcase {
 		 * - order
 		 * - per_page
 		 */
-		$request = new WP_REST_Request( 'GET', '/wp/v2/tags' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/tags' );
 		$request->set_param( 'orderby', 'name' );
 		$request->set_param( 'order', 'desc' );
 		$request->set_param( 'per_page', 1 );
@@ -163,7 +163,7 @@ class WP_Test_REST_Tags_Controller extends WP_Test_REST_Controller_Testcase {
 		$data = $response->get_data();
 		$this->assertEquals( 1, count( $data ) );
 		$this->assertEquals( 'Banana', $data[0]['name'] );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/tags' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/tags' );
 		$request->set_param( 'orderby', 'name' );
 		$request->set_param( 'order', 'asc' );
 		$request->set_param( 'per_page', 2 );
@@ -179,7 +179,7 @@ class WP_Test_REST_Tags_Controller extends WP_Test_REST_Controller_Testcase {
 		$tag1 = $this->factory->tag->create( array( 'name' => 'Apple' ) );
 		$tag2 = $this->factory->tag->create( array( 'name' => 'Banana' ) );
 		// defaults to orderby=name, order=asc
-		$request = new WP_REST_Request( 'GET', '/wp/v2/tags' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/tags' );
 		$response = $this->server->dispatch( $request );
 		$this->assertEquals( 200, $response->get_status() );
 		$data = $response->get_data();
@@ -187,7 +187,7 @@ class WP_Test_REST_Tags_Controller extends WP_Test_REST_Controller_Testcase {
 		$this->assertEquals( 'Banana', $data[1]['name'] );
 		$this->assertEquals( 'Cantaloupe', $data[2]['name'] );
 		// orderby=id, with default order=asc
-		$request = new WP_REST_Request( 'GET', '/wp/v2/tags' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/tags' );
 		$request->set_param( 'orderby', 'id' );
 		$response = $this->server->dispatch( $request );
 		$this->assertEquals( 200, $response->get_status() );
@@ -196,7 +196,7 @@ class WP_Test_REST_Tags_Controller extends WP_Test_REST_Controller_Testcase {
 		$this->assertEquals( 'Apple', $data[1]['name'] );
 		$this->assertEquals( 'Banana', $data[2]['name'] );
 		// orderby=id, order=desc
-		$request = new WP_REST_Request( 'GET', '/wp/v2/tags' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/tags' );
 		$request->set_param( 'orderby', 'id' );
 		$request->set_param( 'order', 'desc' );
 		$response = $this->server->dispatch( $request );
@@ -214,7 +214,7 @@ class WP_Test_REST_Tags_Controller extends WP_Test_REST_Controller_Testcase {
 		$this->factory->tag->create( array( 'name' => 'Dark Horse' ) );
 		wp_set_object_terms( $post_id, array( $tag1, $tag2 ), 'post_tag' );
 
-		$request = new WP_REST_Request( 'GET', '/wp/v2/tags' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/tags' );
 		$request->set_param( 'post', $post_id );
 		$response = $this->server->dispatch( $request );
 		$this->assertEquals( 200, $response->get_status() );
@@ -235,7 +235,7 @@ class WP_Test_REST_Tags_Controller extends WP_Test_REST_Controller_Testcase {
 		}
 		wp_set_object_terms( $post_id, $tag_ids, 'post_tag' );
 
-		$request = new WP_REST_Request( 'GET', '/wp/v2/tags' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/tags' );
 		$request->set_param( 'post', $post_id );
 		$request->set_param( 'page', 1 );
 		$request->set_param( 'per_page', 15 );
@@ -249,7 +249,7 @@ class WP_Test_REST_Tags_Controller extends WP_Test_REST_Controller_Testcase {
 			$i++;
 		}
 
-		$request = new WP_REST_Request( 'GET', '/wp/v2/tags' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/tags' );
 		$request->set_param( 'post', $post_id );
 		$request->set_param( 'page', 2 );
 		$request->set_param( 'per_page', 15 );
@@ -266,7 +266,7 @@ class WP_Test_REST_Tags_Controller extends WP_Test_REST_Controller_Testcase {
 	public function test_get_items_post_empty() {
 		$post_id = $this->factory->post->create();
 
-		$request = new WP_REST_Request( 'GET', '/wp/v2/tags' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/tags' );
 		$request->set_param( 'post', $post_id );
 		$response = $this->server->dispatch( $request );
 		$this->assertEquals( 200, $response->get_status() );
@@ -277,7 +277,7 @@ class WP_Test_REST_Tags_Controller extends WP_Test_REST_Controller_Testcase {
 
 	public function test_get_items_custom_tax_post_args() {
 		register_taxonomy( 'batman', 'post', array( 'show_in_rest' => true ) );
-		$controller = new WP_REST_Terms_Controller( 'batman' );
+		$controller = new CUTV_REST_Terms_Controller( 'batman' );
 		$controller->register_routes();
 		$term1 = $this->factory->term->create( array( 'name' => 'Cape', 'taxonomy' => 'batman' ) );
 		$term2 = $this->factory->term->create( array( 'name' => 'Mask', 'taxonomy' => 'batman' ) );
@@ -285,7 +285,7 @@ class WP_Test_REST_Tags_Controller extends WP_Test_REST_Controller_Testcase {
 		$post_id = $this->factory->post->create();
 		wp_set_object_terms( $post_id, array( $term1, $term2 ), 'batman' );
 
-		$request = new WP_REST_Request( 'GET', '/wp/v2/batman' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/batman' );
 		$request->set_param( 'post', $post_id );
 		$response = $this->server->dispatch( $request );
 		$this->assertEquals( 200, $response->get_status() );
@@ -302,14 +302,14 @@ class WP_Test_REST_Tags_Controller extends WP_Test_REST_Controller_Testcase {
 		 * Tests:
 		 * - search
 		 */
-		$request = new WP_REST_Request( 'GET', '/wp/v2/tags' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/tags' );
 		$request->set_param( 'search', 'App' );
 		$response = $this->server->dispatch( $request );
 		$this->assertEquals( 200, $response->get_status() );
 		$data = $response->get_data();
 		$this->assertEquals( 1, count( $data ) );
 		$this->assertEquals( 'Apple', $data[0]['name'] );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/tags' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/tags' );
 		$request->set_param( 'search', 'Garbage' );
 		$response = $this->server->dispatch( $request );
 		$this->assertEquals( 200, $response->get_status() );
@@ -320,7 +320,7 @@ class WP_Test_REST_Tags_Controller extends WP_Test_REST_Controller_Testcase {
 	public function test_get_items_slug_arg() {
 		$tag1 = $this->factory->tag->create( array( 'name' => 'Apple' ) );
 		$tag2 = $this->factory->tag->create( array( 'name' => 'Banana' ) );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/tags' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/tags' );
 		$request->set_param( 'slug', 'apple' );
 		$response = $this->server->dispatch( $request );
 		$this->assertEquals( 200, $response->get_status() );
@@ -334,7 +334,7 @@ class WP_Test_REST_Tags_Controller extends WP_Test_REST_Controller_Testcase {
 		$term1 = $this->factory->term->create( array( 'name' => 'Cape', 'taxonomy' => 'robin' ) );
 		$term2 = $this->factory->term->create( array( 'name' => 'Mask', 'taxonomy' => 'robin' ) );
 
-		$request = new WP_REST_Request( 'GET', '/wp/v2/terms/robin' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/terms/robin' );
 		$response = $this->server->dispatch( $request );
 		$this->assertErrorResponse( 'rest_no_route', $response, 404 );
 	}
@@ -346,21 +346,21 @@ class WP_Test_REST_Tags_Controller extends WP_Test_REST_Controller_Testcase {
 				'name'   => "Tag {$i}",
 				) );
 		}
-		$request = new WP_REST_Request( 'GET', '/wp/v2/tags' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/tags' );
 		$response = $this->server->dispatch( $request );
 		$headers = $response->get_headers();
 		$this->assertEquals( 50, $headers['X-WP-Total'] );
 		$this->assertEquals( 5, $headers['X-WP-TotalPages'] );
 		$next_link = add_query_arg( array(
 			'page'    => 2,
-			), rest_url( 'wp/v2/tags' ) );
+			), rest_url( 'cutv/v2/tags' ) );
 		$this->assertFalse( stripos( $headers['Link'], 'rel="prev"' ) );
 		$this->assertContains( '<' . $next_link . '>; rel="next"', $headers['Link'] );
 		// 3rd page
 		$this->factory->tag->create( array(
 				'name'   => 'Tag 51',
 				) );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/tags' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/tags' );
 		$request->set_param( 'page', 3 );
 		$response = $this->server->dispatch( $request );
 		$headers = $response->get_headers();
@@ -368,14 +368,14 @@ class WP_Test_REST_Tags_Controller extends WP_Test_REST_Controller_Testcase {
 		$this->assertEquals( 6, $headers['X-WP-TotalPages'] );
 		$prev_link = add_query_arg( array(
 			'page'    => 2,
-			), rest_url( 'wp/v2/tags' ) );
+			), rest_url( 'cutv/v2/tags' ) );
 		$this->assertContains( '<' . $prev_link . '>; rel="prev"', $headers['Link'] );
 		$next_link = add_query_arg( array(
 			'page'    => 4,
-			), rest_url( 'wp/v2/tags' ) );
+			), rest_url( 'cutv/v2/tags' ) );
 		$this->assertContains( '<' . $next_link . '>; rel="next"', $headers['Link'] );
 		// Last page
-		$request = new WP_REST_Request( 'GET', '/wp/v2/tags' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/tags' );
 		$request->set_param( 'page', 6 );
 		$response = $this->server->dispatch( $request );
 		$headers = $response->get_headers();
@@ -383,11 +383,11 @@ class WP_Test_REST_Tags_Controller extends WP_Test_REST_Controller_Testcase {
 		$this->assertEquals( 6, $headers['X-WP-TotalPages'] );
 		$prev_link = add_query_arg( array(
 			'page'    => 5,
-			), rest_url( 'wp/v2/tags' ) );
+			), rest_url( 'cutv/v2/tags' ) );
 		$this->assertContains( '<' . $prev_link . '>; rel="prev"', $headers['Link'] );
 		$this->assertFalse( stripos( $headers['Link'], 'rel="next"' ) );
 		// Out of bounds
-		$request = new WP_REST_Request( 'GET', '/wp/v2/tags' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/tags' );
 		$request->set_param( 'page', 8 );
 		$response = $this->server->dispatch( $request );
 		$headers = $response->get_headers();
@@ -395,13 +395,13 @@ class WP_Test_REST_Tags_Controller extends WP_Test_REST_Controller_Testcase {
 		$this->assertEquals( 6, $headers['X-WP-TotalPages'] );
 		$prev_link = add_query_arg( array(
 			'page'    => 6,
-			), rest_url( 'wp/v2/tags' ) );
+			), rest_url( 'cutv/v2/tags' ) );
 		$this->assertContains( '<' . $prev_link . '>; rel="prev"', $headers['Link'] );
 		$this->assertFalse( stripos( $headers['Link'], 'rel="next"' ) );
 	}
 
 	public function test_get_items_invalid_context() {
-		$request = new WP_REST_Request( 'GET', '/wp/v2/tags' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/tags' );
 		$request->set_param( 'context', 'banana' );
 		$response = $this->server->dispatch( $request );
 		$this->assertErrorResponse( 'rest_invalid_param', $response, 400 );
@@ -409,13 +409,13 @@ class WP_Test_REST_Tags_Controller extends WP_Test_REST_Controller_Testcase {
 
 	public function test_get_item() {
 		$id = $this->factory->tag->create();
-		$request = new WP_REST_Request( 'GET', '/wp/v2/tags/' . $id );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/tags/' . $id );
 		$response = $this->server->dispatch( $request );
 		$this->check_get_taxonomy_term_response( $response, $id );
 	}
 
 	public function test_get_term_invalid_term() {
-		$request = new WP_REST_Request( 'GET', '/wp/v2/tags/' . REST_TESTS_IMPOSSIBLY_HIGH_NUMBER );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/tags/' . REST_TESTS_IMPOSSIBLY_HIGH_NUMBER );
 		$response = $this->server->dispatch( $request );
 		$this->assertErrorResponse( 'rest_term_invalid', $response, 404 );
 	}
@@ -423,7 +423,7 @@ class WP_Test_REST_Tags_Controller extends WP_Test_REST_Controller_Testcase {
 	public function test_get_item_invalid_permission_for_context() {
 		$id = $this->factory->tag->create();
 		wp_set_current_user( 0 );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/tags/' . $id );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/tags/' . $id );
 		$request->set_param( 'context', 'edit' );
 		$response = $this->server->dispatch( $request );
 		$this->assertErrorResponse( 'rest_forbidden_context', $response, 401 );
@@ -433,7 +433,7 @@ class WP_Test_REST_Tags_Controller extends WP_Test_REST_Controller_Testcase {
 		register_taxonomy( 'robin', 'post', array( 'public' => false ) );
 		$term1 = $this->factory->term->create( array( 'name' => 'Cape', 'taxonomy' => 'robin' ) );
 
-		$request = new WP_REST_Request( 'GET', '/wp/v2/terms/robin/' . $term1 );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/terms/robin/' . $term1 );
 		$response = $this->server->dispatch( $request );
 		$this->assertErrorResponse( 'rest_no_route', $response, 404 );
 	}
@@ -441,14 +441,14 @@ class WP_Test_REST_Tags_Controller extends WP_Test_REST_Controller_Testcase {
 	public function test_get_item_incorrect_taxonomy() {
 		register_taxonomy( 'robin', 'post' );
 		$term1 = $this->factory->term->create( array( 'name' => 'Cape', 'taxonomy' => 'robin' ) );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/tags/' . $term1 );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/tags/' . $term1 );
 		$response = $this->server->dispatch( $request );
 		$this->assertErrorResponse( 'rest_term_invalid', $response, 404 );
 	}
 
 	public function test_create_item() {
 		wp_set_current_user( $this->administrator );
-		$request = new WP_REST_Request( 'POST', '/wp/v2/tags' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/tags' );
 		$request->set_param( 'name', 'My Awesome Term' );
 		$request->set_param( 'description', 'This term is so awesome.' );
 		$request->set_param( 'slug', 'so-awesome' );
@@ -456,7 +456,7 @@ class WP_Test_REST_Tags_Controller extends WP_Test_REST_Controller_Testcase {
 		$this->assertEquals( 201, $response->get_status() );
 		$headers = $response->get_headers();
 		$data = $response->get_data();
-		$this->assertContains( '/wp/v2/tags/' . $data['id'], $headers['Location'] );
+		$this->assertContains( '/cutv/v2/tags/' . $data['id'], $headers['Location'] );
 		$this->assertEquals( 'My Awesome Term', $data['name'] );
 		$this->assertEquals( 'This term is so awesome.', $data['description'] );
 		$this->assertEquals( 'so-awesome', $data['slug'] );
@@ -464,7 +464,7 @@ class WP_Test_REST_Tags_Controller extends WP_Test_REST_Controller_Testcase {
 
 	public function test_create_item_incorrect_permissions() {
 		wp_set_current_user( $this->subscriber );
-		$request = new WP_REST_Request( 'POST', '/wp/v2/tags' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/tags' );
 		$request->set_param( 'name', 'Incorrect permissions' );
 		$response = $this->server->dispatch( $request );
 		$this->assertErrorResponse( 'rest_cannot_create', $response, 403 );
@@ -472,7 +472,7 @@ class WP_Test_REST_Tags_Controller extends WP_Test_REST_Controller_Testcase {
 
 	public function test_create_item_missing_arguments() {
 		wp_set_current_user( $this->administrator );
-		$request = new WP_REST_Request( 'POST', '/wp/v2/tags' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/tags' );
 		$response = $this->server->dispatch( $request );
 		$this->assertErrorResponse( 'rest_missing_callback_param', $response, 400 );
 	}
@@ -480,7 +480,7 @@ class WP_Test_REST_Tags_Controller extends WP_Test_REST_Controller_Testcase {
 	public function test_create_item_parent_non_hierarchical_taxonomy() {
 		wp_set_current_user( $this->administrator );
 
-		$request = new WP_REST_Request( 'POST', '/wp/v2/tags' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/tags' );
 		$request->set_param( 'name', 'My Awesome Term' );
 		$request->set_param( 'parent', REST_TESTS_IMPOSSIBLY_HIGH_NUMBER );
 		$response = $this->server->dispatch( $request );
@@ -495,7 +495,7 @@ class WP_Test_REST_Tags_Controller extends WP_Test_REST_Controller_Testcase {
 			'slug'        => 'original-slug',
 			);
 		$term = get_term_by( 'id', $this->factory->tag->create( $orig_args ), 'post_tag' );
-		$request = new WP_REST_Request( 'POST', '/wp/v2/tags/' . $term->term_id );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/tags/' . $term->term_id );
 		$request->set_param( 'name', 'New Name' );
 		$request->set_param( 'description', 'New Description' );
 		$request->set_param( 'slug', 'new-slug' );
@@ -509,7 +509,7 @@ class WP_Test_REST_Tags_Controller extends WP_Test_REST_Controller_Testcase {
 
 	public function test_update_item_invalid_term() {
 		wp_set_current_user( $this->administrator );
-		$request = new WP_REST_Request( 'POST', '/wp/v2/tags/' . REST_TESTS_IMPOSSIBLY_HIGH_NUMBER );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/tags/' . REST_TESTS_IMPOSSIBLY_HIGH_NUMBER );
 		$request->set_param( 'name', 'Invalid Term' );
 		$response = $this->server->dispatch( $request );
 		$this->assertErrorResponse( 'rest_term_invalid', $response, 404 );
@@ -518,7 +518,7 @@ class WP_Test_REST_Tags_Controller extends WP_Test_REST_Controller_Testcase {
 	public function test_update_item_incorrect_permissions() {
 		wp_set_current_user( $this->subscriber );
 		$term = get_term_by( 'id', $this->factory->tag->create(), 'post_tag' );
-		$request = new WP_REST_Request( 'POST', '/wp/v2/tags/' . $term->term_id );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/tags/' . $term->term_id );
 		$request->set_param( 'name', 'Incorrect permissions' );
 		$response = $this->server->dispatch( $request );
 		$this->assertErrorResponse( 'rest_cannot_update', $response, 403 );
@@ -528,7 +528,7 @@ class WP_Test_REST_Tags_Controller extends WP_Test_REST_Controller_Testcase {
 		wp_set_current_user( $this->administrator );
 		$term = get_term_by( 'id', $this->factory->tag->create(), 'post_tag' );
 
-		$request = new WP_REST_Request( 'POST', '/wp/v2/tags/' . $term->term_taxonomy_id );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/tags/' . $term->term_taxonomy_id );
 		$request->set_param( 'parent', REST_TESTS_IMPOSSIBLY_HIGH_NUMBER );
 		$response = $this->server->dispatch( $request );
 		$this->assertErrorResponse( 'rest_taxonomy_not_hierarchical', $response, 400 );
@@ -537,7 +537,7 @@ class WP_Test_REST_Tags_Controller extends WP_Test_REST_Controller_Testcase {
 	public function test_delete_item() {
 		wp_set_current_user( $this->administrator );
 		$term = get_term_by( 'id', $this->factory->tag->create( array( 'name' => 'Deleted Tag' ) ), 'post_tag' );
-		$request = new WP_REST_Request( 'DELETE', '/wp/v2/tags/' . $term->term_id );
+		$request = new CUTV_REST_Request( 'DELETE', '/cutv/v2/tags/' . $term->term_id );
 		$request->set_param( 'force', true );
 		$response = $this->server->dispatch( $request );
 		$this->assertEquals( 200, $response->get_status() );
@@ -548,7 +548,7 @@ class WP_Test_REST_Tags_Controller extends WP_Test_REST_Controller_Testcase {
 	public function test_delete_item_force_false() {
 		wp_set_current_user( $this->administrator );
 		$term = get_term_by( 'id', $this->factory->tag->create( array( 'name' => 'Deleted Tag' ) ), 'post_tag' );
-		$request = new WP_REST_Request( 'DELETE', '/wp/v2/tags/' . $term->term_id );
+		$request = new CUTV_REST_Request( 'DELETE', '/cutv/v2/tags/' . $term->term_id );
 		// force defaults to false
 		$response = $this->server->dispatch( $request );
 		$this->assertEquals( 501, $response->get_status() );
@@ -556,7 +556,7 @@ class WP_Test_REST_Tags_Controller extends WP_Test_REST_Controller_Testcase {
 
 	public function test_delete_item_invalid_term() {
 		wp_set_current_user( $this->administrator );
-		$request = new WP_REST_Request( 'DELETE', '/wp/v2/tags/' . REST_TESTS_IMPOSSIBLY_HIGH_NUMBER );
+		$request = new CUTV_REST_Request( 'DELETE', '/cutv/v2/tags/' . REST_TESTS_IMPOSSIBLY_HIGH_NUMBER );
 		$response = $this->server->dispatch( $request );
 		$this->assertErrorResponse( 'rest_term_invalid', $response, 404 );
 	}
@@ -564,14 +564,14 @@ class WP_Test_REST_Tags_Controller extends WP_Test_REST_Controller_Testcase {
 	public function test_delete_item_incorrect_permissions() {
 		wp_set_current_user( $this->subscriber );
 		$term = get_term_by( 'id', $this->factory->tag->create(), 'post_tag' );
-		$request = new WP_REST_Request( 'DELETE', '/wp/v2/tags/' . $term->term_id );
+		$request = new CUTV_REST_Request( 'DELETE', '/cutv/v2/tags/' . $term->term_id );
 		$response = $this->server->dispatch( $request );
 		$this->assertErrorResponse( 'rest_cannot_delete', $response, 403 );
 	}
 
 	public function test_prepare_item() {
 		$term = get_term_by( 'id', $this->factory->tag->create(), 'post_tag' );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/tags/' . $term->term_id );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/tags/' . $term->term_id );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
 
@@ -579,7 +579,7 @@ class WP_Test_REST_Tags_Controller extends WP_Test_REST_Controller_Testcase {
 	}
 
 	public function test_get_item_schema() {
-		$request = new WP_REST_Request( 'OPTIONS', '/wp/v2/tags' );
+		$request = new CUTV_REST_Request( 'OPTIONS', '/cutv/v2/tags' );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
 		$properties = $data['schema']['properties'];
@@ -595,7 +595,7 @@ class WP_Test_REST_Tags_Controller extends WP_Test_REST_Controller_Testcase {
 	}
 
 	public function test_get_item_schema_non_hierarchical() {
-		$request = new WP_REST_Request( 'OPTIONS', '/wp/v2/tags' );
+		$request = new CUTV_REST_Request( 'OPTIONS', '/cutv/v2/tags' );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
 		$properties = $data['schema']['properties'];
@@ -617,7 +617,7 @@ class WP_Test_REST_Tags_Controller extends WP_Test_REST_Controller_Testcase {
 			'get_callback'    => array( $this, 'additional_field_get_callback' ),
 		) );
 
-		$request = new WP_REST_Request( 'OPTIONS', '/wp/v2/tags' );
+		$request = new CUTV_REST_Request( 'OPTIONS', '/cutv/v2/tags' );
 
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
@@ -625,7 +625,7 @@ class WP_Test_REST_Tags_Controller extends WP_Test_REST_Controller_Testcase {
 		$this->assertEquals( $schema, $data['schema']['properties']['my_custom_int'] );
 
 		$tag_id = $this->factory->tag->create();
-		$request = new WP_REST_Request( 'GET', '/wp/v2/tags/' . $tag_id );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/tags/' . $tag_id );
 
 		$response = $this->server->dispatch( $request );
 		$this->assertArrayHasKey( 'my_custom_int', $response->data );
@@ -683,8 +683,8 @@ class WP_Test_REST_Tags_Controller extends WP_Test_REST_Controller_Testcase {
 			$expected_links[] = 'up';
 		}
 		$this->assertEqualSets( $expected_links, array_keys( $links ) );
-		$this->assertContains( 'wp/v2/taxonomies/' . $term->taxonomy, $links['about'][0]['href'] );
-		$this->assertEquals( add_query_arg( 'tags', $term->term_id, rest_url( 'wp/v2/posts' ) ), $links['https://api.w.org/post_type'][0]['href'] );
+		$this->assertContains( 'cutv/v2/taxonomies/' . $term->taxonomy, $links['about'][0]['href'] );
+		$this->assertEquals( add_query_arg( 'tags', $term->term_id, rest_url( 'cutv/v2/posts' ) ), $links['https://api.w.org/post_type'][0]['href'] );
 	}
 
 	protected function check_get_taxonomy_term_response( $response, $id ) {

@@ -1,10 +1,10 @@
 <?php
 
-class WP_Test_REST_Controller extends WP_Test_REST_TestCase {
+class WP_Test_rest_Controller extends WP_Test_rest_TestCase {
 
 	public function setUp() {
 		parent::setUp();
-		$this->request = new WP_REST_Request( 'GET', '/wp/v2/testroute', array(
+		$this->request = new CUTV_REST_Request( 'GET', '/cutv/v2/testroute', array(
 			'args'     => array(
 				'someinteger'     => array(
 					'type'        => 'integer',
@@ -111,7 +111,7 @@ class WP_Test_REST_Controller extends WP_Test_REST_TestCase {
 	}
 
 	public function test_get_endpoint_args_for_item_schema_description() {
-		$controller = new WP_REST_Test_Controller();
+		$controller = new CUTV_REST_Test_Controller();
 		$args       = $controller->get_endpoint_args_for_item_schema();
 		$this->assertEquals( 'A pretty string.', $args['somestring']['description'] );
 		$this->assertFalse( isset( $args['someinteger']['description'] ) );
@@ -119,7 +119,7 @@ class WP_Test_REST_Controller extends WP_Test_REST_TestCase {
 
 	public function test_get_endpoint_args_for_item_schema_arg_options() {
 
-		$controller = new WP_REST_Test_Controller();
+		$controller = new CUTV_REST_Test_Controller();
 		$args       = $controller->get_endpoint_args_for_item_schema();
 
 		$this->assertFalse( $args['someargoptions']['required'] );
@@ -128,7 +128,7 @@ class WP_Test_REST_Controller extends WP_Test_REST_TestCase {
 
 	public function test_get_endpoint_args_for_item_schema_default_value() {
 
-		$controller = new WP_REST_Test_Controller();
+		$controller = new CUTV_REST_Test_Controller();
 
 		$args = $controller->get_endpoint_args_for_item_schema();
 
@@ -139,7 +139,7 @@ class WP_Test_REST_Controller extends WP_Test_REST_TestCase {
 
 	public function test_get_post() {
 		$post_id = $this->factory()->post->create( array( 'post_title' => 'Original' ) );
-		$controller = new WP_REST_Test_Controller();
+		$controller = new CUTV_REST_Test_Controller();
 
 		$post = $controller->get_post( $post_id );
 		$this->assertEquals( 'Original', $post->post_title );

@@ -1,12 +1,12 @@
 <?php
 /**
- * Unit tests covering WP_REST_Users_Controller functionality.
+ * Unit tests covering CUTV_REST_Users_Controller functionality.
  *
  * @package WordPress
  * @subpackage JSON API
  */
 
-class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
+class WP_Test_rest_Users_Controller extends WP_Test_rest_Controller_Testcase {
 	/**
 	 * This function is run before each method
 	 */
@@ -22,28 +22,28 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 			'user_email' => 'editor@example.com',
 		) );
 
-		$this->endpoint = new WP_REST_Users_Controller();
+		$this->endpoint = new CUTV_REST_Users_Controller();
 	}
 
 	public function test_register_routes() {
 		$routes = $this->server->get_routes();
 
-		$this->assertArrayHasKey( '/wp/v2/users', $routes );
-		$this->assertCount( 2, $routes['/wp/v2/users'] );
-		$this->assertArrayHasKey( '/wp/v2/users/(?P<id>[\d]+)', $routes );
-		$this->assertCount( 3, $routes['/wp/v2/users/(?P<id>[\d]+)'] );
-		$this->assertArrayHasKey( '/wp/v2/users/me', $routes );
+		$this->assertArrayHasKey( '/cutv/v2/users', $routes );
+		$this->assertCount( 2, $routes['/cutv/v2/users'] );
+		$this->assertArrayHasKey( '/cutv/v2/users/(?P<id>[\d]+)', $routes );
+		$this->assertCount( 3, $routes['/cutv/v2/users/(?P<id>[\d]+)'] );
+		$this->assertArrayHasKey( '/cutv/v2/users/me', $routes );
 	}
 
 	public function test_context_param() {
 		// Collection
-		$request = new WP_REST_Request( 'OPTIONS', '/wp/v2/users' );
+		$request = new CUTV_REST_Request( 'OPTIONS', '/cutv/v2/users' );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
 		$this->assertEquals( 'view', $data['endpoints'][0]['args']['context']['default'] );
 		$this->assertEquals( array( 'view', 'embed', 'edit' ), $data['endpoints'][0]['args']['context']['enum'] );
 		// Single
-		$request = new WP_REST_Request( 'OPTIONS', '/wp/v2/users/' . $this->user );
+		$request = new CUTV_REST_Request( 'OPTIONS', '/cutv/v2/users/' . $this->user );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
 		$this->assertEquals( 'view', $data['endpoints'][0]['args']['context']['default'] );
@@ -51,7 +51,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 	}
 
 	public function test_registered_query_params() {
-		$request = new WP_REST_Request( 'OPTIONS', '/wp/v2/users' );
+		$request = new CUTV_REST_Request( 'OPTIONS', '/cutv/v2/users' );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
 		$keys = array_keys( $data['endpoints'][0]['args'] );
@@ -74,7 +74,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 	public function test_get_items() {
 		wp_set_current_user( $this->user );
 
-		$request = new WP_REST_Request( 'GET', '/wp/v2/users' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/users' );
 		$request->set_param( 'context', 'view' );
 		$response = $this->server->dispatch( $request );
 
@@ -89,7 +89,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 	public function test_get_items_with_edit_context() {
 		wp_set_current_user( $this->user );
 
-		$request = new WP_REST_Request( 'GET', '/wp/v2/users' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/users' );
 		$request->set_param( 'context', 'edit' );
 		$response = $this->server->dispatch( $request );
 
@@ -103,7 +103,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 
 	public function test_get_items_with_edit_context_without_permission() {
 		//test with a user not logged in
-		$request = new WP_REST_Request( 'GET', '/wp/v2/users' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/users' );
 		$request->set_param( 'context', 'edit' );
 		$response = $this->server->dispatch( $request );
 
@@ -111,7 +111,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 
 		//test with a user logged in but without sufficient capabilities; capability in question: 'list_users'
 		wp_set_current_user( $this->editor );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/users' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/users' );
 		$request->set_param( 'context', 'edit' );
 		$response = $this->server->dispatch( $request );
 
@@ -119,7 +119,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 	}
 
 	public function test_get_items_unauthenticated_only_shows_public_users() {
-		$request = new WP_REST_Request( 'GET', '/wp/v2/users' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/users' );
 		$response = $this->server->dispatch( $request );
 
 		$this->assertEquals( array(), $response->get_data() );
@@ -127,7 +127,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		$this->factory->post->create( array( 'post_author' => $this->editor ) );
 		$this->factory->post->create( array( 'post_author' => $this->user, 'post_status' => 'draft' ) );
 
-		$request = new WP_REST_Request( 'GET', '/wp/v2/users' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/users' );
 		$response = $this->server->dispatch( $request );
 		$users = $response->get_data();
 
@@ -152,21 +152,21 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 				'name'   => "User {$i}",
 				) );
 		}
-		$request = new WP_REST_Request( 'GET', '/wp/v2/users' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/users' );
 		$response = $this->server->dispatch( $request );
 		$headers = $response->get_headers();
 		$this->assertEquals( 50, $headers['X-WP-Total'] );
 		$this->assertEquals( 5, $headers['X-WP-TotalPages'] );
 		$next_link = add_query_arg( array(
 			'page'    => 2,
-			), rest_url( 'wp/v2/users' ) );
+			), rest_url( 'cutv/v2/users' ) );
 		$this->assertFalse( stripos( $headers['Link'], 'rel="prev"' ) );
 		$this->assertContains( '<' . $next_link . '>; rel="next"', $headers['Link'] );
 		// 3rd page
 		$this->factory->user->create( array(
 				'name'   => 'User 51',
 				) );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/users' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/users' );
 		$request->set_param( 'page', 3 );
 		$response = $this->server->dispatch( $request );
 		$headers = $response->get_headers();
@@ -174,14 +174,14 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		$this->assertEquals( 6, $headers['X-WP-TotalPages'] );
 		$prev_link = add_query_arg( array(
 			'page'    => 2,
-			), rest_url( 'wp/v2/users' ) );
+			), rest_url( 'cutv/v2/users' ) );
 		$this->assertContains( '<' . $prev_link . '>; rel="prev"', $headers['Link'] );
 		$next_link = add_query_arg( array(
 			'page'    => 4,
-			), rest_url( 'wp/v2/users' ) );
+			), rest_url( 'cutv/v2/users' ) );
 		$this->assertContains( '<' . $next_link . '>; rel="next"', $headers['Link'] );
 		// Last page
-		$request = new WP_REST_Request( 'GET', '/wp/v2/users' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/users' );
 		$request->set_param( 'page', 6 );
 		$response = $this->server->dispatch( $request );
 		$headers = $response->get_headers();
@@ -189,11 +189,11 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		$this->assertEquals( 6, $headers['X-WP-TotalPages'] );
 		$prev_link = add_query_arg( array(
 			'page'    => 5,
-			), rest_url( 'wp/v2/users' ) );
+			), rest_url( 'cutv/v2/users' ) );
 		$this->assertContains( '<' . $prev_link . '>; rel="prev"', $headers['Link'] );
 		$this->assertFalse( stripos( $headers['Link'], 'rel="next"' ) );
 		// Out of bounds
-		$request = new WP_REST_Request( 'GET', '/wp/v2/users' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/users' );
 		$request->set_param( 'page', 8 );
 		$response = $this->server->dispatch( $request );
 		$headers = $response->get_headers();
@@ -201,7 +201,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		$this->assertEquals( 6, $headers['X-WP-TotalPages'] );
 		$prev_link = add_query_arg( array(
 			'page'    => 6,
-			), rest_url( 'wp/v2/users' ) );
+			), rest_url( 'cutv/v2/users' ) );
 		$this->assertContains( '<' . $prev_link . '>; rel="prev"', $headers['Link'] );
 		$this->assertFalse( stripos( $headers['Link'], 'rel="next"' ) );
 	}
@@ -211,10 +211,10 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		for ( $i = 0; $i < 20; $i++ ) {
 			$this->factory->user->create( array( 'display_name' => "User {$i}" ) );
 		}
-		$request = new WP_REST_Request( 'GET', '/wp/v2/users' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/users' );
 		$response = $this->server->dispatch( $request );
 		$this->assertEquals( 10, count( $response->get_data() ) );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/users' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/users' );
 		$request->set_param( 'per_page', 5 );
 		$response = $this->server->dispatch( $request );
 		$this->assertEquals( 5, count( $response->get_data() ) );
@@ -225,7 +225,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		for ( $i = 0; $i < 20; $i++ ) {
 			$this->factory->user->create( array( 'display_name' => "User {$i}" ) );
 		}
-		$request = new WP_REST_Request( 'GET', '/wp/v2/users' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/users' );
 		$request->set_param( 'per_page', 5 );
 		$request->set_param( 'page', 2 );
 		$response = $this->server->dispatch( $request );
@@ -233,7 +233,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		$prev_link = add_query_arg( array(
 			'per_page'  => 5,
 			'page'      => 1,
-			), rest_url( 'wp/v2/users' ) );
+			), rest_url( 'cutv/v2/users' ) );
 		$headers = $response->get_headers();
 		$this->assertContains( '<' . $prev_link . '>; rel="prev"', $headers['Link'] );
 	}
@@ -243,14 +243,14 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		$low_id = $this->factory->user->create( array( 'display_name' => 'AAAAA' ) );
 		$mid_id = $this->factory->user->create( array( 'display_name' => 'NNNNN' ) );
 		$high_id = $this->factory->user->create( array( 'display_name' => 'ZZZZ' ) );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/users' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/users' );
 		$request->set_param( 'orderby', 'name' );
 		$request->set_param( 'order', 'desc' );
 		$request->set_param( 'per_page', 1 );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
 		$this->assertEquals( $high_id, $data[0]['id'] );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/users' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/users' );
 		$request->set_param( 'orderby', 'name' );
 		$request->set_param( 'order', 'asc' );
 		$request->set_param( 'per_page', 1 );
@@ -263,7 +263,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		wp_set_current_user( $this->user );
 		// 2 users created in __construct(), plus default user
 		$this->factory->user->create();
-		$request = new WP_REST_Request( 'GET', '/wp/v2/users' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/users' );
 		$request->set_param( 'offset', 1 );
 		$response = $this->server->dispatch( $request );
 		$this->assertCount( 3, $response->get_data() );
@@ -282,7 +282,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		$id1 = $this->factory->user->create();
 		$id2 = $this->factory->user->create();
 		$id3 = $this->factory->user->create();
-		$request = new WP_REST_Request( 'GET', '/wp/v2/users' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/users' );
 		// Orderby=>asc
 		$request->set_param( 'include', array( $id3, $id1 ) );
 		$response = $this->server->dispatch( $request );
@@ -307,7 +307,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		wp_set_current_user( $this->user );
 		$id1 = $this->factory->user->create();
 		$id2 = $this->factory->user->create();
-		$request = new WP_REST_Request( 'GET', '/wp/v2/users' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/users' );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
 		$this->assertTrue( in_array( $id1, wp_list_pluck( $data, 'id' ) ) );
@@ -321,12 +321,12 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 
 	public function test_get_items_search() {
 		wp_set_current_user( $this->user );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/users' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/users' );
 		$request->set_param( 'search', 'yololololo' );
 		$response = $this->server->dispatch( $request );
 		$this->assertEquals( 0, count( $response->get_data() ) );
 		$yolo_id = $this->factory->user->create( array( 'display_name' => 'yololololo' ) );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/users' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/users' );
 		$request->set_param( 'search', (string) $yolo_id );
 		$response = $this->server->dispatch( $request );
 		$this->assertEquals( 1, count( $response->get_data() ) );
@@ -335,7 +335,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 			'role'          => 'author',
 			'user_nicename' => 'adam',
 		) );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/users' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/users' );
 		$request->set_param( 'search', 'ada' );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
@@ -347,7 +347,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		wp_set_current_user( $this->user );
 		$this->factory->user->create( array( 'display_name' => 'foo', 'user_login' => 'bar' ) );
 		$id2 = $this->factory->user->create( array( 'display_name' => 'Moo', 'user_login' => 'foo' ) );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/users' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/users' );
 		$request->set_param( 'slug', 'foo' );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
@@ -360,7 +360,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		wp_set_current_user( $this->user );
 		$tango = $this->factory->user->create( array( 'display_name' => 'tango', 'role' => 'subscriber' ) );
 		$yolo  = $this->factory->user->create( array( 'display_name' => 'yolo', 'role' => 'author' ) );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/users' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/users' );
 		$request->set_param( 'roles', 'author,subscriber' );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
@@ -385,13 +385,13 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 	public function test_get_items_invalid_roles() {
 		wp_set_current_user( $this->user );
 		$lolz = $this->factory->user->create( array( 'display_name' => 'lolz', 'role' => 'author' ) );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/users' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/users' );
 		$request->set_param( 'roles', 'ilovesteak,author' );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
 		$this->assertEquals( 1, count( $data ) );
 		$this->assertEquals( $lolz, $data[0]['id'] );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/users' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/users' );
 		$request->set_param( 'roles', 'steakisgood' );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
@@ -403,7 +403,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		$user_id = $this->factory->user->create();
 		wp_set_current_user( $this->user );
 
-		$request = new WP_REST_Request( 'GET', sprintf( '/wp/v2/users/%d', $user_id ) );
+		$request = new CUTV_REST_Request( 'GET', sprintf( '/cutv/v2/users/%d', $user_id ) );
 
 		$response = $this->server->dispatch( $request );
 		$this->check_get_user_response( $response, 'embed' );
@@ -411,7 +411,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 
 	public function test_prepare_item() {
 		wp_set_current_user( $this->user );
-		$request = new WP_REST_Request;
+		$request = new CUTV_REST_Request;
 		$request->set_param( 'context', 'edit' );
 		$user = get_user_by( 'id', get_current_user_id() );
 		$data = $this->endpoint->prepare_item_for_response( $user, $request );
@@ -421,7 +421,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 	public function test_get_user_avatar_urls() {
 		wp_set_current_user( $this->user );
 
-		$request = new WP_REST_Request( 'GET', sprintf( '/wp/v2/users/%d', $this->editor ) );
+		$request = new CUTV_REST_Request( 'GET', sprintf( '/cutv/v2/users/%d', $this->editor ) );
 
 		$response = $this->server->dispatch( $request );
 
@@ -440,7 +440,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 
 	public function test_get_user_invalid_id() {
 		wp_set_current_user( $this->user );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/users/100' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/users/100' );
 		$response = $this->server->dispatch( $request );
 
 		$this->assertErrorResponse( 'rest_user_invalid_id', $response, 404 );
@@ -453,7 +453,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		$lolz = $this->factory->user->create( array( 'display_name' => 'lolz', 'roles' => '' ) );
 		delete_user_option( $lolz, 'capabilities' );
 		delete_user_option( $lolz, 'user_level' );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/users/' . $lolz );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/users/' . $lolz );
 		$request->set_param( 'context', 'edit' );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
@@ -465,7 +465,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 	public function test_get_item_without_permission() {
 		wp_set_current_user( $this->editor );
 
-		$request = new WP_REST_Request( 'GET', sprintf( '/wp/v2/users/%d', $this->user ) );
+		$request = new CUTV_REST_Request( 'GET', sprintf( '/cutv/v2/users/%d', $this->user ) );
 		$response = $this->server->dispatch( $request );
 
 		$this->assertErrorResponse( 'rest_user_cannot_view', $response, 403 );
@@ -479,7 +479,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 			'post_author' => $this->author_id,
 		));
 		wp_set_current_user( 0 );
-		$request = new WP_REST_Request( 'GET', sprintf( '/wp/v2/users/%d', $this->author_id ) );
+		$request = new CUTV_REST_Request( 'GET', sprintf( '/cutv/v2/users/%d', $this->author_id ) );
 		$response = $this->server->dispatch( $request );
 		$this->check_get_user_response( $response, 'embed' );
 	}
@@ -489,7 +489,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 			'role' => 'author',
 		) );
 		wp_set_current_user( 0 );
-		$request = new WP_REST_Request( 'GET', sprintf( '/wp/v2/users/%d', $this->author_id ) );
+		$request = new CUTV_REST_Request( 'GET', sprintf( '/cutv/v2/users/%d', $this->author_id ) );
 		$response = $this->server->dispatch( $request );
 		$this->assertEquals( 401, $response->get_status() );
 		$this->post_id = $this->factory->post->create( array(
@@ -504,7 +504,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		$user_id = $this->factory->user->create();
 		$this->allow_user_to_manage_multisite();
 
-		$request = new WP_REST_Request( 'GET', sprintf( '/wp/v2/users/%d', $user_id ) );
+		$request = new CUTV_REST_Request( 'GET', sprintf( '/cutv/v2/users/%d', $user_id ) );
 		$request->set_param( 'context', 'edit' );
 
 		$response = $this->server->dispatch( $request );
@@ -519,7 +519,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 			'post_author' => $this->author_id,
 		));
 		wp_set_current_user( 0 );
-		$request = new WP_REST_Request( 'GET', sprintf( '/wp/v2/users/%d', $this->author_id ) );
+		$request = new CUTV_REST_Request( 'GET', sprintf( '/cutv/v2/users/%d', $this->author_id ) );
 		$request->set_param( 'context', 'edit' );
 		$response = $this->server->dispatch( $request );
 		$this->assertErrorResponse( 'rest_user_cannot_view', $response, 401 );
@@ -528,19 +528,19 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 	public function test_get_current_user() {
 		wp_set_current_user( $this->user );
 
-		$request = new WP_REST_Request( 'GET', '/wp/v2/users/me' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/users/me' );
 
 		$response = $this->server->dispatch( $request );
 		$this->assertEquals( 302, $response->get_status() );
 
 		$headers = $response->get_headers();
 		$this->assertArrayHasKey( 'Location', $headers );
-		$this->assertEquals( rest_url( 'wp/v2/users/' . $this->user ), $headers['Location'] );
+		$this->assertEquals( rest_url( 'cutv/v2/users/' . $this->user ), $headers['Location'] );
 	}
 
 	public function test_get_current_user_without_permission() {
 		wp_set_current_user( 0 );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/users/me' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/users/me' );
 		$response = $this->server->dispatch( $request );
 
 		$this->assertErrorResponse( 'rest_not_logged_in', $response, 401 );
@@ -562,7 +562,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 			'url'         => 'http://example.com',
 		);
 
-		$request = new WP_REST_Request( 'POST', '/wp/v2/users' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/users' );
 		$request->add_header( 'content-type', 'application/x-www-form-urlencoded' );
 		$request->set_body_params( $params );
 
@@ -582,7 +582,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 			'email'    => 'testjson@example.com',
 		);
 
-		$request = new WP_REST_Request( 'POST', '/wp/v2/users' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/users' );
 		$request->add_header( 'content-type', 'application/json' );
 		$request->set_body( wp_json_encode( $params ) );
 
@@ -599,7 +599,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 			'email'    => 'chunkylover53@aol.com',
 		);
 
-		$request = new WP_REST_Request( 'POST', '/wp/v2/users' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/users' );
 		$request->add_header( 'content-type', 'application/x-www-form-urlencoded' );
 		$request->set_body_params( $params );
 		$response = $this->server->dispatch( $request );
@@ -618,7 +618,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 			'email'    => 'smartgirl63_@yahoo.com',
 		);
 
-		$request = new WP_REST_Request( 'POST', '/wp/v2/users' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/users' );
 		$request->add_header( 'content-type', 'application/x-www-form-urlencoded' );
 		$request->set_body_params( $params );
 		$response = $this->server->dispatch( $request );
@@ -636,7 +636,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 			'email'    => 'something',
 		);
 
-		$request = new WP_REST_Request( 'POST', '/wp/v2/users' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/users' );
 		$request->add_header( 'content-type', 'application/x-www-form-urlencoded' );
 		$request->set_body_params( $params );
 		$response = $this->server->dispatch( $request );
@@ -655,7 +655,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 			'roles'    => array( 'baby' ),
 		);
 
-		$request = new WP_REST_Request( 'POST', '/wp/v2/users' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/users' );
 		$request->add_header( 'content-type', 'application/x-www-form-urlencoded' );
 		$request->set_body_params( $params );
 		$response = $this->server->dispatch( $request );
@@ -682,7 +682,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		$_POST['first_name'] = 'New Name';
 		$_POST['url'] = 'http://google.com';
 
-		$request = new WP_REST_Request( 'PUT', sprintf( '/wp/v2/users/%d', $user_id ) );
+		$request = new CUTV_REST_Request( 'PUT', sprintf( '/cutv/v2/users/%d', $user_id ) );
 		$request->add_header( 'content-type', 'application/x-www-form-urlencoded' );
 		$request->set_body_params( $_POST );
 
@@ -709,7 +709,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		$this->allow_user_to_manage_multisite();
 		wp_set_current_user( $this->user );
 
-		$request = new WP_REST_Request( 'PUT', '/wp/v2/users/' . $user2 );
+		$request = new CUTV_REST_Request( 'PUT', '/cutv/v2/users/' . $user2 );
 		$request->set_param( 'email', 'testjson@example.com' );
 		$response = $this->server->dispatch( $request );
 		$this->assertInstanceOf( 'WP_Error', $response->as_error() );
@@ -722,7 +722,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		$this->allow_user_to_manage_multisite();
 		wp_set_current_user( $this->user );
 
-		$request = new WP_REST_Request( 'PUT', '/wp/v2/users/' . $user2 );
+		$request = new CUTV_REST_Request( 'PUT', '/cutv/v2/users/' . $user2 );
 		$request->set_param( 'username', 'test_json_user' );
 		$response = $this->server->dispatch( $request );
 		$this->assertInstanceOf( 'WP_Error', $response->as_error() );
@@ -735,7 +735,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		$this->allow_user_to_manage_multisite();
 		wp_set_current_user( $this->user );
 
-		$request = new WP_REST_Request( 'PUT', '/wp/v2/users/' . $user2 );
+		$request = new CUTV_REST_Request( 'PUT', '/cutv/v2/users/' . $user2 );
 		$request->set_param( 'slug', 'test_json_user' );
 		$response = $this->server->dispatch( $request );
 		$this->assertInstanceOf( 'WP_Error', $response->as_error() );
@@ -763,7 +763,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		$userdata = get_userdata( $user_id );
 		$pw_before = $userdata->user_pass;
 
-		$request = new WP_REST_Request( 'PUT', sprintf( '/wp/v2/users/%d', $user_id ) );
+		$request = new CUTV_REST_Request( 'PUT', sprintf( '/cutv/v2/users/%d', $user_id ) );
 		$request->add_header( 'content-type', 'application/json' );
 		$request->set_body( wp_json_encode( $params ) );
 
@@ -789,7 +789,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		wp_set_current_user( $this->user );
 		$this->allow_user_to_manage_multisite();
 
-		$request = new WP_REST_Request( 'PUT', sprintf( '/wp/v2/users/%d', $user_id ) );
+		$request = new CUTV_REST_Request( 'PUT', sprintf( '/cutv/v2/users/%d', $user_id ) );
 		$request->set_param( 'roles', array( 'editor' ) );
 		$response = $this->server->dispatch( $request );
 
@@ -806,7 +806,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 	public function test_update_user_role_invalid_privilege_escalation() {
 		wp_set_current_user( $this->editor );
 
-		$request = new WP_REST_Request( 'PUT', sprintf( '/wp/v2/users/%d', $this->editor ) );
+		$request = new CUTV_REST_Request( 'PUT', sprintf( '/cutv/v2/users/%d', $this->editor ) );
 		$request->set_param( 'roles', array( 'administrator' ) );
 		$response = $this->server->dispatch( $request );
 
@@ -825,7 +825,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 
 		wp_set_current_user( $user_id );
 
-		$request = new WP_REST_Request( 'PUT', sprintf( '/wp/v2/users/%d', $user_id ) );
+		$request = new CUTV_REST_Request( 'PUT', sprintf( '/cutv/v2/users/%d', $user_id ) );
 		$request->set_param( 'roles', array( 'editor' ) );
 		$response = $this->server->dispatch( $request );
 
@@ -847,7 +847,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		$user = wp_get_current_user();
 		update_site_option( 'site_admins', array( $user->user_login ) );
 
-		$request = new WP_REST_Request( 'PUT', sprintf( '/wp/v2/users/%d', $user_id ) );
+		$request = new CUTV_REST_Request( 'PUT', sprintf( '/cutv/v2/users/%d', $user_id ) );
 		$request->set_param( 'roles', array( 'editor' ) );
 		$response = $this->server->dispatch( $request );
 
@@ -861,7 +861,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		wp_set_current_user( $this->user );
 		$this->allow_user_to_manage_multisite();
 
-		$request = new WP_REST_Request( 'PUT', sprintf( '/wp/v2/users/%d', $this->editor ) );
+		$request = new CUTV_REST_Request( 'PUT', sprintf( '/cutv/v2/users/%d', $this->editor ) );
 		$request->set_param( 'roles', array( 'BeSharp' ) );
 		$response = $this->server->dispatch( $request );
 
@@ -881,7 +881,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 			'email'    => 'chunkylover53@aol.com',
 		);
 
-		$request = new WP_REST_Request( 'PUT', sprintf( '/wp/v2/users/%d', $this->user ) );
+		$request = new CUTV_REST_Request( 'PUT', sprintf( '/cutv/v2/users/%d', $this->user ) );
 		$request->add_header( 'content-type', 'application/x-www-form-urlencoded' );
 		$request->set_body_params( $params );
 		$response = $this->server->dispatch( $request );
@@ -900,7 +900,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 			'email'    => 'smartgirl63_@yahoo.com',
 		);
 
-		$request = new WP_REST_Request( 'PUT', sprintf( '/wp/v2/users/%d', $this->editor ) );
+		$request = new CUTV_REST_Request( 'PUT', sprintf( '/cutv/v2/users/%d', $this->editor ) );
 		$request->add_header( 'content-type', 'application/x-www-form-urlencoded' );
 		$request->set_body_params( $params );
 		$response = $this->server->dispatch( $request );
@@ -915,7 +915,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		wp_set_current_user( $this->user );
 
 		$userdata = get_userdata( $user_id ); // cache for later
-		$request = new WP_REST_Request( 'DELETE', sprintf( '/wp/v2/users/%d', $user_id ) );
+		$request = new CUTV_REST_Request( 'DELETE', sprintf( '/cutv/v2/users/%d', $user_id ) );
 		$request['force'] = true;
 		$response = $this->server->dispatch( $request );
 
@@ -931,7 +931,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		wp_set_current_user( $this->user );
 
 		$userdata = get_userdata( $user_id ); // cache for later
-		$request = new WP_REST_Request( 'DELETE', sprintf( '/wp/v2/users/%d', $user_id ) );
+		$request = new CUTV_REST_Request( 'DELETE', sprintf( '/cutv/v2/users/%d', $user_id ) );
 		$response = $this->server->dispatch( $request );
 		$this->assertErrorResponse( 'rest_trash_not_supported', $response, 501 );
 
@@ -946,7 +946,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		$this->allow_user_to_manage_multisite();
 		wp_set_current_user( $this->editor );
 
-		$request = new WP_REST_Request( 'DELETE', sprintf( '/wp/v2/users/%d', $user_id ) );
+		$request = new CUTV_REST_Request( 'DELETE', sprintf( '/cutv/v2/users/%d', $user_id ) );
 		$request['force'] = true;
 		$response = $this->server->dispatch( $request );
 
@@ -957,7 +957,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		$this->allow_user_to_manage_multisite();
 		wp_set_current_user( $this->user );
 
-		$request = new WP_REST_Request( 'DELETE', '/wp/v2/users/100' );
+		$request = new CUTV_REST_Request( 'DELETE', '/cutv/v2/users/100' );
 		$request['force'] = true;
 		$response = $this->server->dispatch( $request );
 
@@ -980,7 +980,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 
 		// Delete our test user, and reassign to the new author
 		wp_set_current_user( $this->user );
-		$request = new WP_REST_Request( 'DELETE', sprintf( '/wp/v2/users/%d', $user_id ) );
+		$request = new CUTV_REST_Request( 'DELETE', sprintf( '/cutv/v2/users/%d', $user_id ) );
 		$request['force'] = true;
 		$request->set_param( 'reassign', $reassign_id );
 		$response = $this->server->dispatch( $request );
@@ -998,7 +998,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		$this->allow_user_to_manage_multisite();
 		wp_set_current_user( $this->user );
 
-		$request = new WP_REST_Request( 'DELETE', sprintf( '/wp/v2/users/%d', $user_id ) );
+		$request = new CUTV_REST_Request( 'DELETE', sprintf( '/cutv/v2/users/%d', $user_id ) );
 		$request['force'] = true;
 		$request->set_param( 'reassign', 100 );
 		$response = $this->server->dispatch( $request );
@@ -1007,7 +1007,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 	}
 
 	public function test_get_item_schema() {
-		$request = new WP_REST_Request( 'OPTIONS', '/wp/v2/users' );
+		$request = new CUTV_REST_Request( 'OPTIONS', '/cutv/v2/users' );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
 		$properties = $data['schema']['properties'];
@@ -1035,7 +1035,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 
 	public function test_get_item_schema_show_avatar() {
 		update_option( 'show_avatars', false );
-		$request = new WP_REST_Request( 'OPTIONS', '/wp/v2/users' );
+		$request = new CUTV_REST_Request( 'OPTIONS', '/cutv/v2/users' );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
 		$properties = $data['schema']['properties'];
@@ -1058,7 +1058,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 			'update_callback' => array( $this, 'additional_field_update_callback' ),
 		) );
 
-		$request = new WP_REST_Request( 'OPTIONS', '/wp/v2/users' );
+		$request = new CUTV_REST_Request( 'OPTIONS', '/cutv/v2/users' );
 
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
@@ -1072,12 +1072,12 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 			update_site_option( 'site_admins', array( $current_user->user_login ) );
 		}
 
-		$request = new WP_REST_Request( 'GET', '/wp/v2/users/1' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/users/1' );
 
 		$response = $this->server->dispatch( $request );
 		$this->assertArrayHasKey( 'my_custom_int', $response->data );
 
-		$request = new WP_REST_Request( 'POST', '/wp/v2/users/1' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/users/1' );
 		$request->set_body_params(array(
 			'my_custom_int' => 123,
 		));
@@ -1085,7 +1085,7 @@ class WP_Test_REST_Users_Controller extends WP_Test_REST_Controller_Testcase {
 		$response = $this->server->dispatch( $request );
 		$this->assertEquals( 123, get_user_meta( 1, 'my_custom_int', true ) );
 
-		$request = new WP_REST_Request( 'POST', '/wp/v2/users' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/users' );
 		$request->set_body_params(array(
 			'my_custom_int' => 123,
 			'email' => 'joe@foobar.com',

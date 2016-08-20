@@ -30,7 +30,7 @@
 
   (props @bradyvercher, [#2387](https://github.com/WP-API/WP-API/pull/2387))
 
-- Adds `roles` param for `GET /wp/v2/users`.
+- Adds `roles` param for `GET /cutv/v2/users`.
 
   (props @BE-Webdesign, [#2372](https://github.com/WP-API/WP-API/pull/2372))
 
@@ -66,7 +66,7 @@
 
   (props @claudiosmweb, [#2335](https://github.com/WP-API/WP-API/pull/2335))
 
-- Ensures `GET /wp/v2/categories` with out of bounds offset doesn't return results.
+- Ensures `GET /cutv/v2/categories` with out of bounds offset doesn't return results.
 
   (props @danielbachhuber, [#2313](https://github.com/WP-API/WP-API/pull/2313))
 
@@ -98,7 +98,7 @@
 
 - BREAKING CHANGE: Removes meta endpoints from primary plugin.
 
-  If your project depends on post meta endpoints, please install [WP REST API Meta Endpoints](https://wordpress.org/plugins/rest-api-meta-endpoints/). For the gory history of meta, read [#1425](https://github.com/WP-API/WP-API/issues/1425) and linked issues. At this time, we recommend using `register_rest_field()` to expose meta ([docs](http://v2.wp-api.org/extending/modifying/)).
+  If your project depends on post meta endpoints, please install [WP REST API Meta Endpoints](https://wordpress.org/plugins/rest-api-meta-endpoints/). For the gory history of meta, read [#1425](https://github.com/WP-API/WP-API/issues/1425) and linked issues. At this time, we recommend using `register_rest_field()` to expose meta ([docs](http://v2.cutv-api.org/extending/modifying/)).
 
   (props @danielbachhuber, [#2172](https://github.com/WP-API/WP-API/pull/2172))
 
@@ -120,9 +120,9 @@
 
   (props @danielbachhuber, [#2205](https://github.com/WP-API/WP-API/pull/2205), [#2204](https://github.com/WP-API/WP-API/pull/2204), [#2203](https://github.com/WP-API/WP-API/pull/2203), [#2218](https://github.com/WP-API/WP-API/pull/2218), [#2216](https://github.com/WP-API/WP-API/pull/2216), [#2230](https://github.com/WP-API/WP-API/pull/2230), [#2184](https://github.com/WP-API/WP-API/pull/2184), [#2235](https://github.com/WP-API/WP-API/pull/2235))
 
-- BREAKING CHANGE: Removes `post_*` query param support for `GET /wp/v2/comments`.
+- BREAKING CHANGE: Removes `post_*` query param support for `GET /cutv/v2/comments`.
 
-  The proper pattern is to use `GET /wp/v2/posts` to fetch the post IDs to limit the request to.
+  The proper pattern is to use `GET /cutv/v2/posts` to fetch the post IDs to limit the request to.
 
   (props @danielbachhuber, [#2165](https://github.com/WP-API/WP-API/pull/2165))
 
@@ -136,7 +136,7 @@
 
   (props @danielbachhuber, [#2241](https://github.com/WP-API/WP-API/pull/2241))
 
-- Introduces `media_type` and `mime_type` params for `GET /wp/v2/media`.
+- Introduces `media_type` and `mime_type` params for `GET /cutv/v2/media`.
 
   (props @danielbachhuber, [#2231](https://github.com/WP-API/WP-API/pull/2231))
 
@@ -180,7 +180,7 @@
 
   (props @danielbachhuber, [#2185](https://github.com/WP-API/WP-API/pull/2185))
 
-- Validates `GET /wp/v2/comments` private query params.
+- Validates `GET /cutv/v2/comments` private query params.
 
   Returns an error when user doesn't have permission to use them, instead of silently discarding.
 
@@ -210,7 +210,7 @@
 
   (props @danielbachhuber, [#2169](https://github.com/WP-API/WP-API/pull/2169))
 
-- Adds `trash` status to `GET /wp/v2/statuses`.
+- Adds `trash` status to `GET /cutv/v2/statuses`.
 
   (props @danielbachhuber, [#2158](https://github.com/WP-API/WP-API/pull/2158))
 
@@ -234,11 +234,11 @@
 
 - BREAKING CHANGE: Moves Post->Term relations to the Post Resource
 
-  Previously, a client would fetch a Post's Tags with `GET /wp/v2/posts/<id>/tags`.
+  Previously, a client would fetch a Post's Tags with `GET /cutv/v2/posts/<id>/tags`.
 
   In Beta 11, an array of term ids is included on the Post resource.
 
-  The collection of terms for a Post can be fetched with `GET /wp/v2/tags?post=<id>`.
+  The collection of terms for a Post can be fetched with `GET /cutv/v2/tags?post=<id>`.
 
   The `WP_REST_Posts_Terms_Controller` class no longer exists.
 
@@ -272,13 +272,13 @@
 
   (props @danielbachhuber, [#2008](https://github.com/WP-API/WP-API/pull/2008), [#2010](https://github.com/WP-API/WP-API/pull/2010), [#2057](https://github.com/WP-API/WP-API/pull/2057), [#2058](https://github.com/WP-API/WP-API/pull/2058))
 
-- Renames `GET /wp/v2/comments` `user` param to `author` to match resource attribute.
+- Renames `GET /cutv/v2/comments` `user` param to `author` to match resource attribute.
 
   Not a breaking change, because it didn't work in the first place.
 
   (props @danielbachhuber, [#2105](https://github.com/WP-API/WP-API/pull/2105))
 
-- Adds support for `GET /wp/v2/pages parent=1,2,3`.
+- Adds support for `GET /cutv/v2/pages parent=1,2,3`.
 
   (props @danielbachhuber, [#2101](https://github.com/WP-API/WP-API/pull/2101))
 
@@ -286,7 +286,7 @@
 
   (props @danielbachhuber, [#2079](https://github.com/WP-API/WP-API/pull/2079))
 
-- Add `parent_exclude` param to `GET /wp/v2/posts`.
+- Add `parent_exclude` param to `GET /cutv/v2/posts`.
 
   (props @danielbachhuber, [#2077](https://github.com/WP-API/WP-API/pull/2077))
 
@@ -314,7 +314,7 @@
 
   (props @danielbachhuber, [#2053](https://github.com/WP-API/WP-API/pull/2053))
 
-- Forces `GET /wp/v2/media` to be limited to `'status' => [ inherit, private, trash ]`
+- Forces `GET /cutv/v2/media` to be limited to `'status' => [ inherit, private, trash ]`
 
   (props @danielbachhuber, [#2026](https://github.com/WP-API/WP-API/pull/2026))
 
@@ -335,7 +335,7 @@ unnecessary call to `get_item()`.
 
   (props @danielbachhuber, [#2030](https://github.com/WP-API/WP-API/pull/2030), [#2029](https://github.com/WP-API/WP-API/pull/2029), [#2034](https://github.com/WP-API/WP-API/pull/2034), [#2036](https://github.com/WP-API/WP-API/pull/2036), [#2037](https://github.com/WP-API/WP-API/pull/2037), [#2035](https://github.com/WP-API/WP-API/pull/2035), [#2039](https://github.com/WP-API/WP-API/pull/2039))
 
-- Requires `force` argument for `DELETE /wp/v2/<taxonomy>/<id>`.
+- Requires `force` argument for `DELETE /cutv/v2/<taxonomy>/<id>`.
 
   (props @danielbachhuber, [#2028](https://github.com/WP-API/WP-API/pull/2028))
 
@@ -351,7 +351,7 @@ unnecessary call to `get_item()`.
 
   (props @adamsilverstein, [#1951](https://github.com/WP-API/WP-API/pull/1951))
 
-- Abstracts `POST /wp/v2/media` permissions check.
+- Abstracts `POST /cutv/v2/media` permissions check.
 
   (props @danielbachhuber, [#2003](https://github.com/WP-API/WP-API/pull/2003))
 
@@ -359,7 +359,7 @@ unnecessary call to `get_item()`.
 
   (props @danielbachhuber, [#1998](https://github.com/WP-API/WP-API/pull/1998), [#1999](https://github.com/WP-API/WP-API/pull/1999), [#2000](https://github.com/WP-API/WP-API/pull/2000), [#2002](https://github.com/WP-API/WP-API/pull/2002))
 
-- Adds `rest_comment_query` for filtering `GET /wp/v2/comments`.
+- Adds `rest_comment_query` for filtering `GET /cutv/v2/comments`.
 
   (props @danielbachhuber, [#2007](https://github.com/WP-API/WP-API/pull/2007))
 
@@ -371,7 +371,7 @@ unnecessary call to `get_item()`.
 
   (props @danielbachhuber, [#2004](https://github.com/WP-API/WP-API/pull/2004), [#2027](https://github.com/WP-API/WP-API/pull/2027))
 
-- In `GET /wp/v2/<taxonomy>`, drops support for `orderby=>term_id`.
+- In `GET /cutv/v2/<taxonomy>`, drops support for `orderby=>term_id`.
 
   Only one `id` is exposed through the REST API.
 
@@ -395,7 +395,7 @@ unnecessary call to `get_item()`.
 
   (props @danielbachhuber, [#1853](https://github.com/WP-API/WP-API/pull/1853))
 
-- BREAKING CHANGE: Introduces `edit` context for `wp/v2/types` and `wp/v2/taxonomies`.
+- BREAKING CHANGE: Introduces `edit` context for `cutv/v2/types` and `cutv/v2/taxonomies`.
 
   Some fields have moved into this context, which require `edit_posts` and `manage_terms`, respectively.
 
@@ -419,11 +419,11 @@ unnecessary call to `get_item()`.
 
   (props @danielbachhuber, [#1963](https://github.com/WP-API/WP-API/pull/1963))
 
-- Adds `include` param to `/wp/v2/posts`, `/wp/v2/users`, `/wp/v2/<taxonomy>` and `/wp/v2/comments`.
+- Adds `include` param to `/cutv/v2/posts`, `/cutv/v2/users`, `/cutv/v2/<taxonomy>` and `/cutv/v2/comments`.
 
   (props @danielbachhuber, [#1961](https://github.com/WP-API/WP-API/pull/1961), [#1964](https://github.com/WP-API/WP-API/pull/1964), [#1968](https://github.com/WP-API/WP-API/pull/1968), [#1971](https://github.com/WP-API/WP-API/pull/1971))
 
-- Ensures `GET /wp/v2/posts` respects `order` and `orderby` params.
+- Ensures `GET /cutv/v2/posts` respects `order` and `orderby` params.
 
   (props @danielbachhuber, [#1962](https://github.com/WP-API/WP-API/pull/1962))
 
@@ -513,13 +513,13 @@ unnecessary call to `get_item()`.
 
 - BREAKING CHANGE: Move tags and categories to top-level endpoints.
 
-  Tags are now accessible at `/wp/v2/tags`, and categories accessible at `/wp/v2/categories`. Post terms reside at `/wp/v2/posts/<id>/tags` and `/wp/v2/<id>/categories`.
+  Tags are now accessible at `/cutv/v2/tags`, and categories accessible at `/cutv/v2/categories`. Post terms reside at `/cutv/v2/posts/<id>/tags` and `/cutv/v2/<id>/categories`.
 
   (props @danielbachhuber, [#1802](https://github.com/WP-API/WP-API/pull/1802))
 
-- BREAKING CHANGE: Return object for requests to `/wp/v2/taxonomies`.
+- BREAKING CHANGE: Return object for requests to `/cutv/v2/taxonomies`.
 
-  This is consistent with `/wp/v2/types` and `/wp/v2/statuses`.
+  This is consistent with `/cutv/v2/types` and `/cutv/v2/statuses`.
 
   (props @danielbachhuber, [#1825](https://github.com/WP-API/WP-API/pull/1825))
 
@@ -565,7 +565,7 @@ unnecessary call to `get_item()`.
 
   (props @danielbachhuber, [#1814](https://github.com/WP-API/WP-API/pull/1814), [#1817](https://github.com/WP-API/WP-API/pull/1817), [#1829](https://github.com/WP-API/WP-API/pull/1829). [#1846](https://github.com/WP-API/WP-API/pull/1846))
 
-- Add missing 'wp/v2' in Location Response header when creating new Post Meta.
+- Add missing 'cutv/v2' in Location Response header when creating new Post Meta.
 
   (props @johanmynhardt, [#1790](https://github.com/WP-API/WP-API/pull/1790))
 
@@ -607,7 +607,7 @@ unnecessary call to `get_item()`.
 
   (props @danielbachhuber, [#1827](https://github.com/WP-API/WP-API/pull/1827))
 
-- Bring the wp-api.js library up to date for v2 of the REST API.
+- Bring the cutv-api.js library up to date for v2 of the REST API.
 
   (props @adamsilverstein, [#1828](https://github.com/WP-API/WP-API/pull/1828))
 
@@ -717,7 +717,7 @@ unnecessary call to `get_item()`.
 
   (props @danielbachhuber, [#1715](https://github.com/WP-API/WP-API/pull/1715))
 
-- Update the wp-api.js client from the client-js repo.
+- Update the cutv-api.js client from the client-js repo.
 
   (props @rachelbaker, [#1709](https://github.com/WP-API/WP-API/pull/1709))
 
@@ -859,7 +859,7 @@ unnecessary call to `get_item()`.
 
   Our fantastic JavaScript API from version 1 is now available for version 2, refreshed with the latest and greatest changes.
 
-  As a refresher: if you want to use it, simply make your script depend on `wp-api` when you enqueue it. If you want to enqueue the script manually, add `wp_enqueue_script( 'wp-api' )` to a callback on `wp_enqueue_scripts`.
+  As a refresher: if you want to use it, simply make your script depend on `cutv-api` when you enqueue it. If you want to enqueue the script manually, add `wp_enqueue_script( 'cutv-api' )` to a callback on `wp_enqueue_scripts`.
 
   (props @tlovett1, @kadamwhite, @nathanrice, [#1374][gh-1374], [#1320][gh-1320])
 
@@ -867,7 +867,7 @@ unnecessary call to `get_item()`.
 
   Previously when fetching a collection of items, you only received the items themselves. To fetch the links as well via embedding, you needed to make a request to the single item with `_embed` set.
 
-  No longer! You can now request a collection with embeds enabled (try `/wp/v2/posts?_embed`). This will embed links inside each item, allowing you to build interface items much easier (for example, post archive pages can get featured image data at the same time).
+  No longer! You can now request a collection with embeds enabled (try `/cutv/v2/posts?_embed`). This will embed links inside each item, allowing you to build interface items much easier (for example, post archive pages can get featured image data at the same time).
 
   This also applies to custom endpoints. Any endpoint that returns a list of objects will automatically have the embedding applied to objects inside the list.
 
@@ -891,7 +891,7 @@ unnecessary call to `get_item()`.
 
 - Respect `rest_base` for taxonomies.
 
-  **⚠️ This breaks backwards compatibility** by changing the `/wp/v2/posts/{id}/terms/post_tag` endpoint to `/wp/v2/posts/{id}/tag`.
+  **⚠️ This breaks backwards compatibility** by changing the `/cutv/v2/posts/{id}/terms/post_tag` endpoint to `/cutv/v2/posts/{id}/tag`.
 
   (props @joehoyle, [#1466][gh-1466])
 
@@ -2325,7 +2325,7 @@ registration
 
 - Move the JavaScript client library into the plugin.
 
-  Previously, the `wp-api.js` file was a separate repository. The JavaScript
+  Previously, the `cutv-api.js` file was a separate repository. The JavaScript
   client has moved back into the plugin to coordinate code changes.
 
   (props @tlovett1, [#730][gh-730])
@@ -2401,7 +2401,7 @@ registration
 
 - Update the cookie authentication documentation examples.
 
-  With 1.1 the localized JavaScript object for `wp-api.js` changed to
+  With 1.1 the localized JavaScript object for `cutv-api.js` changed to
   `WP_API_Settings`. This updates the Authentication section documentation
   nonce example to use the updated object name.
 
@@ -2445,7 +2445,7 @@ registration
 
   (props @danielbachhuber, [#271][gh-271])
 
-- Update documentation link references to wp-api.org.
+- Update documentation link references to cutv-api.org.
 
   (props @pollyplummer, [#320][gh-320])
 
@@ -2670,7 +2670,7 @@ registration
 - Include new client JS from github.io
 
   The WP-API Javascript library is now loaded dynamically from
-  `wp-api.github.io` to ensure it is always up-to-date.
+  `cutv-api.github.io` to ensure it is always up-to-date.
 
   (props @tlovett1, [#179][gh-179], [#240][gh-240])
 
@@ -3499,7 +3499,7 @@ registration
 
 ## 0.4
 - Add Backbone-based models and collections - These are available to your code
-	by declaring a dependency on `wp-api` ([#270][])
+	by declaring a dependency on `cutv-api` ([#270][])
 - Check `json_route` before using it ([#336][])
 - Conditionally load classes ([#337][])
 - Add additional test helper plugin - Provides code coverage as needed to the

@@ -1,12 +1,12 @@
 <?php
 
 /**
- * Unit tests covering WP_REST_Attachments_Controller functionality
+ * Unit tests covering CUTV_REST_Attachments_Controller functionality
  *
  * @package WordPress
  * @subpackage JSON API
  */
-class WP_Test_REST_Attachments_Controller extends WP_Test_REST_Post_Type_Controller_Testcase {
+class WP_Test_rest_Attachments_Controller extends WP_Test_rest_Post_Type_Controller_Testcase {
 
 	public function setUp() {
 		parent::setUp();
@@ -32,10 +32,10 @@ class WP_Test_REST_Attachments_Controller extends WP_Test_REST_Post_Type_Control
 
 	public function test_register_routes() {
 		$routes = $this->server->get_routes();
-		$this->assertArrayHasKey( '/wp/v2/media', $routes );
-		$this->assertCount( 2, $routes['/wp/v2/media'] );
-		$this->assertArrayHasKey( '/wp/v2/media/(?P<id>[\d]+)', $routes );
-		$this->assertCount( 3, $routes['/wp/v2/media/(?P<id>[\d]+)'] );
+		$this->assertArrayHasKey( '/cutv/v2/media', $routes );
+		$this->assertCount( 2, $routes['/cutv/v2/media'] );
+		$this->assertArrayHasKey( '/cutv/v2/media/(?P<id>[\d]+)', $routes );
+		$this->assertCount( 3, $routes['/cutv/v2/media/(?P<id>[\d]+)'] );
 	}
 
 	public static function disposition_provider() {
@@ -75,13 +75,13 @@ class WP_Test_REST_Attachments_Controller extends WP_Test_REST_Post_Type_Control
 	 */
 	public function test_parse_disposition( $header, $expected ) {
 		$header_list = array( $header );
-		$parsed = WP_REST_Attachments_Controller::get_filename_from_disposition( $header_list );
+		$parsed = CUTV_REST_Attachments_Controller::get_filename_from_disposition( $header_list );
 		$this->assertEquals( $expected, $parsed );
 	}
 
 	public function test_context_param() {
 		// Collection
-		$request = new WP_REST_Request( 'OPTIONS', '/wp/v2/media' );
+		$request = new CUTV_REST_Request( 'OPTIONS', '/cutv/v2/media' );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
 		$this->assertEquals( 'view', $data['endpoints'][0]['args']['context']['default'] );
@@ -91,7 +91,7 @@ class WP_Test_REST_Attachments_Controller extends WP_Test_REST_Post_Type_Control
 			'post_mime_type' => 'image/jpeg',
 			'post_excerpt'   => 'A sample caption',
 		) );
-		$request = new WP_REST_Request( 'OPTIONS', '/wp/v2/media/' . $attachment_id );
+		$request = new CUTV_REST_Request( 'OPTIONS', '/cutv/v2/media/' . $attachment_id );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
 		$this->assertEquals( 'view', $data['endpoints'][0]['args']['context']['default'] );
@@ -99,7 +99,7 @@ class WP_Test_REST_Attachments_Controller extends WP_Test_REST_Post_Type_Control
 	}
 
 	public function test_registered_query_params() {
-		$request = new WP_REST_Request( 'OPTIONS', '/wp/v2/media' );
+		$request = new CUTV_REST_Request( 'OPTIONS', '/cutv/v2/media' );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
 		$keys = array_keys( $data['endpoints'][0]['args'] );
@@ -154,7 +154,7 @@ class WP_Test_REST_Attachments_Controller extends WP_Test_REST_Post_Type_Control
 			'post_mime_type' => 'image/jpeg',
 			'post_excerpt'   => 'A sample caption',
 		) );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/media' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/media' );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
 		$this->assertCount( 2, $data );
@@ -182,7 +182,7 @@ class WP_Test_REST_Attachments_Controller extends WP_Test_REST_Post_Type_Control
 			'post_mime_type' => 'image/jpeg',
 			'post_excerpt'   => 'A sample caption',
 		) );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/media' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/media' );
 		$response = $this->server->dispatch( $request );
 
 		$data = $response->get_data();
@@ -197,7 +197,7 @@ class WP_Test_REST_Attachments_Controller extends WP_Test_REST_Post_Type_Control
 		$id1 = $this->factory->attachment->create_object( $this->test_file, 0, array(
 			'post_mime_type' => 'image/jpeg',
 		) );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/media' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/media' );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
 		$this->assertEquals( $id1, $data[0]['id'] );
@@ -216,7 +216,7 @@ class WP_Test_REST_Attachments_Controller extends WP_Test_REST_Post_Type_Control
 		$id1 = $this->factory->attachment->create_object( $this->test_file, 0, array(
 			'post_mime_type' => 'image/jpeg',
 		) );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/media' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/media' );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
 		$this->assertEquals( $id1, $data[0]['id'] );
@@ -242,10 +242,10 @@ class WP_Test_REST_Attachments_Controller extends WP_Test_REST_Post_Type_Control
 			'post_excerpt'   => 'A sample caption',
 		) );
 		// all attachments
-		$request = new WP_REST_Request( 'GET', '/wp/v2/media' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/media' );
 		$response = $this->server->dispatch( $request );
 		$this->assertEquals( 2, count( $response->get_data() ) );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/media' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/media' );
 		// attachments without a parent
 		$request->set_param( 'parent', 0 );
 		$response = $this->server->dispatch( $request );
@@ -253,14 +253,14 @@ class WP_Test_REST_Attachments_Controller extends WP_Test_REST_Post_Type_Control
 		$this->assertEquals( 1, count( $data ) );
 		$this->assertEquals( $attachment_id2, $data[0]['id'] );
 		// attachments with parent=post_id
-		$request = new WP_REST_Request( 'GET', '/wp/v2/media' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/media' );
 		$request->set_param( 'parent', $post_id );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
 		$this->assertEquals( 1, count( $data ) );
 		$this->assertEquals( $attachment_id, $data[0]['id'] );
 		// attachments with invalid parent
-		$request = new WP_REST_Request( 'GET', '/wp/v2/media' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/media' );
 		$request->set_param( 'parent', REST_TESTS_IMPOSSIBLY_HIGH_NUMBER );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
@@ -273,7 +273,7 @@ class WP_Test_REST_Attachments_Controller extends WP_Test_REST_Post_Type_Control
 			'post_mime_type' => 'image/jpeg',
 			'post_excerpt'   => 'A sample caption',
 		) );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/media' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/media' );
 		$request->set_param( 'status', 'publish' );
 		$request->set_param( 'context', 'edit' );
 		$response = $this->server->dispatch( $request );
@@ -290,7 +290,7 @@ class WP_Test_REST_Attachments_Controller extends WP_Test_REST_Post_Type_Control
 			'post_excerpt'   => 'A sample caption',
 			'post_status'    => 'private',
 		) );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/media' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/media' );
 		$request->set_param( 'status', 'private' );
 		$response = $this->server->dispatch( $request );
 		$this->assertErrorResponse( 'rest_invalid_param', $response, 400 );
@@ -303,7 +303,7 @@ class WP_Test_REST_Attachments_Controller extends WP_Test_REST_Post_Type_Control
 	}
 
 	public function test_get_items_invalid_date() {
-		$request = new WP_REST_Request( 'GET', '/wp/v2/media' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/media' );
 		$request->set_param( 'after', rand_str() );
 		$request->set_param( 'before', rand_str() );
 		$response = $this->server->dispatch( $request );
@@ -326,7 +326,7 @@ class WP_Test_REST_Attachments_Controller extends WP_Test_REST_Post_Type_Control
 			'post_mime_type' => 'image/jpeg',
 			'post_excerpt'   => 'A sample caption',
 		) );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/media' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/media' );
 		$request->set_param( 'after', '2016-01-15T00:00:00Z' );
 		$request->set_param( 'before', '2016-01-17T00:00:00Z' );
 		$response = $this->server->dispatch( $request );
@@ -341,7 +341,7 @@ class WP_Test_REST_Attachments_Controller extends WP_Test_REST_Post_Type_Control
 			'post_excerpt'   => 'A sample caption',
 		) );
 		update_post_meta( $attachment_id, '_wp_attachment_image_alt', 'Sample alt text' );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/media/' . $attachment_id );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/media/' . $attachment_id );
 		$response = $this->server->dispatch( $request );
 		$this->check_get_post_response( $response );
 		$data = $response->get_data();
@@ -357,7 +357,7 @@ class WP_Test_REST_Attachments_Controller extends WP_Test_REST_Post_Type_Control
 		add_image_size( 'rest-api-test', 119, 119, true );
 		wp_update_attachment_metadata( $attachment_id, wp_generate_attachment_metadata( $attachment_id, $this->test_file ) );
 
-		$request = new WP_REST_Request( 'GET', '/wp/v2/media/' . $attachment_id );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/media/' . $attachment_id );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
 		$image_src = wp_get_attachment_image_src( $attachment_id, 'rest-api-test' );
@@ -381,7 +381,7 @@ class WP_Test_REST_Attachments_Controller extends WP_Test_REST_Post_Type_Control
 
 		add_filter( 'wp_get_attachment_image_src', '__return_false' );
 
-		$request = new WP_REST_Request( 'GET', '/wp/v2/media/' . $attachment_id );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/media/' . $attachment_id );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
 		remove_filter( 'wp_get_attachment_image_src', '__return_false' );
@@ -397,14 +397,14 @@ class WP_Test_REST_Attachments_Controller extends WP_Test_REST_Post_Type_Control
 			'post_mime_type' => 'image/jpeg',
 			'post_excerpt'   => 'A sample caption',
 		) );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/media/' . $id1 );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/media/' . $id1 );
 		$response = $this->server->dispatch( $request );
 		$this->assertEquals( 403, $response->get_status() );
 	}
 
 	public function test_create_item() {
 		wp_set_current_user( $this->author_id );
-		$request = new WP_REST_Request( 'POST', '/wp/v2/media' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/media' );
 		$request->set_header( 'Content-Type', 'image/jpeg' );
 		$request->set_header( 'Content-Disposition', 'attachment; filename=canola.jpg' );
 		$request->set_body( file_get_contents( $this->test_file ) );
@@ -418,7 +418,7 @@ class WP_Test_REST_Attachments_Controller extends WP_Test_REST_Post_Type_Control
 
 	public function test_create_item_default_filename_title() {
 		wp_set_current_user( $this->author_id );
-		$request = new WP_REST_Request( 'POST', '/wp/v2/media' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/media' );
 		$request->set_file_params( array(
 			'file' => array(
 				'file'     => file_get_contents( $this->test_file2 ),
@@ -436,7 +436,7 @@ class WP_Test_REST_Attachments_Controller extends WP_Test_REST_Post_Type_Control
 
 	public function test_create_item_with_files() {
 		wp_set_current_user( $this->author_id );
-		$request = new WP_REST_Request( 'POST', '/wp/v2/media' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/media' );
 		$request->set_file_params( array(
 			'file' => array(
 				'file'     => file_get_contents( $this->test_file ),
@@ -452,14 +452,14 @@ class WP_Test_REST_Attachments_Controller extends WP_Test_REST_Post_Type_Control
 
 	public function test_create_item_empty_body() {
 		wp_set_current_user( $this->author_id );
-		$request = new WP_REST_Request( 'POST', '/wp/v2/media' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/media' );
 		$response = $this->server->dispatch( $request );
 		$this->assertErrorResponse( 'rest_upload_no_data', $response, 400 );
 	}
 
 	public function test_create_item_missing_content_type() {
 		wp_set_current_user( $this->author_id );
-		$request = new WP_REST_Request( 'POST', '/wp/v2/media' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/media' );
 		$request->set_body( file_get_contents( $this->test_file ) );
 		$response = $this->server->dispatch( $request );
 		$this->assertErrorResponse( 'rest_upload_no_content_type', $response, 400 );
@@ -467,7 +467,7 @@ class WP_Test_REST_Attachments_Controller extends WP_Test_REST_Post_Type_Control
 
 	public function test_create_item_missing_content_disposition() {
 		wp_set_current_user( $this->author_id );
-		$request = new WP_REST_Request( 'POST', '/wp/v2/media' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/media' );
 		$request->set_header( 'Content-Type', 'image/jpeg' );
 		$request->set_body( file_get_contents( $this->test_file ) );
 		$response = $this->server->dispatch( $request );
@@ -476,7 +476,7 @@ class WP_Test_REST_Attachments_Controller extends WP_Test_REST_Post_Type_Control
 
 	public function test_create_item_bad_md5_header() {
 		wp_set_current_user( $this->author_id );
-		$request = new WP_REST_Request( 'POST', '/wp/v2/media' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/media' );
 		$request->set_header( 'Content-Type', 'image/jpeg' );
 		$request->set_header( 'Content-Disposition', 'attachment; filename=canola.jpg' );
 		$request->set_header( 'Content-MD5', 'abc123' );
@@ -487,7 +487,7 @@ class WP_Test_REST_Attachments_Controller extends WP_Test_REST_Post_Type_Control
 
 	public function test_create_item_with_files_bad_md5_header() {
 		wp_set_current_user( $this->author_id );
-		$request = new WP_REST_Request( 'POST', '/wp/v2/media' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/media' );
 		$request->set_file_params( array(
 			'file' => array(
 				'file'     => file_get_contents( $this->test_file ),
@@ -503,7 +503,7 @@ class WP_Test_REST_Attachments_Controller extends WP_Test_REST_Post_Type_Control
 
 	public function test_create_item_invalid_upload_files_capability() {
 		wp_set_current_user( $this->contributor_id );
-		$request = new WP_REST_Request( 'POST', '/wp/v2/media' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/media' );
 		$response = $this->server->dispatch( $request );
 		$this->assertErrorResponse( 'rest_cannot_create', $response, 403 );
 	}
@@ -511,7 +511,7 @@ class WP_Test_REST_Attachments_Controller extends WP_Test_REST_Post_Type_Control
 	public function test_create_item_invalid_edit_permissions() {
 		$post_id = $this->factory->post->create( array( 'post_author' => $this->editor_id ) );
 		wp_set_current_user( $this->author_id );
-		$request = new WP_REST_Request( 'POST', '/wp/v2/media' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/media' );
 		$request->set_param( 'post', $post_id );
 		$response = $this->server->dispatch( $request );
 		$this->assertErrorResponse( 'rest_cannot_edit', $response, 403 );
@@ -520,7 +520,7 @@ class WP_Test_REST_Attachments_Controller extends WP_Test_REST_Post_Type_Control
 	public function test_create_item_invalid_post_type() {
 		$attachment_id = $this->factory->post->create( array( 'post_type' => 'attachment', 'post_status' => 'inherit', 'post_parent' => 0 ) );
 		wp_set_current_user( $this->editor_id );
-		$request = new WP_REST_Request( 'POST', '/wp/v2/media' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/media' );
 		$request->set_header( 'Content-Type', 'image/jpeg' );
 		$request->set_header( 'Content-Disposition', 'attachment; filename=canola.jpg' );
 		$request->set_body( file_get_contents( $this->test_file ) );
@@ -531,7 +531,7 @@ class WP_Test_REST_Attachments_Controller extends WP_Test_REST_Post_Type_Control
 
 	public function test_create_item_alt_text() {
 		wp_set_current_user( $this->author_id );
-		$request = new WP_REST_Request( 'POST', '/wp/v2/media' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/media' );
 		$request->set_header( 'Content-Type', 'image/jpeg' );
 		$request->set_header( 'Content-Disposition', 'attachment; filename=canola.jpg' );
 
@@ -544,7 +544,7 @@ class WP_Test_REST_Attachments_Controller extends WP_Test_REST_Post_Type_Control
 
 	public function test_create_item_unsafe_alt_text() {
 		wp_set_current_user( $this->author_id );
-		$request = new WP_REST_Request( 'POST', '/wp/v2/media' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/media' );
 		$request->set_header( 'Content-Type', 'image/jpeg' );
 		$request->set_header( 'Content-Disposition', 'attachment; filename=canola.jpg' );
 		$request->set_body( file_get_contents( $this->test_file ) );
@@ -561,7 +561,7 @@ class WP_Test_REST_Attachments_Controller extends WP_Test_REST_Post_Type_Control
 			'post_excerpt'   => 'A sample caption',
 			'post_author'    => $this->editor_id,
 		) );
-		$request = new WP_REST_Request( 'POST', '/wp/v2/media/' . $attachment_id );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/media/' . $attachment_id );
 		$request->set_param( 'title', 'My title is very cool' );
 		$request->set_param( 'caption', 'This is a better caption.' );
 		$request->set_param( 'description', 'Without a description, my attachment is descriptionless.' );
@@ -592,7 +592,7 @@ class WP_Test_REST_Attachments_Controller extends WP_Test_REST_Post_Type_Control
 		$this->assertEquals( $original_parent, $attachment->post_parent );
 
 		$new_parent = $this->factory->post->create( array() );
-		$request = new WP_REST_Request( 'POST', '/wp/v2/media/' . $attachment_id );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/media/' . $attachment_id );
 		$request->set_param( 'post', $new_parent );
 		$this->server->dispatch( $request );
 
@@ -607,7 +607,7 @@ class WP_Test_REST_Attachments_Controller extends WP_Test_REST_Post_Type_Control
 			'post_excerpt'   => 'A sample caption',
 			'post_author'    => $this->editor_id,
 		) );
-		$request = new WP_REST_Request( 'POST', '/wp/v2/media/' . $attachment_id );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/media/' . $attachment_id );
 		$request->set_param( 'caption', 'This is a better caption.' );
 		$response = $this->server->dispatch( $request );
 		$this->assertErrorResponse( 'rest_cannot_edit', $response, 403 );
@@ -621,7 +621,7 @@ class WP_Test_REST_Attachments_Controller extends WP_Test_REST_Post_Type_Control
 			'post_excerpt'   => 'A sample caption',
 			'post_author'    => $this->editor_id,
 		) );
-		$request = new WP_REST_Request( 'POST', '/wp/v2/media/' . $attachment_id );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/media/' . $attachment_id );
 		$request->set_param( 'post', $attachment_id );
 		$response = $this->server->dispatch( $request );
 		$this->assertErrorResponse( 'rest_invalid_param', $response, 400 );
@@ -633,7 +633,7 @@ class WP_Test_REST_Attachments_Controller extends WP_Test_REST_Post_Type_Control
 			'post_mime_type' => 'image/jpeg',
 			'post_excerpt'   => 'A sample caption',
 		) );
-		$request = new WP_REST_Request( 'DELETE', '/wp/v2/media/' . $attachment_id );
+		$request = new CUTV_REST_Request( 'DELETE', '/cutv/v2/media/' . $attachment_id );
 		$request['force'] = true;
 		$response = $this->server->dispatch( $request );
 		$this->assertEquals( 200, $response->get_status() );
@@ -647,7 +647,7 @@ class WP_Test_REST_Attachments_Controller extends WP_Test_REST_Post_Type_Control
 		) );
 
 		// Attempt trashing
-		$request = new WP_REST_Request( 'DELETE', '/wp/v2/media/' . $attachment_id );
+		$request = new CUTV_REST_Request( 'DELETE', '/cutv/v2/media/' . $attachment_id );
 		$response = $this->server->dispatch( $request );
 		$this->assertErrorResponse( 'rest_trash_not_supported', $response, 501 );
 
@@ -663,7 +663,7 @@ class WP_Test_REST_Attachments_Controller extends WP_Test_REST_Post_Type_Control
 			'post_excerpt'   => 'A sample caption',
 			'post_author'    => $this->editor_id,
 		) );
-		$request = new WP_REST_Request( 'DELETE', '/wp/v2/media/' . $attachment_id );
+		$request = new CUTV_REST_Request( 'DELETE', '/cutv/v2/media/' . $attachment_id );
 		$response = $this->server->dispatch( $request );
 		$this->assertErrorResponse( 'rest_cannot_delete', $response, 403 );
 	}
@@ -676,7 +676,7 @@ class WP_Test_REST_Attachments_Controller extends WP_Test_REST_Post_Type_Control
 		) );
 
 		$attachment = get_post( $attachment_id );
-		$request = new WP_REST_Request( 'GET', sprintf( '/wp/v2/media/%d', $attachment_id ) );
+		$request = new CUTV_REST_Request( 'GET', sprintf( '/cutv/v2/media/%d', $attachment_id ) );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
 		$this->check_post_data( $attachment, $data, 'view', $response->get_links() );
@@ -684,7 +684,7 @@ class WP_Test_REST_Attachments_Controller extends WP_Test_REST_Post_Type_Control
 	}
 
 	public function test_get_item_schema() {
-		$request = new WP_REST_Request( 'OPTIONS', '/wp/v2/media' );
+		$request = new CUTV_REST_Request( 'OPTIONS', '/cutv/v2/media' );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
 		$properties = $data['schema']['properties'];
@@ -728,7 +728,7 @@ class WP_Test_REST_Attachments_Controller extends WP_Test_REST_Post_Type_Control
 			'get_callback'    => array( $this, 'additional_field_get_callback' ),
 		) );
 
-		$request = new WP_REST_Request( 'OPTIONS', '/wp/v2/media' );
+		$request = new CUTV_REST_Request( 'OPTIONS', '/cutv/v2/media' );
 
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
@@ -740,7 +740,7 @@ class WP_Test_REST_Attachments_Controller extends WP_Test_REST_Post_Type_Control
 			'post_excerpt'   => 'A sample caption',
 		) );
 
-		$request = new WP_REST_Request( 'GET', '/wp/v2/media/' . $attachment_id );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/media/' . $attachment_id );
 
 		$response = $this->server->dispatch( $request );
 		$this->assertArrayHasKey( 'my_custom_int', $response->data );

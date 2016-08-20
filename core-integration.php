@@ -8,7 +8,7 @@
  *
  * @see https://core.trac.wordpress.org/ticket/35677
  */
-function wp_api_comment_query_vars( $query ) {
+function cutv_api_comment_query_vars( $query ) {
 	$query->query_var_defaults['parent__in'] = array();
 	$query->query_var_defaults['parent__not_in'] = array();
 }

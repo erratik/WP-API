@@ -10,7 +10,7 @@
 
 	window.wp            = window.wp || {};
 	wp.api               = wp.api || new WP_API();
-	wp.api.versionString = wp.api.versionString || 'wp/v2/';
+	wp.api.versionString = wp.api.versionString || 'cutv/v2/';
 
 	// Alias _includes to _.contains, ensuring it is available.
 	if ( ! _.isFunction( _.includes ) && _.isFunction( _.contains ) ) {

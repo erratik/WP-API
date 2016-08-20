@@ -1,9 +1,9 @@
 <?php
 
-class WP_Test_REST_Request_Validation extends WP_Test_REST_TestCase {
+class WP_Test_rest_Request_Validation extends WP_Test_rest_TestCase {
 
 	public function test_validate_within_min_max_range_inclusive() {
-		$request = new WP_REST_Request( 'GET', '/wp/v2/foo', array(
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/foo', array(
 			'args' => array(
 				'minmaxrange' => array(
 					'type'    => 'integer',
@@ -23,7 +23,7 @@ class WP_Test_REST_Request_Validation extends WP_Test_REST_TestCase {
 	}
 
 	public function test_validate_within_min_max_range_min_exclusive() {
-		$request = new WP_REST_Request( 'GET', '/wp/v2/foo', array(
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/foo', array(
 			'args' => array(
 				'minmaxrange' => array(
 					'type'             => 'integer',
@@ -48,7 +48,7 @@ class WP_Test_REST_Request_Validation extends WP_Test_REST_TestCase {
 	}
 
 	public function test_validate_within_min_max_range_max_exclusive() {
-		$request = new WP_REST_Request( 'GET', '/wp/v2/foo', array(
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/foo', array(
 			'args' => array(
 				'minmaxrange' => array(
 					'type'             => 'integer',
@@ -73,7 +73,7 @@ class WP_Test_REST_Request_Validation extends WP_Test_REST_TestCase {
 	}
 
 	public function test_validate_within_min_max_range_both_exclusive() {
-		$request = new WP_REST_Request( 'GET', '/wp/v2/foo', array(
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/foo', array(
 			'args' => array(
 				'minmaxrange' => array(
 					'type'             => 'integer',
@@ -99,7 +99,7 @@ class WP_Test_REST_Request_Validation extends WP_Test_REST_TestCase {
 	}
 
 	public function test_validate_greater_than_min_inclusive() {
-		$request = new WP_REST_Request( 'GET', '/wp/v2/foo', array(
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/foo', array(
 			'args' => array(
 				'greaterthanmin' => array(
 					'type'             => 'integer',
@@ -114,7 +114,7 @@ class WP_Test_REST_Request_Validation extends WP_Test_REST_TestCase {
 	}
 
 	public function test_validate_greater_than_min_exclusive() {
-		$request = new WP_REST_Request( 'GET', '/wp/v2/foo', array(
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/foo', array(
 			'args' => array(
 				'greaterthanmin' => array(
 					'type'             => 'integer',
@@ -132,7 +132,7 @@ class WP_Test_REST_Request_Validation extends WP_Test_REST_TestCase {
 	}
 
 	public function test_validate_less_than_max_inclusive() {
-		$request = new WP_REST_Request( 'GET', '/wp/v2/foo', array(
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/foo', array(
 			'args' => array(
 				'lessthanmax' => array(
 					'type'             => 'integer',
@@ -147,7 +147,7 @@ class WP_Test_REST_Request_Validation extends WP_Test_REST_TestCase {
 	}
 
 	public function test_validate_less_than_max_exclusive() {
-		$request = new WP_REST_Request( 'GET', '/wp/v2/foo', array(
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/foo', array(
 			'args' => array(
 				'lessthanmax' => array(
 					'type'             => 'integer',

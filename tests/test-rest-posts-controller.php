@@ -1,12 +1,12 @@
 <?php
 
 /**
- * Unit tests covering WP_REST_Posts_Controller functionality.
+ * Unit tests covering CUTV_REST_Posts_Controller functionality.
  *
  * @package WordPress
  * @subpackage JSON API
  */
-class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Testcase {
+class WP_Test_rest_Posts_Controller extends WP_Test_rest_Post_Type_Controller_Testcase {
 
 	public function setUp() {
 		parent::setUp();
@@ -29,21 +29,21 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_register_routes() {
 		$routes = $this->server->get_routes();
 
-		$this->assertArrayHasKey( '/wp/v2/posts', $routes );
-		$this->assertCount( 2, $routes['/wp/v2/posts'] );
-		$this->assertArrayHasKey( '/wp/v2/posts/(?P<id>[\d]+)', $routes );
-		$this->assertCount( 3, $routes['/wp/v2/posts/(?P<id>[\d]+)'] );
+		$this->assertArrayHasKey( '/cutv/v2/posts', $routes );
+		$this->assertCount( 2, $routes['/cutv/v2/posts'] );
+		$this->assertArrayHasKey( '/cutv/v2/posts/(?P<id>[\d]+)', $routes );
+		$this->assertCount( 3, $routes['/cutv/v2/posts/(?P<id>[\d]+)'] );
 	}
 
 	public function test_context_param() {
 		// Collection
-		$request = new WP_REST_Request( 'OPTIONS', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'OPTIONS', '/cutv/v2/posts' );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
 		$this->assertEquals( 'view', $data['endpoints'][0]['args']['context']['default'] );
 		$this->assertEquals( array( 'view', 'embed', 'edit' ), $data['endpoints'][0]['args']['context']['enum'] );
 		// Single
-		$request = new WP_REST_Request( 'OPTIONS', '/wp/v2/posts/' . $this->post_id );
+		$request = new CUTV_REST_Request( 'OPTIONS', '/cutv/v2/posts/' . $this->post_id );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
 		$this->assertEquals( 'view', $data['endpoints'][0]['args']['context']['default'] );
@@ -51,7 +51,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	}
 
 	public function test_registered_query_params() {
-		$request = new WP_REST_Request( 'OPTIONS', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'OPTIONS', '/cutv/v2/posts' );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
 		$keys = array_keys( $data['endpoints'][0]['args'] );
@@ -79,7 +79,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	}
 
 	public function test_get_items() {
-		$request = new WP_REST_Request( 'GET', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/posts' );
 		$response = $this->server->dispatch( $request );
 
 		$this->check_get_posts_response( $response );
@@ -91,7 +91,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	 * @issue 862
 	 */
 	public function test_get_items_empty_query() {
-		$request = new WP_REST_Request( 'GET', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/posts' );
 		$request->set_query_params( array(
 			'filter' => array( 'year' => 2008 ),
 		) );
@@ -104,12 +104,12 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 		$this->factory->post->create( array( 'post_author' => $this->editor_id ) );
 		$this->factory->post->create( array( 'post_author' => $this->author_id ) );
 		// All 3 posts
-		$request = new WP_REST_Request( 'GET', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/posts' );
 		$response = $this->server->dispatch( $request );
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertEquals( 3, count( $response->get_data() ) );
 		// 2 of 3 posts
-		$request = new WP_REST_Request( 'GET', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/posts' );
 		$request->set_param( 'author', array( $this->editor_id, $this->author_id ) );
 		$response = $this->server->dispatch( $request );
 		$this->assertEquals( 200, $response->get_status() );
@@ -117,7 +117,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 		$this->assertEquals( 2, count( $data ) );
 		$this->assertEqualSets( array( $this->editor_id, $this->author_id ), wp_list_pluck( $data, 'author' ) );
 		// 1 of 3 posts
-		$request = new WP_REST_Request( 'GET', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/posts' );
 		$request->set_param( 'author', $this->editor_id );
 		$response = $this->server->dispatch( $request );
 		$this->assertEquals( 200, $response->get_status() );
@@ -130,12 +130,12 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 		$this->factory->post->create( array( 'post_author' => $this->editor_id ) );
 		$this->factory->post->create( array( 'post_author' => $this->author_id ) );
 		// All 3 posts
-		$request = new WP_REST_Request( 'GET', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/posts' );
 		$response = $this->server->dispatch( $request );
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertEquals( 3, count( $response->get_data() ) );
 		// 1 of 3 posts
-		$request = new WP_REST_Request( 'GET', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/posts' );
 		$request->set_param( 'author_exclude', array( $this->editor_id, $this->author_id ) );
 		$response = $this->server->dispatch( $request );
 		$this->assertEquals( 200, $response->get_status() );
@@ -144,7 +144,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 		$this->assertNotEquals( $this->editor_id, $data[0]['author'] );
 		$this->assertNotEquals( $this->author_id, $data[0]['author'] );
 		// 2 of 3 posts
-		$request = new WP_REST_Request( 'GET', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/posts' );
 		$request->set_param( 'author_exclude', $this->editor_id );
 		$response = $this->server->dispatch( $request );
 		$this->assertEquals( 200, $response->get_status() );
@@ -158,7 +158,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 		$id1 = $this->factory->post->create( array( 'post_status' => 'publish' ) );
 		$this->factory->post->create( array( 'post_status' => 'publish' ) );
 		$id3 = $this->factory->post->create( array( 'post_status' => 'publish' ) );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/posts' );
 		// Orderby=>desc
 		$request->set_param( 'include', array( $id1, $id3 ) );
 		$response = $this->server->dispatch( $request );
@@ -176,7 +176,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_get_items_exclude_query() {
 		$id1 = $this->factory->post->create( array( 'post_status' => 'publish' ) );
 		$id2 = $this->factory->post->create( array( 'post_status' => 'publish' ) );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/posts' );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
 		$this->assertTrue( in_array( $id1, wp_list_pluck( $data, 'id' ) ) );
@@ -193,10 +193,10 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 			$this->factory->post->create( array( 'post_status' => 'publish' ) );
 		}
 		$this->factory->post->create( array( 'post_title' => 'Search Result', 'post_status' => 'publish' ) );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/posts' );
 		$response = $this->server->dispatch( $request );
 		$this->assertEquals( 7, count( $response->get_data() ) );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/posts' );
 		$request->set_param( 'search', 'Search Result' );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
@@ -207,7 +207,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_get_items_slug_query() {
 		$this->factory->post->create( array( 'post_title' => 'Apple', 'post_status' => 'publish' ) );
 		$this->factory->post->create( array( 'post_title' => 'Banana', 'post_status' => 'publish' ) );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/posts' );
 		$request->set_param( 'slug', 'apple' );
 		$response = $this->server->dispatch( $request );
 		$this->assertEquals( 200, $response->get_status() );
@@ -219,17 +219,17 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_get_items_status_query() {
 		wp_set_current_user( 0 );
 		$this->factory->post->create( array( 'post_status' => 'draft' ) );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/posts' );
 		$request->set_param( 'status', 'publish' );
 		$response = $this->server->dispatch( $request );
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertEquals( 1, count( $response->get_data() ) );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/posts' );
 		$request->set_param( 'status', 'draft' );
 		$response = $this->server->dispatch( $request );
 		$this->assertErrorResponse( 'rest_invalid_param', $response, 400 );
 		wp_set_current_user( $this->editor_id );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/posts' );
 		$request->set_param( 'status', 'draft' );
 		$response = $this->server->dispatch( $request );
 		$this->assertEquals( 200, $response->get_status() );
@@ -242,7 +242,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 		) );
 		wp_set_current_user( 0 );
 
-		$request = new WP_REST_Request( 'GET', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/posts' );
 		$response = $this->server->dispatch( $request );
 
 		$this->assertEquals( 200, $response->get_status() );
@@ -258,7 +258,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 		$this->factory->post->create( array( 'post_title' => 'Apple Sauce', 'post_status' => 'publish' ) );
 		$this->factory->post->create( array( 'post_title' => 'Apple Cobbler', 'post_status' => 'publish' ) );
 		$this->factory->post->create( array( 'post_title' => 'Apple Coffee Cake', 'post_status' => 'publish' ) );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/posts' );
 		$request->set_param( 'search', 'Apple' );
 		// order defaults to 'desc'
 		$request->set_param( 'orderby', 'title' );
@@ -289,13 +289,13 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 		stick_post( $post_id2 );
 
 		// No stickies by default
-		$request = new WP_REST_Request( 'GET', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/posts' );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
 		$this->assertEquals( array( $this->post_id, $post_id3, $post_id2, $post_id1 ), wp_list_pluck( $data, 'id' ) );
 
 		// Permit stickies
-		$request = new WP_REST_Request( 'GET', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/posts' );
 		$request->set_param( 'filter', array( 'ignore_sticky_posts' => false ) );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
@@ -307,7 +307,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 		$id2 = $this->factory->post->create( array( 'post_status' => 'publish' ) );
 		$id3 = $this->factory->post->create( array( 'post_status' => 'publish' ) );
 		$id4 = $this->factory->post->create( array( 'post_status' => 'publish' ) );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/posts' );
 		$request->set_param( 'offset', 1 );
 		$response = $this->server->dispatch( $request );
 		$this->assertCount( 3, $response->get_data() );
@@ -329,7 +329,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 		$tag = wp_insert_term( 'My Tag', 'post_tag' );
 
 		wp_set_object_terms( $id1, array( $tag['term_id'] ), 'post_tag' );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/posts' );
 		$request->set_param( 'tags', array( $tag['term_id'] ) );
 
 		$response = $this->server->dispatch( $request );
@@ -348,7 +348,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 		wp_set_object_terms( $id2, array( $tag['term_id'] ), 'post_tag' );
 		wp_set_object_terms( $id1, array( $category['term_id'] ), 'category' );
 
-		$request = new WP_REST_Request( 'GET', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/posts' );
 		$request->set_param( 'tags', array( $tag['term_id'] ) );
 		$request->set_param( 'categories', array( $category['term_id'] ) );
 
@@ -366,21 +366,21 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 				'post_title'   => "Post {$i}",
 				) );
 		}
-		$request = new WP_REST_Request( 'GET', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/posts' );
 		$response = $this->server->dispatch( $request );
 		$headers = $response->get_headers();
 		$this->assertEquals( 50, $headers['X-WP-Total'] );
 		$this->assertEquals( 5, $headers['X-WP-TotalPages'] );
 		$next_link = add_query_arg( array(
 			'page'    => 2,
-			), rest_url( '/wp/v2/posts' ) );
+			), rest_url( '/cutv/v2/posts' ) );
 		$this->assertFalse( stripos( $headers['Link'], 'rel="prev"' ) );
 		$this->assertContains( '<' . $next_link . '>; rel="next"', $headers['Link'] );
 		// 3rd page
 		$this->factory->post->create( array(
 				'post_title'   => 'Post 51',
 				) );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/posts' );
 		$request->set_param( 'page', 3 );
 		$response = $this->server->dispatch( $request );
 		$headers = $response->get_headers();
@@ -388,14 +388,14 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 		$this->assertEquals( 6, $headers['X-WP-TotalPages'] );
 		$prev_link = add_query_arg( array(
 			'page'    => 2,
-			), rest_url( '/wp/v2/posts' ) );
+			), rest_url( '/cutv/v2/posts' ) );
 		$this->assertContains( '<' . $prev_link . '>; rel="prev"', $headers['Link'] );
 		$next_link = add_query_arg( array(
 			'page'    => 4,
-			), rest_url( '/wp/v2/posts' ) );
+			), rest_url( '/cutv/v2/posts' ) );
 		$this->assertContains( '<' . $next_link . '>; rel="next"', $headers['Link'] );
 		// Last page
-		$request = new WP_REST_Request( 'GET', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/posts' );
 		$request->set_param( 'page', 6 );
 		$response = $this->server->dispatch( $request );
 		$headers = $response->get_headers();
@@ -403,11 +403,11 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 		$this->assertEquals( 6, $headers['X-WP-TotalPages'] );
 		$prev_link = add_query_arg( array(
 			'page'    => 5,
-			), rest_url( '/wp/v2/posts' ) );
+			), rest_url( '/cutv/v2/posts' ) );
 		$this->assertContains( '<' . $prev_link . '>; rel="prev"', $headers['Link'] );
 		$this->assertFalse( stripos( $headers['Link'], 'rel="next"' ) );
 		// Out of bounds
-		$request = new WP_REST_Request( 'GET', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/posts' );
 		$request->set_param( 'page', 8 );
 		$response = $this->server->dispatch( $request );
 		$headers = $response->get_headers();
@@ -415,12 +415,12 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 		$this->assertEquals( 6, $headers['X-WP-TotalPages'] );
 		$prev_link = add_query_arg( array(
 			'page'    => 6,
-			), rest_url( '/wp/v2/posts' ) );
+			), rest_url( '/cutv/v2/posts' ) );
 		$this->assertContains( '<' . $prev_link . '>; rel="prev"', $headers['Link'] );
 		$this->assertFalse( stripos( $headers['Link'], 'rel="next"' ) );
 
 		// With filter params.
-		$request = new WP_REST_Request( 'GET', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/posts' );
 		$request->set_query_params( array( 'filter' => array( 'posts_per_page' => 5, 'paged' => 2 ) ) );
 		$response = $this->server->dispatch( $request );
 		$headers = $response->get_headers();
@@ -428,11 +428,11 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 		$this->assertEquals( 11, $headers['X-WP-TotalPages'] );
 		$prev_link = add_query_arg( array(
 			'page'    => 1,
-			), rest_url( '/wp/v2/posts' ) );
+			), rest_url( '/cutv/v2/posts' ) );
 		$this->assertContains( '<' . $prev_link . '>; rel="prev"', $headers['Link'] );
 		$next_link = add_query_arg( array(
 			'page'    => 3,
-			), rest_url( '/wp/v2/posts' ) );
+			), rest_url( '/cutv/v2/posts' ) );
 		$this->assertContains( '<' . $next_link . '>; rel="next"', $headers['Link'] );
 	}
 
@@ -440,7 +440,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 		// Private query vars inaccessible to unauthorized users
 		wp_set_current_user( 0 );
 		$draft_id = $this->factory->post->create( array( 'post_status' => 'draft' ) );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/posts' );
 		$request->set_param( 'filter', array( 'post_status' => 'draft' ) );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
@@ -455,14 +455,14 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	}
 
 	public function test_get_items_invalid_context() {
-		$request = new WP_REST_Request( 'GET', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/posts' );
 		$request->set_param( 'context', 'banana' );
 		$response = $this->server->dispatch( $request );
 		$this->assertErrorResponse( 'rest_invalid_param', $response, 400 );
 	}
 
 	public function test_get_items_invalid_date() {
-		$request = new WP_REST_Request( 'GET', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/posts' );
 		$request->set_param( 'after', rand_str() );
 		$request->set_param( 'before', rand_str() );
 		$response = $this->server->dispatch( $request );
@@ -474,7 +474,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 		$post2 = $this->factory->post->create( array( 'post_date' => '2016-01-16T00:00:00Z' ) );
 		$post3 = $this->factory->post->create( array( 'post_date' => '2016-01-17T00:00:00Z' ) );
 
-		$request = new WP_REST_Request( 'GET', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/posts' );
 		$request->set_param( 'after', '2016-01-15T00:00:00Z' );
 		$request->set_param( 'before', '2016-01-17T00:00:00Z' );
 		$response = $this->server->dispatch( $request );
@@ -484,30 +484,30 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	}
 
 	public function test_get_item() {
-		$request = new WP_REST_Request( 'GET', sprintf( '/wp/v2/posts/%d', $this->post_id ) );
+		$request = new CUTV_REST_Request( 'GET', sprintf( '/cutv/v2/posts/%d', $this->post_id ) );
 		$response = $this->server->dispatch( $request );
 
 		$this->check_get_post_response( $response, 'view' );
 	}
 
 	public function test_get_item_links() {
-		$request = new WP_REST_Request( 'GET', sprintf( '/wp/v2/posts/%d', $this->post_id ) );
+		$request = new CUTV_REST_Request( 'GET', sprintf( '/cutv/v2/posts/%d', $this->post_id ) );
 		$response = $this->server->dispatch( $request );
 
 		$links = $response->get_links();
 
-		$this->assertEquals( rest_url( '/wp/v2/posts/' . $this->post_id ), $links['self'][0]['href'] );
-		$this->assertEquals( rest_url( '/wp/v2/posts' ), $links['collection'][0]['href'] );
+		$this->assertEquals( rest_url( '/cutv/v2/posts/' . $this->post_id ), $links['self'][0]['href'] );
+		$this->assertEquals( rest_url( '/cutv/v2/posts' ), $links['collection'][0]['href'] );
 
-		$this->assertEquals( rest_url( '/wp/v2/types/' . get_post_type( $this->post_id ) ), $links['about'][0]['href'] );
+		$this->assertEquals( rest_url( '/cutv/v2/types/' . get_post_type( $this->post_id ) ), $links['about'][0]['href'] );
 
-		$replies_url = rest_url( '/wp/v2/comments' );
+		$replies_url = rest_url( '/cutv/v2/comments' );
 		$replies_url = add_query_arg( 'post', $this->post_id, $replies_url );
 		$this->assertEquals( $replies_url, $links['replies'][0]['href'] );
 
-		$this->assertEquals( rest_url( '/wp/v2/posts/' . $this->post_id . '/revisions' ), $links['version-history'][0]['href'] );
+		$this->assertEquals( rest_url( '/cutv/v2/posts/' . $this->post_id . '/revisions' ), $links['version-history'][0]['href'] );
 
-		$attachments_url = rest_url( '/wp/v2/media' );
+		$attachments_url = rest_url( '/cutv/v2/media' );
 		$attachments_url = add_query_arg( 'parent', $this->post_id, $attachments_url );
 		$this->assertEquals( $attachments_url, $links['https://api.w.org/attachment'][0]['href'] );
 
@@ -526,23 +526,23 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 		$this->assertNotEmpty( $cat_link );
 		$this->assertNull( $format_link );
 
-		$tags_url = add_query_arg( 'post', $this->post_id, rest_url( '/wp/v2/tags' ) );
+		$tags_url = add_query_arg( 'post', $this->post_id, rest_url( '/cutv/v2/tags' ) );
 		$this->assertEquals( $tags_url, $tag_link['href'] );
 
-		$category_url = add_query_arg( 'post', $this->post_id, rest_url( '/wp/v2/categories' ) );
+		$category_url = add_query_arg( 'post', $this->post_id, rest_url( '/cutv/v2/categories' ) );
 		$this->assertEquals( $category_url, $cat_link['href'] );
 	}
 
 	public function test_get_item_links_no_author() {
-		$request = new WP_REST_Request( 'GET', sprintf( '/wp/v2/posts/%d', $this->post_id ) );
+		$request = new CUTV_REST_Request( 'GET', sprintf( '/cutv/v2/posts/%d', $this->post_id ) );
 		$response = $this->server->dispatch( $request );
 		$links = $response->get_links();
 		$this->assertFalse( isset( $links['author'] ) );
 		wp_update_post( array( 'ID' => $this->post_id, 'post_author' => $this->author_id ) );
-		$request = new WP_REST_Request( 'GET', sprintf( '/wp/v2/posts/%d', $this->post_id ) );
+		$request = new CUTV_REST_Request( 'GET', sprintf( '/cutv/v2/posts/%d', $this->post_id ) );
 		$response = $this->server->dispatch( $request );
 		$links = $response->get_links();
-		$this->assertEquals( rest_url( '/wp/v2/users/' . $this->author_id ), $links['author'][0]['href'] );
+		$this->assertEquals( rest_url( '/cutv/v2/users/' . $this->author_id ), $links['author'][0]['href'] );
 	}
 
 	public function test_get_post_without_permission() {
@@ -551,21 +551,21 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 		) );
 		wp_set_current_user( 0 );
 
-		$request = new WP_REST_Request( 'GET', sprintf( '/wp/v2/posts/%d', $draft_id ) );
+		$request = new CUTV_REST_Request( 'GET', sprintf( '/cutv/v2/posts/%d', $draft_id ) );
 		$response = $this->server->dispatch( $request );
 
 		$this->assertErrorResponse( 'rest_forbidden', $response, 403 );
 	}
 
 	public function test_get_post_invalid_id() {
-		$request = new WP_REST_Request( 'GET', '/wp/v2/posts/' . REST_TESTS_IMPOSSIBLY_HIGH_NUMBER );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/posts/' . REST_TESTS_IMPOSSIBLY_HIGH_NUMBER );
 		$response = $this->server->dispatch( $request );
 
 		$this->assertErrorResponse( 'rest_post_invalid_id', $response, 404 );
 	}
 
 	public function test_get_post_list_context_with_permission() {
-		$request = new WP_REST_Request( 'GET', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/posts' );
 		$request->set_query_params( array(
 			'context' => 'edit',
 		) );
@@ -579,7 +579,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 
 	public function test_get_post_list_context_without_permission() {
 		wp_set_current_user( 0 );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/posts' );
 		$request->set_query_params( array(
 			'context' => 'edit',
 		) );
@@ -590,7 +590,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 
 	public function test_get_post_context_without_permission() {
 		wp_set_current_user( 0 );
-		$request = new WP_REST_Request( 'GET', sprintf( '/wp/v2/posts/%d', $this->post_id ) );
+		$request = new CUTV_REST_Request( 'GET', sprintf( '/cutv/v2/posts/%d', $this->post_id ) );
 		$request->set_query_params( array(
 			'context' => 'edit',
 		) );
@@ -606,7 +606,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 
 		wp_set_current_user( $this->editor_id );
 
-		$request = new WP_REST_Request( 'GET', sprintf( '/wp/v2/posts/%d', $post_id ) );
+		$request = new CUTV_REST_Request( 'GET', sprintf( '/cutv/v2/posts/%d', $post_id ) );
 		$response = $this->server->dispatch( $request );
 
 		$this->check_get_post_response( $response, 'view' );
@@ -616,7 +616,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 		$post_id = $this->factory->post->create( array(
 			'post_password' => '$inthebananastand',
 		) );
-		$request = new WP_REST_Request( 'GET', sprintf( '/wp/v2/posts/%d', $post_id ) );
+		$request = new CUTV_REST_Request( 'GET', sprintf( '/cutv/v2/posts/%d', $post_id ) );
 		$response = $this->server->dispatch( $request );
 
 		$this->assertErrorResponse( 'rest_forbidden', $response, 403 );
@@ -627,12 +627,12 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 		register_post_status( 'testprivtatus', array( 'public' => false ) );
 		// Public status
 		wp_update_post( array( 'ID' => $this->post_id, 'post_status' => 'testpubstatus' ) );
-		$request = new WP_REST_Request( 'GET', sprintf( '/wp/v2/posts/%d', $this->post_id ) );
+		$request = new CUTV_REST_Request( 'GET', sprintf( '/cutv/v2/posts/%d', $this->post_id ) );
 		$response = $this->server->dispatch( $request );
 		$this->assertEquals( 200, $response->get_status() );
 		// Private status
 		wp_update_post( array( 'ID' => $this->post_id, 'post_status' => 'testprivtatus' ) );
-		$request = new WP_REST_Request( 'GET', sprintf( '/wp/v2/posts/%d', $this->post_id ) );
+		$request = new CUTV_REST_Request( 'GET', sprintf( '/cutv/v2/posts/%d', $this->post_id ) );
 		$response = $this->server->dispatch( $request );
 		$this->assertEquals( 403, $response->get_status() );
 	}
@@ -640,7 +640,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_prepare_item() {
 		wp_set_current_user( $this->editor_id );
 
-		$request = new WP_REST_Request( 'GET', sprintf( '/wp/v2/posts/%d', $this->post_id ) );
+		$request = new CUTV_REST_Request( 'GET', sprintf( '/cutv/v2/posts/%d', $this->post_id ) );
 		$request->set_query_params( array( 'context' => 'edit' ) );
 		$response = $this->server->dispatch( $request );
 
@@ -650,7 +650,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_create_item() {
 		wp_set_current_user( $this->editor_id );
 
-		$request = new WP_REST_Request( 'POST', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/posts' );
 		$request->add_header( 'content-type', 'application/x-www-form-urlencoded' );
 		$params = $this->set_post_data();
 		$request->set_body_params( $params );
@@ -662,7 +662,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_rest_create_item() {
 		wp_set_current_user( $this->editor_id );
 
-		$request = new WP_REST_Request( 'POST', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/posts' );
 		$request->add_header( 'content-type', 'application/json' );
 		$params = $this->set_post_data();
 		$request->set_body( wp_json_encode( $params ) );
@@ -674,7 +674,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_create_post_invalid_id() {
 		wp_set_current_user( $this->editor_id );
 
-		$request = new WP_REST_Request( 'POST', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/posts' );
 		$params = $this->set_post_data( array(
 			'id' => '3',
 		) );
@@ -687,7 +687,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_create_post_as_contributor() {
 		wp_set_current_user( $this->contributor_id );
 
-		$request = new WP_REST_Request( 'POST', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/posts' );
 		$params = $this->set_post_data(array(
 			'status' => 'pending',
 		));
@@ -700,7 +700,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_create_post_sticky() {
 		wp_set_current_user( $this->editor_id );
 
-		$request = new WP_REST_Request( 'POST', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/posts' );
 		$params = $this->set_post_data( array(
 			'sticky' => true,
 		) );
@@ -716,7 +716,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_create_post_sticky_as_contributor() {
 		wp_set_current_user( $this->contributor_id );
 
-		$request = new WP_REST_Request( 'POST', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/posts' );
 		$params = $this->set_post_data( array(
 			'sticky' => true,
 			'status' => 'pending',
@@ -730,7 +730,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_create_post_other_author_without_permission() {
 		wp_set_current_user( $this->author_id );
 
-		$request = new WP_REST_Request( 'POST', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/posts' );
 		$params = $this->set_post_data(array(
 			'author' => $this->editor_id,
 		));
@@ -743,7 +743,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_create_post_without_permission() {
 		wp_set_current_user( 0 );
 
-		$request = new WP_REST_Request( 'POST', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/posts' );
 		$params = $this->set_post_data( array(
 			'status' => 'draft',
 		) );
@@ -756,7 +756,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_create_post_draft() {
 		wp_set_current_user( $this->editor_id );
 
-		$request = new WP_REST_Request( 'POST', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/posts' );
 		$params = $this->set_post_data( array(
 			'status' => 'draft',
 		) );
@@ -775,7 +775,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_create_post_private() {
 		wp_set_current_user( $this->editor_id );
 
-		$request = new WP_REST_Request( 'POST', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/posts' );
 		$params = $this->set_post_data( array(
 			'status' => 'private',
 		) );
@@ -796,7 +796,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 		$user->get_role_caps();
 		$user->update_user_level_from_caps();
 
-		$request = new WP_REST_Request( 'POST', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/posts' );
 		$params = $this->set_post_data( array(
 			'status' => 'private',
 			'author' => $this->author_id,
@@ -815,7 +815,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 		$user->get_role_caps();
 		$user->update_user_level_from_caps();
 
-		$request = new WP_REST_Request( 'POST', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/posts' );
 		$params = $this->set_post_data( array(
 			'status' => 'publish',
 		) );
@@ -828,7 +828,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_create_post_invalid_status() {
 		wp_set_current_user( $this->editor_id );
 
-		$request = new WP_REST_Request( 'POST', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/posts' );
 		$params = $this->set_post_data( array(
 			'status' => 'teststatus',
 		) );
@@ -841,7 +841,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_create_post_with_format() {
 		wp_set_current_user( $this->editor_id );
 
-		$request = new WP_REST_Request( 'POST', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/posts' );
 		$params = $this->set_post_data( array(
 			'format' => 'gallery',
 		) );
@@ -857,7 +857,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_create_post_with_invalid_format() {
 		wp_set_current_user( $this->editor_id );
 
-		$request = new WP_REST_Request( 'POST', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/posts' );
 		$params = $this->set_post_data( array(
 			'format' => 'testformat',
 		) );
@@ -877,7 +877,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 
 		wp_set_current_user( $this->editor_id );
 
-		$request = new WP_REST_Request( 'POST', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/posts' );
 		$params = $this->set_post_data( array(
 			'featured_media' => $this->attachment_id,
 		) );
@@ -888,7 +888,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 		$this->assertEquals( $this->attachment_id, $data['featured_media'] );
 		$this->assertEquals( $this->attachment_id, (int) get_post_thumbnail_id( $new_post->ID ) );
 
-		$request = new WP_REST_Request( 'POST', '/wp/v2/posts/' . $new_post->ID );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/posts/' . $new_post->ID );
 		$params = $this->set_post_data( array(
 			'featured_media' => 0,
 		) );
@@ -902,7 +902,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_create_post_invalid_author() {
 		wp_set_current_user( $this->editor_id );
 
-		$request = new WP_REST_Request( 'POST', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/posts' );
 		$params = $this->set_post_data( array(
 			'author' => -1,
 		) );
@@ -915,7 +915,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_create_post_invalid_author_without_permission() {
 		wp_set_current_user( $this->author_id );
 
-		$request = new WP_REST_Request( 'POST', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/posts' );
 		$params = $this->set_post_data( array(
 			'author' => $this->editor_id,
 		) );
@@ -928,7 +928,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_create_post_with_password() {
 		wp_set_current_user( $this->editor_id );
 
-		$request = new WP_REST_Request( 'POST', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/posts' );
 		$params = $this->set_post_data( array(
 			'password' => 'testing',
 		) );
@@ -947,7 +947,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 		$user->get_role_caps();
 		$user->update_user_level_from_caps();
 
-		$request = new WP_REST_Request( 'POST', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/posts' );
 		$params = $this->set_post_data( array(
 			'password' => 'testing',
 			'author'   => $this->author_id,
@@ -962,7 +962,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_create_post_with_falsy_password() {
 		wp_set_current_user( $this->editor_id );
 
-		$request = new WP_REST_Request( 'POST', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/posts' );
 		$params = $this->set_post_data( array(
 			'password' => '0',
 		) );
@@ -977,7 +977,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_create_post_with_empty_string_password_and_sticky() {
 		wp_set_current_user( $this->editor_id );
 
-		$request = new WP_REST_Request( 'POST', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/posts' );
 		$params = $this->set_post_data( array(
 			'password' => '',
 			'sticky'   => true,
@@ -993,7 +993,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_create_post_with_password_and_sticky_fails() {
 		wp_set_current_user( $this->editor_id );
 
-		$request = new WP_REST_Request( 'POST', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/posts' );
 		$params = $this->set_post_data( array(
 			'password' => '123',
 			'sticky'   => true,
@@ -1007,7 +1007,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_create_post_custom_date() {
 		wp_set_current_user( $this->editor_id );
 
-		$request = new WP_REST_Request( 'POST', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/posts' );
 		$params = $this->set_post_data( array(
 			'date' => '2010-01-01T02:00:00Z',
 		) );
@@ -1024,7 +1024,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_create_post_custom_date_with_timezone() {
 		wp_set_current_user( $this->editor_id );
 
-		$request = new WP_REST_Request( 'POST', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/posts' );
 		$params = $this->set_post_data( array(
 			'date' => '2010-01-01T02:00:00-10:00',
 		) );
@@ -1045,7 +1045,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_create_post_with_db_error() {
 		wp_set_current_user( $this->editor_id );
 
-		$request = new WP_REST_Request( 'POST', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/posts' );
 		$params  = $this->set_post_data( array() );
 		$request->set_body_params( $params );
 
@@ -1067,7 +1067,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_create_post_with_invalid_date() {
 		wp_set_current_user( $this->editor_id );
 
-		$request = new WP_REST_Request( 'POST', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/posts' );
 		$params = $this->set_post_data( array(
 			'date' => '2010-60-01T02:00:00Z',
 		) );
@@ -1080,7 +1080,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_create_post_with_invalid_date_gmt() {
 		wp_set_current_user( $this->editor_id );
 
-		$request = new WP_REST_Request( 'POST', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/posts' );
 		$params = $this->set_post_data( array(
 			'date_gmt' => '2010-60-01T02:00:00',
 		) );
@@ -1093,7 +1093,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_create_post_with_quotes_in_title() {
 		wp_set_current_user( $this->editor_id );
 
-		$request = new WP_REST_Request( 'POST', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/posts' );
 		$params = $this->set_post_data( array(
 			'title' => "Rob O'Rourke's Diary",
 		) );
@@ -1106,7 +1106,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_create_post_with_categories() {
 		wp_set_current_user( $this->editor_id );
 		$category = wp_insert_term( 'Test Category', 'category' );
-		$request = new WP_REST_Request( 'POST', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/posts' );
 		$params = $this->set_post_data( array(
 			'password'   => 'testing',
 			'categories' => array(
@@ -1122,7 +1122,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 
 	public function test_create_post_with_invalid_categories() {
 		wp_set_current_user( $this->editor_id );
-		$request = new WP_REST_Request( 'POST', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/posts' );
 		$params = $this->set_post_data( array(
 			'password'   => 'testing',
 			'categories' => array(
@@ -1139,7 +1139,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_update_item() {
 		wp_set_current_user( $this->editor_id );
 
-		$request = new WP_REST_Request( 'PUT', sprintf( '/wp/v2/posts/%d', $this->post_id ) );
+		$request = new CUTV_REST_Request( 'PUT', sprintf( '/cutv/v2/posts/%d', $this->post_id ) );
 		$request->add_header( 'content-type', 'application/x-www-form-urlencoded' );
 		$params = $this->set_post_data();
 		$request->set_body_params( $params );
@@ -1160,7 +1160,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_rest_update_post() {
 		wp_set_current_user( $this->editor_id );
 
-		$request = new WP_REST_Request( 'PUT', sprintf( '/wp/v2/posts/%d', $this->post_id ) );
+		$request = new CUTV_REST_Request( 'PUT', sprintf( '/cutv/v2/posts/%d', $this->post_id ) );
 		$request->add_header( 'content-type', 'application/json' );
 		$params = $this->set_post_data();
 		$request->set_body( wp_json_encode( $params ) );
@@ -1181,7 +1181,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_rest_update_post_raw() {
 		wp_set_current_user( $this->editor_id );
 
-		$request = new WP_REST_Request( 'PUT', sprintf( '/wp/v2/posts/%d', $this->post_id ) );
+		$request = new CUTV_REST_Request( 'PUT', sprintf( '/cutv/v2/posts/%d', $this->post_id ) );
 		$request->add_header( 'content-type', 'application/json' );
 		$params = $this->set_raw_post_data();
 		$request->set_body( wp_json_encode( $params ) );
@@ -1202,7 +1202,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_update_post_without_extra_params() {
 		wp_set_current_user( $this->editor_id );
 
-		$request = new WP_REST_Request( 'PUT', sprintf( '/wp/v2/posts/%d', $this->post_id ) );
+		$request = new CUTV_REST_Request( 'PUT', sprintf( '/cutv/v2/posts/%d', $this->post_id ) );
 		$params = $this->set_post_data();
 		unset( $params['type'] );
 		unset( $params['name'] );
@@ -1222,7 +1222,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 		$user->get_role_caps();
 		$user->update_user_level_from_caps();
 
-		$request = new WP_REST_Request( 'PUT', sprintf( '/wp/v2/posts/%d', $this->post_id ) );
+		$request = new CUTV_REST_Request( 'PUT', sprintf( '/cutv/v2/posts/%d', $this->post_id ) );
 		$params = $this->set_post_data();
 		$request->set_body_params( $params );
 		$response = $this->server->dispatch( $request );
@@ -1233,7 +1233,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_update_post_sticky_as_contributor() {
 		wp_set_current_user( $this->contributor_id );
 
-		$request = new WP_REST_Request( 'PUT', sprintf( '/wp/v2/posts/%d', $this->post_id ) );
+		$request = new CUTV_REST_Request( 'PUT', sprintf( '/cutv/v2/posts/%d', $this->post_id ) );
 		$params = $this->set_post_data( array(
 			'sticky' => true,
 			'status' => 'pending',
@@ -1247,7 +1247,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_update_post_invalid_id() {
 		wp_set_current_user( $this->editor_id );
 
-		$request = new WP_REST_Request( 'PUT', sprintf( '/wp/v2/posts/%d', REST_TESTS_IMPOSSIBLY_HIGH_NUMBER ) );
+		$request = new CUTV_REST_Request( 'PUT', sprintf( '/cutv/v2/posts/%d', REST_TESTS_IMPOSSIBLY_HIGH_NUMBER ) );
 		$response = $this->server->dispatch( $request );
 
 		$this->assertErrorResponse( 'rest_post_invalid_id', $response, 404 );
@@ -1256,7 +1256,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_update_post_invalid_route() {
 		wp_set_current_user( $this->editor_id );
 
-		$request = new WP_REST_Request( 'PUT', sprintf( '/wp/v2/pages/%d', $this->post_id ) );
+		$request = new CUTV_REST_Request( 'PUT', sprintf( '/cutv/v2/pages/%d', $this->post_id ) );
 		$response = $this->server->dispatch( $request );
 
 		$this->assertErrorResponse( 'rest_post_invalid_id', $response, 404 );
@@ -1265,7 +1265,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_update_post_with_format() {
 		wp_set_current_user( $this->editor_id );
 
-		$request = new WP_REST_Request( 'PUT', sprintf( '/wp/v2/posts/%d', $this->post_id ) );
+		$request = new CUTV_REST_Request( 'PUT', sprintf( '/cutv/v2/posts/%d', $this->post_id ) );
 		$params = $this->set_post_data( array(
 			'format' => 'gallery',
 		) );
@@ -1281,7 +1281,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_update_post_with_invalid_format() {
 		wp_set_current_user( $this->editor_id );
 
-		$request = new WP_REST_Request( 'PUT', sprintf( '/wp/v2/posts/%d', $this->post_id ) );
+		$request = new CUTV_REST_Request( 'PUT', sprintf( '/cutv/v2/posts/%d', $this->post_id ) );
 		$params = $this->set_post_data( array(
 			'format' => 'testformat',
 		) );
@@ -1297,7 +1297,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 		$new_content = rand_str();
 		$expected_modified = current_time( 'mysql' );
 
-		$request = new WP_REST_Request( 'PUT', sprintf( '/wp/v2/posts/%d', $this->post_id ) );
+		$request = new CUTV_REST_Request( 'PUT', sprintf( '/cutv/v2/posts/%d', $this->post_id ) );
 		$params = $this->set_post_data( array(
 			'modified' => '2010-06-01T02:00:00Z',
 			'content'  => $new_content,
@@ -1320,7 +1320,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_update_post_with_invalid_date() {
 		wp_set_current_user( $this->editor_id );
 
-		$request = new WP_REST_Request( 'PUT', sprintf( '/wp/v2/posts/%d', $this->post_id ) );
+		$request = new CUTV_REST_Request( 'PUT', sprintf( '/cutv/v2/posts/%d', $this->post_id ) );
 		$params = $this->set_post_data( array(
 			'date' => rand_str(),
 		) );
@@ -1333,7 +1333,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_update_post_with_invalid_date_gmt() {
 		wp_set_current_user( $this->editor_id );
 
-		$request = new WP_REST_Request( 'PUT', sprintf( '/wp/v2/posts/%d', $this->post_id ) );
+		$request = new CUTV_REST_Request( 'PUT', sprintf( '/cutv/v2/posts/%d', $this->post_id ) );
 		$params = $this->set_post_data( array(
 			'date_gmt' => rand_str(),
 		) );
@@ -1346,7 +1346,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_update_post_slug() {
 		wp_set_current_user( $this->editor_id );
 
-		$request = new WP_REST_Request( 'PUT', sprintf( '/wp/v2/posts/%d', $this->post_id ) );
+		$request = new CUTV_REST_Request( 'PUT', sprintf( '/cutv/v2/posts/%d', $this->post_id ) );
 		$params = $this->set_post_data( array(
 			'slug' => 'sample-slug',
 		) );
@@ -1362,7 +1362,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_update_post_sticky() {
 		wp_set_current_user( $this->editor_id );
 
-		$request = new WP_REST_Request( 'PUT', sprintf( '/wp/v2/posts/%d', $this->post_id ) );
+		$request = new CUTV_REST_Request( 'PUT', sprintf( '/cutv/v2/posts/%d', $this->post_id ) );
 		$params = $this->set_post_data( array(
 			'sticky' => true,
 		) );
@@ -1375,7 +1375,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 		$this->assertEquals( true, is_sticky( $post->ID ) );
 
 		// Updating another field shouldn't change sticky status
-		$request = new WP_REST_Request( 'PUT', sprintf( '/wp/v2/posts/%d', $this->post_id ) );
+		$request = new CUTV_REST_Request( 'PUT', sprintf( '/cutv/v2/posts/%d', $this->post_id ) );
 		$params = $this->set_post_data( array(
 			'title'       => 'This should not reset sticky',
 		) );
@@ -1391,7 +1391,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_update_post_excerpt() {
 		wp_set_current_user( $this->editor_id );
 
-		$request = new WP_REST_Request( 'PUT', sprintf( '/wp/v2/posts/%d', $this->post_id ) );
+		$request = new CUTV_REST_Request( 'PUT', sprintf( '/cutv/v2/posts/%d', $this->post_id ) );
 		$request->set_body_params( array(
 			'excerpt' => 'An Excerpt',
 		) );
@@ -1404,7 +1404,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_update_post_empty_excerpt() {
 		wp_set_current_user( $this->editor_id );
 
-		$request = new WP_REST_Request( 'PUT', sprintf( '/wp/v2/posts/%d', $this->post_id ) );
+		$request = new CUTV_REST_Request( 'PUT', sprintf( '/cutv/v2/posts/%d', $this->post_id ) );
 		$request->set_body_params( array(
 			'excerpt' => '',
 		) );
@@ -1417,7 +1417,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_update_post_content() {
 		wp_set_current_user( $this->editor_id );
 
-		$request = new WP_REST_Request( 'PUT', sprintf( '/wp/v2/posts/%d', $this->post_id ) );
+		$request = new CUTV_REST_Request( 'PUT', sprintf( '/cutv/v2/posts/%d', $this->post_id ) );
 		$request->set_body_params( array(
 			'content' => 'Some Content',
 		) );
@@ -1430,7 +1430,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_update_post_empty_content() {
 		wp_set_current_user( $this->editor_id );
 
-		$request = new WP_REST_Request( 'PUT', sprintf( '/wp/v2/posts/%d', $this->post_id ) );
+		$request = new CUTV_REST_Request( 'PUT', sprintf( '/cutv/v2/posts/%d', $this->post_id ) );
 		$request->set_body_params( array(
 			'content' => '',
 		) );
@@ -1443,7 +1443,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_update_post_with_password_and_sticky_fails() {
 		wp_set_current_user( $this->editor_id );
 
-		$request = new WP_REST_Request( 'PUT', sprintf( '/wp/v2/posts/%d', $this->post_id ) );
+		$request = new CUTV_REST_Request( 'PUT', sprintf( '/cutv/v2/posts/%d', $this->post_id ) );
 		$params = $this->set_post_data( array(
 			'password' => '123',
 			'sticky'   => true,
@@ -1459,7 +1459,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 
 		stick_post( $this->post_id );
 
-		$request = new WP_REST_Request( 'PUT', sprintf( '/wp/v2/posts/%d', $this->post_id ) );
+		$request = new CUTV_REST_Request( 'PUT', sprintf( '/cutv/v2/posts/%d', $this->post_id ) );
 		$params = $this->set_post_data( array(
 			'password' => '123',
 		) );
@@ -1474,7 +1474,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 
 		wp_update_post( array( 'ID' => $this->post_id, 'post_password' => '123' ) );
 
-		$request = new WP_REST_Request( 'PUT', sprintf( '/wp/v2/posts/%d', $this->post_id ) );
+		$request = new CUTV_REST_Request( 'PUT', sprintf( '/cutv/v2/posts/%d', $this->post_id ) );
 		$params = $this->set_post_data( array(
 			'sticky' => true,
 		) );
@@ -1487,7 +1487,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_update_post_with_quotes_in_title() {
 		wp_set_current_user( $this->editor_id );
 
-		$request = new WP_REST_Request( 'PUT', sprintf( '/wp/v2/posts/%d', $this->post_id ) );
+		$request = new CUTV_REST_Request( 'PUT', sprintf( '/cutv/v2/posts/%d', $this->post_id ) );
 		$params = $this->set_post_data( array(
 			'title' => "Rob O'Rourke's Diary",
 		) );
@@ -1502,7 +1502,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 		wp_set_current_user( $this->editor_id );
 		$category = wp_insert_term( 'Test Category', 'category' );
 
-		$request = new WP_REST_Request( 'PUT', sprintf( '/wp/v2/posts/%d', $this->post_id ) );
+		$request = new CUTV_REST_Request( 'PUT', sprintf( '/cutv/v2/posts/%d', $this->post_id ) );
 		$params = $this->set_post_data( array(
 			'title' => 'Tester',
 			'categories' => array(
@@ -1522,7 +1522,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 		}
 		$query = parse_url( $categories_path, PHP_URL_QUERY );
 		parse_str( $query, $args );
-		$request = new WP_REST_Request( 'GET', $args['rest_route'] );
+		$request = new CUTV_REST_Request( 'GET', $args['rest_route'] );
 		unset( $args['rest_route'] );
 		$request->set_query_params( $args );
 		$response = $this->server->dispatch( $request );
@@ -1537,7 +1537,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 		$category = wp_insert_term( 'Test Category', 'category' );
 		wp_set_object_terms( $this->post_id, $category['term_id'], 'category' );
 
-		$request = new WP_REST_Request( 'PUT', sprintf( '/wp/v2/posts/%d', $this->post_id ) );
+		$request = new CUTV_REST_Request( 'PUT', sprintf( '/cutv/v2/posts/%d', $this->post_id ) );
 		$params = $this->set_post_data( array(
 			'title' => 'Tester',
 			'categories' => array(),
@@ -1552,7 +1552,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 		$post_id = $this->factory->post->create( array( 'post_title' => 'Deleted post' ) );
 		wp_set_current_user( $this->editor_id );
 
-		$request = new WP_REST_Request( 'DELETE', sprintf( '/wp/v2/posts/%d', $post_id ) );
+		$request = new CUTV_REST_Request( 'DELETE', sprintf( '/cutv/v2/posts/%d', $post_id ) );
 		$response = $this->server->dispatch( $request );
 
 		$this->assertNotInstanceOf( 'WP_Error', $response );
@@ -1565,7 +1565,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 		$post_id = $this->factory->post->create( array( 'post_title' => 'Deleted post' ) );
 		wp_set_current_user( $this->editor_id );
 
-		$request = new WP_REST_Request( 'DELETE', sprintf( '/wp/v2/posts/%d', $post_id ) );
+		$request = new CUTV_REST_Request( 'DELETE', sprintf( '/cutv/v2/posts/%d', $post_id ) );
 		$request['force'] = true;
 		$response = $this->server->dispatch( $request );
 
@@ -1578,7 +1578,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_delete_item_already_trashed() {
 		$post_id = $this->factory->post->create( array( 'post_title' => 'Deleted post' ) );
 		wp_set_current_user( $this->editor_id );
-		$request = new WP_REST_Request( 'DELETE', sprintf( '/wp/v2/posts/%d', $post_id ) );
+		$request = new CUTV_REST_Request( 'DELETE', sprintf( '/cutv/v2/posts/%d', $post_id ) );
 		$response = $this->server->dispatch( $request );
 		$this->assertEquals( 200, $response->get_status() );
 		$response = $this->server->dispatch( $request );
@@ -1588,7 +1588,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_delete_post_invalid_id() {
 		wp_set_current_user( $this->editor_id );
 
-		$request = new WP_REST_Request( 'DELETE', '/wp/v2/posts/' . REST_TESTS_IMPOSSIBLY_HIGH_NUMBER );
+		$request = new CUTV_REST_Request( 'DELETE', '/cutv/v2/posts/' . REST_TESTS_IMPOSSIBLY_HIGH_NUMBER );
 		$response = $this->server->dispatch( $request );
 
 		$this->assertErrorResponse( 'rest_post_invalid_id', $response, 404 );
@@ -1598,7 +1598,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 		$page_id = $this->factory->post->create( array( 'post_type' => 'page' ) );
 		wp_set_current_user( $this->editor_id );
 
-		$request = new WP_REST_Request( 'DELETE', '/wp/v2/posts/' . $page_id );
+		$request = new CUTV_REST_Request( 'DELETE', '/cutv/v2/posts/' . $page_id );
 		$response = $this->server->dispatch( $request );
 
 		$this->assertErrorResponse( 'rest_post_invalid_id', $response, 404 );
@@ -1607,7 +1607,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_delete_post_without_permission() {
 		wp_set_current_user( $this->author_id );
 
-		$request = new WP_REST_Request( 'DELETE', sprintf( '/wp/v2/posts/%d', $this->post_id ) );
+		$request = new CUTV_REST_Request( 'DELETE', sprintf( '/cutv/v2/posts/%d', $this->post_id ) );
 		$response = $this->server->dispatch( $request );
 
 		$this->assertErrorResponse( 'rest_cannot_delete', $response, 403 );
@@ -1618,13 +1618,13 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 		register_post_type( 'invalid-controller', array( 'show_in_rest' => true, 'rest_controller_class' => 'Fake_Class_Baba' ) );
 		create_initial_rest_routes();
 		$routes = $this->server->get_routes();
-		$this->assertFalse( isset( $routes['/wp/v2/invalid-controller'] ) );
+		$this->assertFalse( isset( $routes['/cutv/v2/invalid-controller'] ) );
 		_unregister_post_type( 'invalid-controller' );
 
 	}
 
 	public function test_get_item_schema() {
-		$request = new WP_REST_Request( 'OPTIONS', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'OPTIONS', '/cutv/v2/posts' );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
 		$properties = $data['schema']['properties'];
@@ -1668,7 +1668,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 			'update_callback' => array( $this, 'additional_field_update_callback' ),
 		) );
 
-		$request = new WP_REST_Request( 'OPTIONS', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'OPTIONS', '/cutv/v2/posts' );
 
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
@@ -1680,12 +1680,12 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 
 		$post_id = $this->factory->post->create();
 
-		$request = new WP_REST_Request( 'GET', '/wp/v2/posts/' . $post_id );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/posts/' . $post_id );
 
 		$response = $this->server->dispatch( $request );
 		$this->assertArrayHasKey( 'my_custom_int', $response->data );
 
-		$request = new WP_REST_Request( 'POST', '/wp/v2/posts/' . $post_id );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/posts/' . $post_id );
 		$request->set_body_params(array(
 			'my_custom_int' => 123,
 		));
@@ -1693,7 +1693,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 		$response = $this->server->dispatch( $request );
 		$this->assertEquals( 123, get_post_meta( $post_id, 'my_custom_int', true ) );
 
-		$request = new WP_REST_Request( 'POST', '/wp/v2/posts' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/posts' );
 		$request->set_body_params(array(
 			'my_custom_int' => 123,
 			'title' => 'hello',

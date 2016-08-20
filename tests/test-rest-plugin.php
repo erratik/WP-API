@@ -9,17 +9,17 @@
  * @package WordPress
  * @subpackage JSON API
  */
-class WP_Test_REST_Plugin extends WP_UnitTestCase {
+class WP_Test_rest_Plugin extends WP_UnitTestCase {
 	public function setUp() {
 		// Override the normal server with our spying server
-		$GLOBALS['wp_rest_server'] = new WP_Test_Spy_REST_Server();
+		$GLOBALS['wp_rest_server'] = new WP_Test_Spy_rest_Server();
 	}
 
 	/**
 	 * The plugin should be installed and activated.
 	 */
 	public function test_plugin_activated() {
-		$this->assertTrue( class_exists( 'WP_REST_Posts_Controller' ) );
+		$this->assertTrue( class_exists( 'CUTV_REST_Posts_Controller' ) );
 	}
 
 	/**
@@ -30,38 +30,38 @@ class WP_Test_REST_Plugin extends WP_UnitTestCase {
 		$this->assertEquals( 10, has_action( 'init', 'rest_api_init' ) );
 	}
 
-	public function test_add_extra_api_taxonomy_arguments() {
+	public function test_add_extra_cutv_api_taxonomy_arguments() {
 
 		// bootstrap the taxonomy variables
-		_add_extra_api_taxonomy_arguments();
+		_add_extra_cutv_api_taxonomy_arguments();
 
 		$taxonomy = get_taxonomy( 'category' );
 		$this->assertTrue( $taxonomy->show_in_rest );
 		$this->assertEquals( 'categories', $taxonomy->rest_base );
-		$this->assertEquals( 'WP_REST_Terms_Controller', $taxonomy->rest_controller_class );
+		$this->assertEquals( 'CUTV_REST_Terms_Controller', $taxonomy->rest_controller_class );
 
 		$taxonomy = get_taxonomy( 'post_tag' );
 		$this->assertTrue( $taxonomy->show_in_rest );
 		$this->assertEquals( 'tags', $taxonomy->rest_base );
-		$this->assertEquals( 'WP_REST_Terms_Controller', $taxonomy->rest_controller_class );
+		$this->assertEquals( 'CUTV_REST_Terms_Controller', $taxonomy->rest_controller_class );
 	}
 
-	public function test_add_extra_api_post_type_arguments() {
+	public function test_add_extra_cutv_api_post_type_arguments() {
 
 		$post_type = get_post_type_object( 'post' );
 		$this->assertTrue( $post_type->show_in_rest );
 		$this->assertEquals( 'posts', $post_type->rest_base );
-		$this->assertEquals( 'WP_REST_Posts_Controller', $post_type->rest_controller_class );
+		$this->assertEquals( 'CUTV_REST_Posts_Controller', $post_type->rest_controller_class );
 
 		$post_type = get_post_type_object( 'page' );
 		$this->assertTrue( $post_type->show_in_rest );
 		$this->assertEquals( 'pages', $post_type->rest_base );
-		$this->assertEquals( 'WP_REST_Posts_Controller', $post_type->rest_controller_class );
+		$this->assertEquals( 'CUTV_REST_Posts_Controller', $post_type->rest_controller_class );
 
 		$post_type = get_post_type_object( 'attachment' );
 		$this->assertTrue( $post_type->show_in_rest );
 		$this->assertEquals( 'media', $post_type->rest_base );
-		$this->assertEquals( 'WP_REST_Attachments_Controller', $post_type->rest_controller_class );
+		$this->assertEquals( 'CUTV_REST_Attachments_Controller', $post_type->rest_controller_class );
 	}
 
 }

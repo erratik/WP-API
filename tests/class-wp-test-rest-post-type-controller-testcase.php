@@ -1,6 +1,6 @@
 <?php
 
-abstract class WP_Test_REST_Post_Type_Controller_Testcase extends WP_Test_REST_Controller_Testcase {
+abstract class WP_Test_rest_Post_Type_Controller_Testcase extends WP_Test_rest_Controller_Testcase {
 
 	protected function check_post_data( $post, $data, $context, $links ) {
 		$post_type_obj = get_post_type_object( $post->post_type );
@@ -159,38 +159,38 @@ abstract class WP_Test_REST_Post_Type_Controller_Testcase extends WP_Test_REST_C
 
 			$links = test_rest_expand_compact_links( $links );
 			$post_type = get_post_type_object( $data['type'] );
-			$this->assertEquals( $links['self'][0]['href'], rest_url( 'wp/v2/' . $post_type->rest_base . '/' . $data['id'] ) );
-			$this->assertEquals( $links['collection'][0]['href'], rest_url( 'wp/v2/' . $post_type->rest_base ) );
-			$this->assertEquals( $links['about'][0]['href'], rest_url( 'wp/v2/types/' . $data['type'] ) );
+			$this->assertEquals( $links['self'][0]['href'], rest_url( 'cutv/v2/' . $post_type->rest_base . '/' . $data['id'] ) );
+			$this->assertEquals( $links['collection'][0]['href'], rest_url( 'cutv/v2/' . $post_type->rest_base ) );
+			$this->assertEquals( $links['about'][0]['href'], rest_url( 'cutv/v2/types/' . $data['type'] ) );
 
 			if ( post_type_supports( $post->post_type, 'author' ) && $data['author'] ) {
-				$this->assertEquals( $links['author'][0]['href'], rest_url( 'wp/v2/users/' . $data['author'] ) );
+				$this->assertEquals( $links['author'][0]['href'], rest_url( 'cutv/v2/users/' . $data['author'] ) );
 			}
 
 			if ( post_type_supports( $post->post_type, 'comments' ) ) {
-				$this->assertEquals( $links['replies'][0]['href'], add_query_arg( 'post', $data['id'], rest_url( 'wp/v2/comments' ) ) );
+				$this->assertEquals( $links['replies'][0]['href'], add_query_arg( 'post', $data['id'], rest_url( 'cutv/v2/comments' ) ) );
 			}
 
 			if ( post_type_supports( $post->post_type, 'revisions' ) ) {
-				$this->assertEquals( $links['version-history'][0]['href'], rest_url( 'wp/v2/' . $post_type->rest_base . '/' . $data['id'] . '/revisions' ) );
+				$this->assertEquals( $links['version-history'][0]['href'], rest_url( 'cutv/v2/' . $post_type->rest_base . '/' . $data['id'] . '/revisions' ) );
 			}
 
 			if ( $post_type->hierarchical && ! empty( $data['parent'] ) ) {
-				$this->assertEquals( $links['up'][0]['href'], rest_url( 'wp/v2/' . $post_type->rest_base . '/' . $data['parent'] ) );
+				$this->assertEquals( $links['up'][0]['href'], rest_url( 'cutv/v2/' . $post_type->rest_base . '/' . $data['parent'] ) );
 			}
 
 			if ( ! in_array( $data['type'], array( 'attachment', 'nav_menu_item', 'revision' ) ) ) {
-				$this->assertEquals( $links['https://api.w.org/attachment'][0]['href'], add_query_arg( 'parent', $data['id'], rest_url( 'wp/v2/media' ) ) );
+				$this->assertEquals( $links['https://api.w.org/attachment'][0]['href'], add_query_arg( 'parent', $data['id'], rest_url( 'cutv/v2/media' ) ) );
 			}
 
 			if ( ! empty( $data['featured_media'] ) ) {
-				$this->assertEquals( $links['https://api.w.org/featuredmedia'][0]['href'], rest_url( 'wp/v2/media/' . $data['featured_media'] ) );
+				$this->assertEquals( $links['https://api.w.org/featuredmedia'][0]['href'], rest_url( 'cutv/v2/media/' . $data['featured_media'] ) );
 			}
 
 			$num = 0;
 			foreach ( $taxonomies as $key => $taxonomy ) {
 				$this->assertEquals( $taxonomy->name, $links['https://api.w.org/term'][ $num ]['attributes']['taxonomy'] );
-				$this->assertEquals( add_query_arg( 'post', $data['id'], rest_url( 'wp/v2/' . $taxonomy->rest_base ) ), $links['https://api.w.org/term'][ $num ]['href'] );
+				$this->assertEquals( add_query_arg( 'post', $data['id'], rest_url( 'cutv/v2/' . $taxonomy->rest_base ) ), $links['https://api.w.org/term'][ $num ]['href'] );
 				$num++;
 			}
 		}

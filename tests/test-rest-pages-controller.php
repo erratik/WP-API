@@ -2,12 +2,12 @@
 
 
 /**
- * Unit tests covering WP_REST_Posts_Controller functionality, used for Pages
+ * Unit tests covering CUTV_REST_Posts_Controller functionality, used for Pages
  *
  * @package WordPress
  * @subpackage JSON API
  */
-class WP_Test_REST_Pages_Controller extends WP_Test_REST_Post_Type_Controller_Testcase {
+class WP_Test_rest_Pages_Controller extends WP_Test_rest_Post_Type_Controller_Testcase {
 
 	public function setUp() {
 		parent::setUp();
@@ -29,14 +29,14 @@ class WP_Test_REST_Pages_Controller extends WP_Test_REST_Post_Type_Controller_Te
 
 	public function test_context_param() {
 		// Collection
-		$request = new WP_REST_Request( 'OPTIONS', '/wp/v2/pages' );
+		$request = new CUTV_REST_Request( 'OPTIONS', '/cutv/v2/pages' );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
 		$this->assertEquals( 'view', $data['endpoints'][0]['args']['context']['default'] );
 		$this->assertEquals( array( 'view', 'embed', 'edit' ), $data['endpoints'][0]['args']['context']['enum'] );
 		// Single
 		$page_id = $this->factory->post->create( array( 'post_type' => 'page' ) );
-		$request = new WP_REST_Request( 'OPTIONS', '/wp/v2/pages/' . $page_id );
+		$request = new CUTV_REST_Request( 'OPTIONS', '/cutv/v2/pages/' . $page_id );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
 		$this->assertEquals( 'view', $data['endpoints'][0]['args']['context']['default'] );
@@ -44,7 +44,7 @@ class WP_Test_REST_Pages_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	}
 
 	public function test_registered_query_params() {
-		$request = new WP_REST_Request( 'OPTIONS', '/wp/v2/pages' );
+		$request = new CUTV_REST_Request( 'OPTIONS', '/cutv/v2/pages' );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
 		$keys = array_keys( $data['endpoints'][0]['args'] );
@@ -80,7 +80,7 @@ class WP_Test_REST_Pages_Controller extends WP_Test_REST_Post_Type_Controller_Te
 		$id1 = $this->factory->post->create( array( 'post_status' => 'publish', 'post_type' => 'page' ) );
 		$id2 = $this->factory->post->create( array( 'post_status' => 'publish', 'post_type' => 'page', 'post_parent' => $id1 ) );
 		// No parent
-		$request = new WP_REST_Request( 'GET', '/wp/v2/pages' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/pages' );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
 		$this->assertEquals( 2, count( $data ) );
@@ -98,7 +98,7 @@ class WP_Test_REST_Pages_Controller extends WP_Test_REST_Post_Type_Controller_Te
 		$id3 = $this->factory->post->create( array( 'post_status' => 'publish', 'post_type' => 'page' ) );
 		$id4 = $this->factory->post->create( array( 'post_status' => 'publish', 'post_type' => 'page', 'post_parent' => $id3 ) );
 		// No parent
-		$request = new WP_REST_Request( 'GET', '/wp/v2/pages' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/pages' );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
 		$this->assertEquals( 4, count( $data ) );
@@ -114,7 +114,7 @@ class WP_Test_REST_Pages_Controller extends WP_Test_REST_Post_Type_Controller_Te
 		$id1 = $this->factory->post->create( array( 'post_status' => 'publish', 'post_type' => 'page' ) );
 		$this->factory->post->create( array( 'post_status' => 'publish', 'post_type' => 'page', 'post_parent' => $id1 ) );
 		// No parent
-		$request = new WP_REST_Request( 'GET', '/wp/v2/pages' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/pages' );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
 		$this->assertEquals( 2, count( $data ) );
@@ -132,7 +132,7 @@ class WP_Test_REST_Pages_Controller extends WP_Test_REST_Post_Type_Controller_Te
 		$id3 = $this->factory->post->create( array( 'post_status' => 'publish', 'post_type' => 'page', 'menu_order' => 3 ) );
 		$id4 = $this->factory->post->create( array( 'post_status' => 'publish', 'post_type' => 'page', 'menu_order' => 1 ) );
 		// No parent
-		$request = new WP_REST_Request( 'GET', '/wp/v2/pages' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/pages' );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
 		$this->assertEqualSets( array( $id1, $id2, $id3, $id4 ), wp_list_pluck( $data, 'id' ) );
@@ -142,7 +142,7 @@ class WP_Test_REST_Pages_Controller extends WP_Test_REST_Post_Type_Controller_Te
 		$data = $response->get_data();
 		$this->assertEqualSets( array( $id4 ), wp_list_pluck( $data, 'id' ) );
 		// Order by menu order
-		$request = new WP_REST_Request( 'GET', '/wp/v2/pages' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/pages' );
 		$request->set_param( 'order', 'asc' );
 		$request->set_param( 'orderby', 'menu_order' );
 		$response = $this->server->dispatch( $request );
@@ -154,7 +154,7 @@ class WP_Test_REST_Pages_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	}
 
 	public function test_get_items_min_max_pages_query() {
-		$request = new WP_REST_Request( 'GET', '/wp/v2/pages' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/pages' );
 		$request->set_param( 'per_page', 0 );
 		$response = $this->server->dispatch( $request );
 		$this->assertErrorResponse( 'rest_invalid_param', $response, 400 );
@@ -175,7 +175,7 @@ class WP_Test_REST_Pages_Controller extends WP_Test_REST_Post_Type_Controller_Te
 		wp_set_current_user( 0 );
 		$page_id = $this->factory->post->create( array( 'post_status' => 'publish', 'post_type' => 'page' ) );
 		$draft_id = $this->factory->post->create( array( 'post_status' => 'draft', 'post_type' => 'page' ) );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/pages' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/pages' );
 		$request->set_param( 'filter', array( 'post_status' => 'draft' ) );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
@@ -190,7 +190,7 @@ class WP_Test_REST_Pages_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	}
 
 	public function test_get_items_invalid_date() {
-		$request = new WP_REST_Request( 'GET', '/wp/v2/pages' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/pages' );
 		$request->set_param( 'after', rand_str() );
 		$request->set_param( 'before', rand_str() );
 		$response = $this->server->dispatch( $request );
@@ -201,7 +201,7 @@ class WP_Test_REST_Pages_Controller extends WP_Test_REST_Post_Type_Controller_Te
 		$post1 = $this->factory->post->create( array( 'post_date' => '2016-01-15T00:00:00Z', 'post_type' => 'page' ) );
 		$post2 = $this->factory->post->create( array( 'post_date' => '2016-01-16T00:00:00Z', 'post_type' => 'page' ) );
 		$post3 = $this->factory->post->create( array( 'post_date' => '2016-01-17T00:00:00Z', 'post_type' => 'page' ) );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/pages' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/pages' );
 		$request->set_param( 'after', '2016-01-15T00:00:00Z' );
 		$request->set_param( 'before', '2016-01-17T00:00:00Z' );
 		$response = $this->server->dispatch( $request );
@@ -216,7 +216,7 @@ class WP_Test_REST_Pages_Controller extends WP_Test_REST_Post_Type_Controller_Te
 
 	public function test_get_item_invalid_post_type() {
 		$post_id = $this->factory->post->create();
-		$request = new WP_REST_Request( 'GET', '/wp/v2/pages/' . $post_id );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/pages/' . $post_id );
 		$response = $this->server->dispatch( $request );
 		$this->assertEquals( 404, $response->get_status() );
 	}
@@ -228,7 +228,7 @@ class WP_Test_REST_Pages_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_create_item_with_template() {
 		wp_set_current_user( $this->editor_id );
 
-		$request = new WP_REST_Request( 'POST', '/wp/v2/pages' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/pages' );
 		$params = $this->set_post_data( array(
 			'template'       => 'page-my-test-template.php',
 		) );
@@ -247,7 +247,7 @@ class WP_Test_REST_Pages_Controller extends WP_Test_REST_Post_Type_Controller_Te
 		) );
 		wp_set_current_user( $this->editor_id );
 
-		$request = new WP_REST_Request( 'POST', '/wp/v2/pages' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/pages' );
 		$params = $this->set_post_data( array(
 			'parent' => $page_id,
 		) );
@@ -268,7 +268,7 @@ class WP_Test_REST_Pages_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	public function test_create_page_with_invalid_parent() {
 		wp_set_current_user( $this->editor_id );
 
-		$request = new WP_REST_Request( 'POST', '/wp/v2/pages' );
+		$request = new CUTV_REST_Request( 'POST', '/cutv/v2/pages' );
 		$params = $this->set_post_data( array(
 			'parent' => -1,
 		) );
@@ -295,7 +295,7 @@ class WP_Test_REST_Pages_Controller extends WP_Test_REST_Post_Type_Controller_Te
 			'post_type' => 'page',
 		) );
 
-		$request = new WP_REST_Request( 'GET', '/wp/v2/pages' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/pages' );
 		$request->set_query_params( array(
 			'page'           => 2,
 			'per_page'       => 4,
@@ -323,7 +323,7 @@ class WP_Test_REST_Pages_Controller extends WP_Test_REST_Post_Type_Controller_Te
 
 		wp_set_current_user( $this->editor_id );
 
-		$request = new WP_REST_Request( 'PUT', sprintf( '/wp/v2/pages/%d', $page_id ) );
+		$request = new CUTV_REST_Request( 'PUT', sprintf( '/cutv/v2/pages/%d', $page_id ) );
 
 		$request->set_body_params( array(
 			'menu_order' => 1,
@@ -343,7 +343,7 @@ class WP_Test_REST_Pages_Controller extends WP_Test_REST_Post_Type_Controller_Te
 
 		wp_set_current_user( $this->editor_id );
 
-		$request = new WP_REST_Request( 'PUT', sprintf( '/wp/v2/pages/%d', $page_id ) );
+		$request = new CUTV_REST_Request( 'PUT', sprintf( '/cutv/v2/pages/%d', $page_id ) );
 
 		$request->set_body_params(array(
 			'menu_order' => 0,
@@ -355,7 +355,7 @@ class WP_Test_REST_Pages_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	}
 
 	public function test_get_item_schema() {
-		$request = new WP_REST_Request( 'OPTIONS', '/wp/v2/pages' );
+		$request = new CUTV_REST_Request( 'OPTIONS', '/cutv/v2/pages' );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
 		$properties = $data['schema']['properties'];

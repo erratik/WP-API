@@ -1,23 +1,23 @@
 <?php
 
-class WP_Test_REST_Taxonomies_Controller extends WP_Test_REST_Controller_Testcase {
+class WP_Test_rest_Taxonomies_Controller extends WP_Test_rest_Controller_Testcase {
 
 	public function test_register_routes() {
 		$routes = $this->server->get_routes();
 
-		$this->assertArrayHasKey( '/wp/v2/taxonomies', $routes );
-		$this->assertArrayHasKey( '/wp/v2/taxonomies/(?P<taxonomy>[\w-]+)', $routes );
+		$this->assertArrayHasKey( '/cutv/v2/taxonomies', $routes );
+		$this->assertArrayHasKey( '/cutv/v2/taxonomies/(?P<taxonomy>[\w-]+)', $routes );
 	}
 
 	public function test_context_param() {
 		// Collection
-		$request = new WP_REST_Request( 'OPTIONS', '/wp/v2/taxonomies' );
+		$request = new CUTV_REST_Request( 'OPTIONS', '/cutv/v2/taxonomies' );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
 		$this->assertEquals( 'view', $data['endpoints'][0]['args']['context']['default'] );
 		$this->assertEqualSets( array( 'view', 'edit', 'embed' ), $data['endpoints'][0]['args']['context']['enum'] );
 		// Single
-		$request = new WP_REST_Request( 'OPTIONS', '/wp/v2/taxonomies/post_tag' );
+		$request = new CUTV_REST_Request( 'OPTIONS', '/cutv/v2/taxonomies/post_tag' );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
 		$this->assertEquals( 'view', $data['endpoints'][0]['args']['context']['default'] );
@@ -25,7 +25,7 @@ class WP_Test_REST_Taxonomies_Controller extends WP_Test_REST_Controller_Testcas
 	}
 
 	public function test_get_items() {
-		$request = new WP_REST_Request( 'GET', '/wp/v2/taxonomies' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/taxonomies' );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
 		$taxonomies = $this->get_public_taxonomies( get_taxonomies( '', 'objects' ) );
@@ -40,21 +40,21 @@ class WP_Test_REST_Taxonomies_Controller extends WP_Test_REST_Controller_Testcas
 
 	public function test_get_items_invalid_permission_for_context() {
 		wp_set_current_user( 0 );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/taxonomies' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/taxonomies' );
 		$request->set_param( 'context', 'edit' );
 		$response = $this->server->dispatch( $request );
 		$this->assertErrorResponse( 'rest_cannot_view', $response, 401 );
 	}
 
 	public function test_get_taxonomies_with_types() {
-		$request = new WP_REST_Request( 'GET', '/wp/v2/taxonomies' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/taxonomies' );
 		$request->set_param( 'type', 'post' );
 		$response = $this->server->dispatch( $request );
 		$this->check_taxonomies_for_type_response( 'post', $response );
 	}
 
 	public function test_get_item() {
-		$request = new WP_REST_Request( 'GET', '/wp/v2/taxonomies/category' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/taxonomies/category' );
 		$response = $this->server->dispatch( $request );
 		$this->check_taxonomy_object_response( 'view', $response );
 	}
@@ -62,7 +62,7 @@ class WP_Test_REST_Taxonomies_Controller extends WP_Test_REST_Controller_Testcas
 	public function test_get_item_edit_context() {
 		$editor_id = $this->factory->user->create( array( 'role' => 'editor' ) );
 		wp_set_current_user( $editor_id );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/taxonomies/category' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/taxonomies/category' );
 		$request->set_param( 'context', 'edit' );
 		$response = $this->server->dispatch( $request );
 		$this->check_taxonomy_object_response( 'edit', $response );
@@ -70,14 +70,14 @@ class WP_Test_REST_Taxonomies_Controller extends WP_Test_REST_Controller_Testcas
 
 	public function test_get_item_invalid_permission_for_context() {
 		wp_set_current_user( 0 );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/taxonomies/category' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/taxonomies/category' );
 		$request->set_param( 'context', 'edit' );
 		$response = $this->server->dispatch( $request );
 		$this->assertErrorResponse( 'rest_forbidden_context', $response, 401 );
 	}
 
 	public function test_get_invalid_taxonomy() {
-		$request = new WP_REST_Request( 'GET', '/wp/v2/taxonomies/invalid' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/taxonomies/invalid' );
 		$response = $this->server->dispatch( $request );
 		$this->assertErrorResponse( 'rest_taxonomy_invalid', $response, 404 );
 	}
@@ -85,7 +85,7 @@ class WP_Test_REST_Taxonomies_Controller extends WP_Test_REST_Controller_Testcas
 	public function test_get_non_public_taxonomy() {
 		register_taxonomy( 'api-private', 'post', array( 'public' => false ) );
 
-		$request = new WP_REST_Request( 'GET', '/wp/v2/taxonomies/api-private' );
+		$request = new CUTV_REST_Request( 'GET', '/cutv/v2/taxonomies/api-private' );
 		$response = $this->server->dispatch( $request );
 		$this->assertErrorResponse( 'rest_forbidden', $response, 403 );
 	}
@@ -104,15 +104,15 @@ class WP_Test_REST_Taxonomies_Controller extends WP_Test_REST_Controller_Testcas
 
 	public function test_prepare_item() {
 		$tax = get_taxonomy( 'category' );
-		$endpoint = new WP_REST_Taxonomies_Controller;
-		$request = new WP_REST_Request;
+		$endpoint = new CUTV_REST_Taxonomies_Controller;
+		$request = new CUTV_REST_Request;
 		$request->set_param( 'context', 'edit' );
 		$response = $endpoint->prepare_item_for_response( $tax, $request );
 		$this->check_taxonomy_object( 'edit', $tax, $response->get_data(), $response->get_links() );
 	}
 
 	public function test_get_item_schema() {
-		$request = new WP_REST_Request( 'OPTIONS', '/wp/v2/taxonomies' );
+		$request = new CUTV_REST_Request( 'OPTIONS', '/cutv/v2/taxonomies' );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
 		$properties = $data['schema']['properties'];
@@ -150,7 +150,7 @@ class WP_Test_REST_Taxonomies_Controller extends WP_Test_REST_Controller_Testcas
 		$this->assertEquals( $tax_obj->name, $data['slug'] );
 		$this->assertEquals( $tax_obj->description, $data['description'] );
 		$this->assertEquals( $tax_obj->hierarchical, $data['hierarchical'] );
-		$this->assertEquals( rest_url( 'wp/v2/taxonomies' ), $links['collection'][0]['href'] );
+		$this->assertEquals( rest_url( 'cutv/v2/taxonomies' ), $links['collection'][0]['href'] );
 		$this->assertArrayHasKey( 'https://api.w.org/items', $links );
 		if ( 'edit' === $context ) {
 			$this->assertEquals( $tax_obj->cap, $data['capabilities'] );

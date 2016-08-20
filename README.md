@@ -9,7 +9,7 @@ Access your WordPress site's data through an easy-to-use HTTP REST API.
 ## WARNING
 
 The **"develop"** branch is undergoing substantial changes and is **NOT
-COMPLETE OR STABLE**. [Read the in-progress documentation](http://v2.wp-api.org/)
+COMPLETE OR STABLE**. [Read the in-progress documentation](http://v2.cutv-api.org/)
 to introduce yourself to endpoints, internal patterns, and implementation details.
 
 The **"master"** branch represents a **BETA** of our next version release.
@@ -27,9 +27,9 @@ This plugin provides an easy to use REST API, available via HTTP. Grab your
 site's data in simple JSON format, including users, posts, taxonomies and more.
 Retrieving or updating data is as simple as sending a HTTP request.
 
-Want to get your site's posts? Simply send a `GET` request to `/wp-json/wp/v2/posts`.
-Update user with ID 4? Send a `POST` request to `/wp-json/wp/v2/users/4`. Get all
-posts with the search term "awesome"? `GET /wp-json/wp/v2/posts?filter[s]=awesome`.
+Want to get your site's posts? Simply send a `GET` request to `/wp-json/cutv/v2/posts`.
+Update user with ID 4? Send a `POST` request to `/wp-json/cutv/v2/users/4`. Get all
+posts with the search term "awesome"? `GET /wp-json/cutv/v2/posts?filter[s]=awesome`.
 It's that easy.
 
 WP API exposes a simple yet easy interface to WP Query, the posts API, post
@@ -88,8 +88,8 @@ WordPress on your own server. **Do not test on servers you do not own.**)
 
 [GPLv2+](http://www.gnu.org/licenses/gpl-2.0.html)
 
-[docs]: http://v2.wp-api.org/
+[docs]: http://v2.cutv-api.org/
 [GitHub]: https://github.com/WP-API/WP-API/issues
 [contributing]: CONTRIBUTING.md
 [recent updates]: https://make.wordpress.org/core/tag/json-api/
-[hackerone]: https://hackerone.com/wp-api
+[hackerone]: https://hackerone.com/cutv-api

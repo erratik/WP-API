@@ -1,13 +1,13 @@
 {
-    "name": "wp-api/wp-api",
+    "name": "cutv-api/cutv-api",
     "type": "wordpress-plugin",
     "description": "Access your WordPress site's data through an easy-to-use HTTP REST API.",
-    "homepage": "http://wp-api.org/",
+    "homepage": "http://cutv-api.org/",
     "license": "GPL2+",
     "authors": [
         {
             "name": "WP-API Team",
-            "homepage": "http://wp-api.org/"
+            "homepage": "http://cutv-api.org/"
         }
     ],
     "support": {

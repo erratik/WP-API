@@ -24,14 +24,14 @@ if ( ! function_exists( 'rest_register_scripts' ) ) {
 		// Use minified scripts if SCRIPT_DEBUG is not on.
 		$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
 
-		wp_register_script( 'wp-api', plugins_url( 'wp-api' . $suffix . '.js', __FILE__ ), array( 'jquery', 'backbone', 'underscore' ), '1.2', true );
+		wp_register_script( 'wp-api', plugins_url( 'cutv-api' . $suffix . '.js', __FILE__ ), array( 'jquery', 'backbone', 'underscore' ), '1.2', true );
 
 		$settings = array(
 			'root'          => esc_url_raw( get_rest_url() ),
 			'nonce'         => wp_create_nonce( 'wp_rest' ),
-			'versionString' => 'wp/v2/',
+			'versionString' => 'cutv/v2/',
 		);
-		wp_localize_script( 'wp-api', 'wpApiSettings', $settings );
+		wp_localize_script( 'cutv-api', 'wpApiSettings', $settings );
 	}
 }
 
@@ -145,7 +145,7 @@ if ( ! function_exists( 'wp_is_numeric_array' ) ) {
  * @param string $date_string Date string to parse and format.
  * @return string Date formatted for ISO8601/RFC3339.
  */
-function rest_mysql_to_rfc3339( $date_string ) {
-	_deprecated_function( 'rest_mysql_to_rfc3339', 'WPAPI-2.0', 'mysql_to_rfc3339' );
+function cutv_rest_mysql_to_rfc3339( $date_string ) {
+	_deprecated_function( 'cutv_rest_mysql_to_rfc3339', 'WPAPI-2.0', 'mysql_to_rfc3339' );
 	return mysql_to_rfc3339( $date_string );
 }

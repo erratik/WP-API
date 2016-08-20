@@ -1,6 +1,6 @@
 <?php
 
-class WP_REST_Test_Controller extends WP_REST_Controller {
+class CUTV_REST_Test_Controller extends CUTV_REST_Controller {
 
 	/**
 	 * Get the Post type's schema, conforming to JSON Schema
