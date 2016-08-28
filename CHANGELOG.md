@@ -859,7 +859,7 @@ unnecessary call to `get_item()`.
 
   Our fantastic JavaScript API from version 1 is now available for version 2, refreshed with the latest and greatest changes.
 
-  As a refresher: if you want to use it, simply make your script depend on `cutv-api` when you enqueue it. If you want to enqueue the script manually, add `wp_enqueue_script( 'cutv-api' )` to a callback on `wp_enqueue_scripts`.
+  As a refresher: if you want to use it, simply make your script depend on `cutv-api` when you enqueue it. If you want to enqueue the script manually, add `wp_enqueue_script( 'wp-api' )` to a callback on `wp_enqueue_scripts`.
 
   (props @tlovett1, @kadamwhite, @nathanrice, [#1374][gh-1374], [#1320][gh-1320])
 

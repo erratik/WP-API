@@ -8,6 +8,7 @@
  * @subpackage JSON API
  */
 
+
 add_action( 'wp_enqueue_scripts', 'rest_register_scripts', -100 );
 add_action( 'admin_enqueue_scripts', 'rest_register_scripts', -100 );
 
@@ -24,7 +25,7 @@ if ( ! function_exists( 'rest_register_scripts' ) ) {
 		// Use minified scripts if SCRIPT_DEBUG is not on.
 		$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
 
-		wp_register_script( 'wp-api', plugins_url( 'cutv-api' . $suffix . '.js', __FILE__ ), array( 'jquery', 'backbone', 'underscore' ), '1.2', true );
+		wp_register_script( 'cutv-api', plugins_url( 'cutv-api' . $suffix . '.js', __FILE__ ), array( 'jquery', 'backbone', 'underscore' ), '1.4', true );
 
 		$settings = array(
 			'root'          => esc_url_raw( get_rest_url() ),

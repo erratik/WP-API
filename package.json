@@ -1,7 +1,7 @@
 {
   "name": "cutv-api",
   "version": "0.0.0",
-  "license" : "GPL-2.0+",
+  "license": "GPL-2.0+",
   "repository": {
     "type": "git",
     "url": "https://github.com/erratik/cutv-api.git"
@@ -10,9 +10,10 @@
   "author": "tayana jacques",
   "devDependencies": {
     "grunt": "^0.4.5",
-    "grunt-contrib-uglify": "~0.4.0",
-    "grunt-contrib-less": "~0.11.1",
+    "grunt-cli": "^1.2.0",
     "grunt-contrib-cssmin": "~0.9.0",
+    "grunt-contrib-less": "~0.11.1",
+    "grunt-contrib-uglify": "~0.4.0",
     "grunt-contrib-watch": "~0.6.1",
     "grunt-phpcs": "^0.4.0",
     "phplint": "^1.6.1"

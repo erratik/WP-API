@@ -1,3 +1,5 @@
+
+
 (function( window, undefined ) {
 
 	'use strict';
@@ -14,7 +16,7 @@
 
 	// Alias _includes to _.contains, ensuring it is available.
 	if ( ! _.isFunction( _.includes ) && _.isFunction( _.contains ) ) {
-	  _.includes = _.contains;
+		_.includes = _.contains;
 	}
 
 })( window );
@@ -102,8 +104,8 @@
 	 */
 	wp.api.utils.getRootUrl = function() {
 		return window.location.origin ?
-			window.location.origin + '/' :
-			window.location.protocol + '/' + window.location.host + '/';
+		window.location.origin + '/' :
+		window.location.protocol + '/' + window.location.host + '/';
 	};
 
 	/**
@@ -936,8 +938,8 @@
 			 */
 			hasMore: function() {
 				if ( null === this.state.totalPages ||
-					 null === this.state.totalObjects ||
-					 null === this.state.currentPage ) {
+					null === this.state.totalObjects ||
+					null === this.state.currentPage ) {
 					return null;
 				} else {
 					return ( this.state.currentPage < this.state.totalPages );
@@ -1021,40 +1023,40 @@
 		constructFromSchema: function() {
 			var routeModel = this, modelRoutes, collectionRoutes, schemaRoot, loadingObjects,
 
-			/**
-			 * Set up the model and collection name mapping options. As the schema is built, the
-			 * model and collection names will be adjusted if they are found in the mapping object.
-			 *
-			 * Localizing a variable wpApiSettings.mapping will over-ride the default mapping options.
-			 *
-			 */
-			mapping = wpApiSettings.mapping || {
-				models: {
-					'Categories':      'Category',
-					'Comments':        'Comment',
-					'Pages':           'Page',
-					'PagesMeta':       'PageMeta',
-					'PagesRevisions':  'PageRevision',
-					'Posts':           'Post',
-					'PostsCategories': 'PostCategory',
-					'PostsRevisions':  'PostRevision',
-					'PostsTags':       'PostTag',
-					'Schema':          'Schema',
-					'Statuses':        'Status',
-					'Tags':            'Tag',
-					'Taxonomies':      'Taxonomy',
-					'Types':           'Type',
-					'Users':           'User'
-				},
-				collections: {
-					'PagesMeta':       'PageMeta',
-					'PagesRevisions':  'PageRevisions',
-					'PostsCategories': 'PostCategories',
-					'PostsMeta':       'PostMeta',
-					'PostsRevisions':  'PostRevisions',
-					'PostsTags':       'PostTags'
-				}
-			};
+				/**
+				 * Set up the model and collection name mapping options. As the schema is built, the
+				 * model and collection names will be adjusted if they are found in the mapping object.
+				 *
+				 * Localizing a variable wpApiSettings.mapping will over-ride the default mapping options.
+				 *
+				 */
+				mapping = wpApiSettings.mapping || {
+						models: {
+							'Categories':      'Category',
+							'Comments':        'Comment',
+							'Pages':           'Page',
+							'PagesMeta':       'PageMeta',
+							'PagesRevisions':  'PageRevision',
+							'Posts':           'Post',
+							'PostsCategories': 'PostCategory',
+							'PostsRevisions':  'PostRevision',
+							'PostsTags':       'PostTag',
+							'Schema':          'Schema',
+							'Statuses':        'Status',
+							'Tags':            'Tag',
+							'Taxonomies':      'Taxonomy',
+							'Types':           'Type',
+							'Users':           'User'
+						},
+						collections: {
+							'PagesMeta':       'PageMeta',
+							'PagesRevisions':  'PageRevisions',
+							'PostsCategories': 'PostCategories',
+							'PostsMeta':       'PostMeta',
+							'PostsRevisions':  'PostRevisions',
+							'PostsTags':       'PostTags'
+						}
+					};
 
 			/**
 			 * Iterate thru the routes, picking up models and collections to build. Builds two arrays,
@@ -1075,8 +1077,8 @@
 
 				// Skip the schema root if included in the schema.
 				if ( index !== routeModel.get( ' versionString' ) &&
-						index !== schemaRoot &&
-						index !== ( '/' + routeModel.get( 'versionString' ).slice( 0, -1 ) )
+					index !== schemaRoot &&
+					index !== ( '/' + routeModel.get( 'versionString' ).slice( 0, -1 ) )
 				) {
 
 					// Single items end with a regex (or the special case 'me').
@@ -1099,9 +1101,9 @@
 
 				// Extract the name and any parent from the route.
 				var modelClassName,
-						routeName  = wp.api.utils.extractRoutePart( modelRoute.index, 2 ),
-						parentName = wp.api.utils.extractRoutePart( modelRoute.index, 4 ),
-						routeEnd   = wp.api.utils.extractRoutePart( modelRoute.index, 1 );
+					routeName  = wp.api.utils.extractRoutePart( modelRoute.index, 2 ),
+					parentName = wp.api.utils.extractRoutePart( modelRoute.index, 4 ),
+					routeEnd   = wp.api.utils.extractRoutePart( modelRoute.index, 1 );
 
 				// Handle the special case of the 'me' route.
 				if ( 'me' === routeEnd ) {
@@ -1117,11 +1119,11 @@
 						// Function that returns a constructed url based on the parent and id.
 						url: function() {
 							var url = routeModel.get( 'apiRoot' ) + routeModel.get( 'versionString' ) +
-									parentName +  '/' +
-									( ( _.isUndefined( this.get( 'parent' ) ) || 0 === this.get( 'parent' ) ) ?
-										this.get( 'parent_post' ) :
-										this.get( 'parent' ) ) + '/' +
-									routeName;
+								parentName +  '/' +
+								( ( _.isUndefined( this.get( 'parent' ) ) || 0 === this.get( 'parent' ) ) ?
+									this.get( 'parent_post' ) :
+									this.get( 'parent' ) ) + '/' +
+								routeName;
 							if ( ! _.isUndefined( this.get( 'id' ) ) ) {
 								url +=  '/' + this.get( 'id' );
 							}
@@ -1197,8 +1199,8 @@
 
 				// Extract the name and any parent from the route.
 				var collectionClassName, modelClassName,
-						routeName  = collectionRoute.index.slice( collectionRoute.index.lastIndexOf( '/' ) + 1 ),
-						parentName = wp.api.utils.extractRoutePart( collectionRoute.index, 3 );
+					routeName  = collectionRoute.index.slice( collectionRoute.index.lastIndexOf( '/' ) + 1 ),
+					parentName = wp.api.utils.extractRoutePart( collectionRoute.index, 3 );
 
 				// If the collection has a parent in its route, add that to its class name/
 				if ( '' !== parentName && parentName !== routeName ) {
@@ -1211,8 +1213,8 @@
 						// Function that returns a constructed url passed on the parent.
 						url: function() {
 							return routeModel.get( 'apiRoot' ) + routeModel.get( 'versionString' ) +
-									parentName + '/' + this.parent + '/' +
-									routeName;
+								parentName + '/' + this.parent + '/' +
+								routeName;
 						},
 
 						// Specify the model that this collection contains.
