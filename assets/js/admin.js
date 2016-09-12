@@ -1,5 +1,7 @@
 var $ = jQuery;
 var _tempData ;
+var editing_video_ids;
+
 jQuery(function($) {
 
     var bulk_action;
@@ -24,6 +26,7 @@ jQuery(function($) {
             switch(bulk_action) {
                 case 'publish':
                 case 'pending':
+                case 'untrash':
                 case 'trash':
                 case 'draft':
                     action_dataset = {
@@ -49,7 +52,6 @@ jQuery(function($) {
 
             // find the IDs that are getting edited
             editing_video_ids = getSelectedVideos();
-            console.log('editing '+ editing_video_ids.length +' video(s): ', editing_video_ids);
 
 
             _cutv.ajax(ajaxurl, action_dataset).then(function (action_result) {
@@ -58,10 +60,33 @@ jQuery(function($) {
                 // } else {
                 //
                 // }
-                console.log($('.wpvr_manage_bulk_actions_select').val(), bulk_action);
-                editSnaptubeVideos(bulk_action);
+                // console.log($('.wpvr_manage_bulk_actions_select').val(), bulk_action);
+                console.group('result from '+action_dataset.action);
+                console.info('[admin.js] edited '+ editing_video_ids.length +' video(s): ');
+                console.log(editing_video_ids);
+
+                console.group('full response: '+action_dataset.action);
+                console.debug(action_result);
+                console.groupEnd();
+
+                var result = JSON.parse(action_result.split('data:')[1]);
+                console.info('result typeof '+ typeof result);
+                console.debug(result);
+                console.groupEnd();
+
+
+                // TODO: split the actions better, no need to make a huge call to add videos if they already exist
+                // TODO: there should be addSnaptubeVideos() and an editSnaptubeVideo()
+                if (result.length) {
+                    console.log('got videos that exist');
+                    editSnaptubeVideos(bulk_action, result);
+
+                } else {
+                    console.log('got videos that don\'t exist');
+                    editSnaptubeVideos(bulk_action);
+                }
                 $('.wpvr_manage_refresh:eq(0)').click();
-                console.log(action_result);
+
 
             });
         })
@@ -177,7 +202,7 @@ function getSelectedVideos() {
     return editing_video_ids;
 }
 
-function editSnaptubeVideos(wp_action) {
+function editSnaptubeVideos(wp_action, videos) {
     var vids = [];
     if (wp_action == 'publish') {
 
@@ -213,6 +238,7 @@ function editSnaptubeVideos(wp_action) {
                             name: $video_wrapper.find('.wpvr_video_title').text(),
                             file: file_link,
                             slug: v.slug,
+                            tags: v.tags,
                             duration: $video_wrapper.find('.wpvr_video_duration').text(),
                             image: image,
                             opimage: image.replace('-200x150', ''),
@@ -228,28 +254,38 @@ function editSnaptubeVideos(wp_action) {
                     action: 'cutv_convert_snaptube',
                     videos: vids
                 }).then(function (data) {
-                    // todo : this should be a function
-                    $('.wpvr_manage_refresh:eq(0)').click();
-                    $('.cutv_bulk_apply').attr('style', 'display: none !important;');
-                    $('.wpvr_manage_bulk_actions_select').val('');
-                    console.log(data);
+                    finishBulkAction('cutv_convert_snaptube', data);
                 });
             }
         });
     } else {
 
         _cutv.ajax(ajaxurl, {
-            action: 'cutv_convert_snaptube',
-            videos: editing_video_ids,
+            action: 'cutv_clear_snaptube_video',
+            videos: videos,
             status: wp_action
         }).then(function (data) {
-            // todo : this should be a function
-            $('.wpvr_manage_refresh:eq(0)').click();
-            $('.cutv_bulk_apply').attr('style', 'display: none !important;');
-            $('.wpvr_manage_bulk_actions_select').val('');
-            console.log(data);
+            finishBulkAction('cutv_clear_snaptube_video', data);
         });
     }
+}
+
+function finishBulkAction(action, response) {
+
+    $('.wpvr_manage_refresh:eq(0)').click();
+    $('.cutv_bulk_apply').attr('style', 'display: none !important;');
+    $('.wpvr_manage_bulk_actions_select').val('');
+
+    // console.group('result from '+action);
+
+    console.group('full response: ' + action);
+    console.debug(response);
+    console.groupEnd();
+
+    // var result = JSON.parse(response.split('data:')[1]);
+    // console.info('result typeof '+ typeof result);
+    // console.debug(result);
+    // console.groupEnd();
 }
 DEBUG_LEVEL = window.location.hostname == 'cutv.dev' ? 3 : 0;
 if (navigator.appName == "Microsoft Internet Explorer") DEBUG_LEVEL = 0;
