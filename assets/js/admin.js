@@ -9,14 +9,11 @@ jQuery(function($) {
     var adding_video_count = 0;
     var action_dataset;
 
+    var button_html = '<div class="cutv_bulk_apply pull-left">'
+        + '<button class="ui labeled icon button"><i class="add circle icon"></i>Apply to  <span class="wpvr_count_checked"></span> videos</button></div>';
+    $('.wpvr_manage_bulk_actions').append(button_html);
+
     $('body')
-
-        .one('mouseover', '.wpvr_video', function(e) {
-            var button_html = '<div class="cutv_bulk_apply pull-left">'
-                            + '<button class="ui labeled icon button"><i class="add circle icon"></i>Apply to  <span class="wpvr_count_checked"></span> videos</button></div>';
-            $('.wpvr_manage_bulk_actions').append(button_html);
-
-        })
         .on('change', '.wpvr_manage_bulk_actions_select', function() {
 
             // SET THE CHOSEN BULK ACTION
@@ -55,12 +52,7 @@ jQuery(function($) {
 
 
             _cutv.ajax(ajaxurl, action_dataset).then(function (action_result) {
-                // if (bulk_action == 'publish') {
-                //
-                // } else {
-                //
-                // }
-                // console.log($('.wpvr_manage_bulk_actions_select').val(), bulk_action);
+
                 console.group('result from '+action_dataset.action);
                 console.info('[admin.js] edited '+ editing_video_ids.length +' video(s): ');
                 console.log(editing_video_ids);
@@ -75,8 +67,6 @@ jQuery(function($) {
                 console.groupEnd();
 
 
-                // TODO: split the actions better, no need to make a huge call to add videos if they already exist
-                // TODO: there should be addSnaptubeVideos() and an editSnaptubeVideo()
                 if (result.length) {
                     console.log('got videos that exist');
                     editSnaptubeVideos(bulk_action, result);
@@ -125,7 +115,6 @@ jQuery(function($) {
 
     // console.log( "Triggered ajaxSuccess handler. The Ajax response was: " + xhr.responseText );
 
-
     if ( url.search('bulk_single_action') > 0 ) {
 
         console.log( "URL: " + url );
@@ -138,57 +127,6 @@ jQuery(function($) {
 });
 
 
-var _cutv = {
-    ajax : function(url, data, options) {
-        return new MakePromise({ url: url, data: data, options: options });
-    }
-};
-function MakePromise(options){
-
-    //log({msg: "A promise is being made...", color: 'purple' });
-
-    var params = {
-        method: 'POST',
-        cache: true,
-        showErrors: true,
-        success: function(result) {
-            //log({msg:"Promise went through!", color: 'purple' });
-            //console.groupEnd();
-            promise.resolve(result);
-        },
-        error: function(jqXHR, textStatus, error) {
-
-            if ( jqXHR.status == 400 ) {
-                errorMessage = jqXHR.responseText;
-                log({msg: "%c(╯°□°）╯ should be accompanied by custom message to display", color: 'red' });
-                log({msg: errorMessage , color: 'red' });
-
-
-            } else {
-                log({msg: "%c(╯°□°）╯", color: 'red' });
-                errorMessage = { error: jqXHR.message, statusCode: jqXHR.code};
-            }
-
-            promise.reject(errorMessage);
-        }
-    };
-
-    $.extend(params, options.options);
-
-    var promise = $.Deferred();
-    $.ajax({
-        type: params.method,
-        url: options.url,
-        data: options.data,
-        success: params.success,
-        error: params.error,
-        beforeSend: function ( xhr ) {
-            xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
-        }
-    });
-    // console.log(promise)
-    return promise;
-}
 
 function getSelectedVideos() {
 
@@ -286,6 +224,59 @@ function finishBulkAction(action, response) {
     // console.info('result typeof '+ typeof result);
     // console.debug(result);
     // console.groupEnd();
+}
+
+// UTILS
+var _cutv = {
+    ajax : function(url, data, options) {
+        return new MakePromise({ url: url, data: data, options: options });
+    }
+};
+function MakePromise(options){
+
+    //log({msg: "A promise is being made...", color: 'purple' });
+
+    var params = {
+        method: 'POST',
+        cache: true,
+        showErrors: true,
+        success: function(result) {
+            //log({msg:"Promise went through!", color: 'purple' });
+            //console.groupEnd();
+            promise.resolve(result);
+        },
+        error: function(jqXHR, textStatus, error) {
+
+            if ( jqXHR.status == 400 ) {
+                errorMessage = jqXHR.responseText;
+                log({msg: "%c(╯°□°）╯ should be accompanied by custom message to display", color: 'red' });
+                log({msg: errorMessage , color: 'red' });
+
+
+            } else {
+                log({msg: "%c(╯°□°）╯", color: 'red' });
+                errorMessage = { error: jqXHR.message, statusCode: jqXHR.code};
+            }
+
+            promise.reject(errorMessage);
+        }
+    };
+
+    $.extend(params, options.options);
+
+    var promise = $.Deferred();
+    $.ajax({
+        type: params.method,
+        url: options.url,
+        data: options.data,
+        success: params.success,
+        error: params.error,
+        beforeSend: function ( xhr ) {
+            xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
+        }
+    });
+    // console.log(promise)
+    return promise;
 }
 DEBUG_LEVEL = window.location.hostname == 'cutv.dev' ? 3 : 0;
 if (navigator.appName == "Microsoft Internet Explorer") DEBUG_LEVEL = 0;

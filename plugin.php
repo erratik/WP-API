@@ -434,9 +434,10 @@ if (!function_exists('rest_sanitize_request_arg')) {
 
 global $wpdb;
 define('CUTV_MAIN_FILE', __FILE__);
-define('HDFLVVIDEOSHARE', $wpdb->prefix . 'hdflvvideoshare');
-define('WVG_PLAYLIST', $wpdb->prefix . 'hdflvvideoshare_playlist');
-define('WVG_MED2PLAY', $wpdb->prefix . 'hdflvvideoshare_med2play');
+define('SNAPTUBE_VIDEOS', $wpdb->prefix . 'hdflvvideoshare');
+define('SNAPTUBE_PLAYLISTS', $wpdb->prefix . 'hdflvvideoshare_playlist');
+define('SNAPTUBE_PLAYLIST_RELATIONS', $wpdb->prefix . 'hdflvvideoshare_med2play');
+define('SNAPTUBE_TAGS', $wpdb->prefix . 'hdflvvideoshare_tags');
 
 /* Including functions definitions */
 require_once('cutv.definitions.php');
@@ -464,15 +465,15 @@ function cutv_add_channel()
 //        $parent_term = term_exists( 'channel' ); // array is returned if taxonomy is given
 //        $parent_term_id = $parent_term['term_id']; // get numeric term id
 
-        $playlists = $wpdb->get_results( 'SELECT * FROM ' . WVG_PLAYLIST );
+        $playlists = $wpdb->get_results( 'SELECT * FROM ' . SNAPTUBE_PLAYLISTS );
 
-        $query = $wpdb->prepare("INSERT INTO " . WVG_PLAYLIST . " (pid, playlist_name, playlist_slugname, playlist_desc, is_publish, playlist_order) VALUES ( %d, %s, %s, %s, %d, %d )",
+        $query = $wpdb->prepare("INSERT INTO " . SNAPTUBE_PLAYLISTS . " (pid, playlist_name, playlist_slugname, playlist_desc, is_publish, playlist_order) VALUES ( %d, %s, %s, %s, %d, %d )",
             array($cat_id, $channelName, $slug, $description, 1, count($playlists))
         );
         $wpdb->query($query);
 
 
-        $playlistsUpdated = $wpdb->get_results('SELECT * FROM ' . WVG_PLAYLIST);
+        $playlistsUpdated = $wpdb->get_results('SELECT * FROM ' . SNAPTUBE_PLAYLISTS);
 
         // Now we'll return it to the javascript function
         // Anything outputted will be returned in the response
@@ -609,7 +610,7 @@ function cutv_convert_snaptube()
 
             // SET FILE (youtube link) FIELDS, USED TO ADD/REMOVE SNAPTUBE VIDEO
             $file = $video['file'];
-            $video_exists = $wpdb->get_row( "SELECT vid FROM " . HDFLVVIDEOSHARE ." WHERE file = '$file'");
+            $video_exists = $wpdb->get_row( "SELECT vid FROM " . SNAPTUBE_VIDEOS ." WHERE file = '$file'");
 
 
             echo 'original wpvr id => ' . $video_id, "\n";
@@ -618,7 +619,7 @@ function cutv_convert_snaptube()
             $description = $post[0]->post_content;
             $post_date = $post[0]->post_date;
             $name = $post[0]->post_title;
-            $vid = $wpdb->get_results("SELECT vid FROM " . HDFLVVIDEOSHARE ." ORDER BY vid DESC LIMIT 1");
+            $vid = $wpdb->get_results("SELECT vid FROM " . SNAPTUBE_VIDEOS ." ORDER BY vid DESC LIMIT 1");
             $vid = $vid[0]->vid + 1;
 
 
@@ -646,7 +647,7 @@ function cutv_convert_snaptube()
                 $amazon_buckets = 0;
 
                 // GET ALL SNAPTUBE VIDEOS TO GET COUNT & ORDERING
-                $videos = $wpdb->get_results("SELECT * FROM " . HDFLVVIDEOSHARE);
+                $videos = $wpdb->get_results("SELECT * FROM " . SNAPTUBE_VIDEOS);
                 $ordering = count($videos) + 2;
 
 
@@ -672,8 +673,8 @@ function cutv_convert_snaptube()
                 $post_id = wp_insert_post( $my_post );
                 add_post_meta( $post_id, '_vc_post_settings', 'a:1:{s:10:"vc_grid_id";a:0:{}}', true );
 
-                // INSERT INTO SNAPTUBE VIDEO TABLE (HDFLVVIDEOSHARE)
-                $query_vids = $wpdb->prepare("INSERT INTO " . HDFLVVIDEOSHARE ." (vid, name, description, file, slug, file_type, duration, image, opimage, download, link, featured, post_date, publish, islive, member_id, ordering, amazon_buckets) VALUES ( %d, %s, %s, %s, %d, %d, %s, %s, %s, %d, %s, %d, %s, %d, %d, %d, %d, %d )",
+                // INSERT INTO SNAPTUBE VIDEO TABLE (SNAPTUBE_VIDEOS)
+                $query_vids = $wpdb->prepare("INSERT INTO " . SNAPTUBE_VIDEOS ." (vid, name, description, file, slug, file_type, duration, image, opimage, download, link, featured, post_date, publish, islive, member_id, ordering, amazon_buckets) VALUES ( %d, %s, %s, %s, %d, %d, %s, %s, %s, %d, %s, %d, %s, %d, %d, %d, %d, %d )",
                     array($vid, $name, $description, $file, $post_id, $file_type, $duration, $image, $opimage, $download, $link, $featured, $post_date, $publish, $islive, $member_id, $ordering, $amazon_buckets)
                 );
 
@@ -681,51 +682,50 @@ function cutv_convert_snaptube()
                 // print_r($query_vids);
                 $wpdb->query($query_vids);
 
-                // INSERT INTO MED2PLAY TABLE
+                // INSERT INTO SNAPTUBE_PLAYLIST_RELATIONS TABLE
                 // @this is the category table sort of
                 echo '[categories ('.count($categories).')] ', "\n";
                 if (count($categories) == 0) {
                     $categories = array(1);
                 }
-
-                print_r($categories);
-                echo  "\n" . PHP_EOL;
+//                print_r($categories);
+//                echo  "\n" . PHP_EOL;
                 foreach ($categories as $value) {
 
-                    $med2play = $wpdb->get_results("SELECT rel_id FROM " . WVG_MED2PLAY ." ORDER BY rel_id DESC LIMIT 1");
-                    print_r($med2play);
+                    $med2play = $wpdb->get_results("SELECT rel_id FROM " . SNAPTUBE_PLAYLIST_RELATIONS . " ORDER BY rel_id DESC LIMIT 1");
+//                    print_r($med2play);
                     $rel_id = $med2play[0]->rel_id + 1;
 
-                    $playlist_attr_exists = $wpdb->get_results('SELECT * FROM ' . WVG_MED2PLAY . " WHERE rel_id='". $rel_id ."'");
+                    $playlist_attr_exists = $wpdb->get_results('SELECT * FROM ' . SNAPTUBE_PLAYLIST_RELATIONS . " WHERE rel_id='" . $rel_id . "'");
 
-                    print_r($playlist_attr_exists);
-                    echo  "\n" . PHP_EOL;
+//                    print_r($playlist_attr_exists);
+                    echo "\n" . PHP_EOL;
 
                     if (count($playlist_attr_exists) > 0) {
 
-                        echo "rel_id => ". $rel_id, ",  updating playlist value => ". $value;
-                        echo  "\n" . PHP_EOL;
+                        echo "rel_id => " . $rel_id, ",  updating playlist value => " . $value;
+                        echo "\n" . PHP_EOL;
 
                         $updated = $wpdb->update(
-                            WVG_MED2PLAY,
+                            SNAPTUBE_PLAYLIST_RELATIONS,
                             array(
-                                'playlist_id' => $value	// integer (number)
+                                'playlist_id' => $value    // integer (number)
                             ),
-                            array( 'rel_id' => $rel_id ),
+                            array('rel_id' => $rel_id),
                             array(
-                                '%d'	// value2
+                                '%d'    // value2
                             ),
-                            array( '%d' )
+                            array('%d')
                         );
 //                        print_r($updated);
-                        echo  "\n" . PHP_EOL;
+                        echo "\n" . PHP_EOL;
                     } else {
 
-                        echo "rel_id => ". $rel_id, ",  new playlist value => ". $value;
-                        echo  "\n" . PHP_EOL;
+                        echo "rel_id => " . $rel_id, ",  new playlist value => " . $value;
+                        echo "\n" . PHP_EOL;
 
-                        $query_med2play = $wpdb->prepare("INSERT INTO " . WVG_MED2PLAY . " (rel_id, media_id, playlist_id, porder, sorder) VALUES ( %d, %d, %d, %d, %d ) ",
-                            array(  $rel_id, $vid, $value, 0, 0)
+                        $query_med2play = $wpdb->prepare("INSERT INTO " . SNAPTUBE_PLAYLIST_RELATIONS . " (rel_id, media_id, playlist_id, porder, sorder) VALUES ( %d, %d, %d, %d, %d ) ",
+                            array($rel_id, $vid, $value, 0, 0)
                         );
 //                        echo  "\n" . PHP_EOL;
 //                        print_r($query_med2play);
@@ -736,22 +736,100 @@ function cutv_convert_snaptube()
 
                 }
 
-                echo '[snaptube video converted] '. get_site_url() .'/wp-json/cutv/v2/videos/'. $video_id, "\n";
+                // INSERT INTO SNAPTUBE_TAGS TABLE
+                // @this is the category table sort of
+                $tags = $video['tags'];
+                echo '[tags ('.count($tags).')] ', "\n";
+                if ($tags != null) {
 
+                    $t = 0;
+                    $tag_str = '';
+                    $safe_concat_str = '';
+                    foreach ($tags as $tag_id) {
+                        // get the tag content
+                        $posttags = get_term( $tag_id );
+                        if ($posttags != null) {
+//                                echo $t, count($tags)-1,  $posttags->term_id, $posttags->name,  hyphenize($posttags->name), "\n";
+                            $tag_str .= $posttags->name;
+                            $safe_concat_str .= hyphenize($posttags->name);
+                            if (count($tags)-1 != $t) {
+                                $tag_str .= ',';
+                                $safe_concat_str .= '-';
+                            }
+                            $t++;
+                        }
+                    }
+
+                    // concat tags into one string: tag1, tag2, tagetc (as is chars)
+                    echo $tag_str, "\n";
+
+                    // concat tags, dashed-separated, no special chars
+                    echo $safe_concat_str, "\n";
+
+                    // update the tags if the video already has tags (find media_id)
+                    $tags_exist = $wpdb->get_results('SELECT * FROM ' . SNAPTUBE_TAGS . " WHERE media_id='". $vid ."'");
+                    //Print_r($tags_exist);
+//                    echo  "\n" . PHP_EOL;
+
+
+                    echo "vtag_id for snaptube video #", $tags_exist[0]->media_id," => " . $tags_exist[0]->vtag_id, ",  updating tag seo_name => " . strtolower($safe_concat_str), ",  updating tag tags_name => " . $tag_str, "\n";
+                    echo  "\n" . PHP_EOL;
+
+                    if (count($tags_exist)) {
+                        $updated = $wpdb->update(
+                            SNAPTUBE_TAGS,
+                            array(
+                                'seo_name' => strtolower($safe_concat_str),   // integer (number)
+                                'tags_name' => $tag_str    // integer (number)
+                            ),
+                            array('media_id' => $vid),
+                            array(
+                                '%s',
+                                '%s'
+                            ),
+                            array('%d')
+                        );
+
+                    } else {
+
+                        // get the tag rows, getting the last vtag_id as new row key
+                        $snaptube_tags = $wpdb->get_results("SELECT * FROM " . SNAPTUBE_TAGS ." ORDER BY vtag_id DESC LIMIT 1");
+                        $new_tag_id = $snaptube_tags[0]->vtag_id + 1;
+                        echo '[new tag id] ', $new_tag_id, "\n";
+
+                        $query_tags = $wpdb->prepare("INSERT INTO " . SNAPTUBE_TAGS . " (vtag_id, tags_name, seo_name, media_id) VALUES ( %d, %s, %s, %d) ",
+                            array($new_tag_id, $tag_str, strtolower($safe_concat_str), $vid)
+                        );
+                        $wpdb->query($query_tags);
+                    }
+
+                }
+                echo '[snaptube video converted] '. get_site_url() .'/wp-json/cutv/v2/videos/'. $video_id, "\n";
 
             }
 
-
-
         }
-
-
 
     }
 
     // Always die in functions echoing ajax content
     die();
 }
+function hyphenize($string) {
+    return
+
+        ## strtolower(
+        preg_replace(
+            array('#[\\s-]+#', '#[^A-Za-z0-9\-]+#'),
+            array('-', ''),
+            ##     cleanString(
+            urldecode($string)
+        ##     )
+        )
+        ## )
+        ;
+}
+
 add_action('wp_ajax_cutv_convert_snaptube', 'cutv_convert_snaptube');
 
 
@@ -762,20 +840,23 @@ function cutv_clear_snaptube_video()
     if (isset($_REQUEST)) {
         global $wpdb;
 
-        print_r($_REQUEST['videos']);
+//        print_r($_REQUEST['videos']);
 
         foreach ($_REQUEST['videos'] as $snaptube_id) {
 
-            $snaptube_video = $wpdb->get_row( "SELECT * FROM " . HDFLVVIDEOSHARE ." WHERE slug = '$snaptube_id'");
+            $snaptube_video = $wpdb->get_row( "SELECT * FROM " . SNAPTUBE_VIDEOS ." WHERE slug = '$snaptube_id'");
             echo '[snaptubes] trying to clean out snaptube #', $snaptube_video->vid, "\n";
-            print_r($snaptube_video);
+//            print_r($snaptube_video);
             echo '[wp_posts] trying to clean out videogallery #', $snaptube_id, "\n";
+
+//            // CLEAN THE SNAPTUBE_VIDEOS
+            $wpdb->delete( SNAPTUBE_VIDEOS, array( 'vid' => $snaptube_video->vid ) );
 //
-//            // CLEAN THE HDFLVVIDEOSHARE
-            $wpdb->delete( HDFLVVIDEOSHARE, array( 'vid' => $snaptube_video->vid ) );
-//
-//            // CLEAN THE MED2PLAY (POSTS IN PLAYLISTS)
-            $wpdb->delete( WVG_MED2PLAY, array( 'media_id' => $snaptube_video->vid ) );
+//            // CLEAN THE SNAPTUBE_PLAYLIST_RELATIONS (POSTS IN PLAYLISTS)
+            $wpdb->delete( SNAPTUBE_PLAYLIST_RELATIONS, array( 'media_id' => $snaptube_video->vid ) );
+
+//            // CLEAN THE SNAPTUBE_TAGS
+            $wpdb->delete( SNAPTUBE_TAGS, array( 'media_id' => $snaptube_video->vid ) );
 
 //            // CLEAN THE POSTS TABLE FROM THE SNAPTUBE VIDEOS
             $wpdb->delete( $wpdb->posts, array( 'ID' => $snaptube_id ) );
@@ -784,259 +865,6 @@ function cutv_clear_snaptube_video()
             $wpdb->delete( $wpdb->postmeta, array( 'post_id' => $snaptube_id ) );
 
         }
-
-        /*
-                foreach ($_REQUEST['videos'] as $video) {
-                    // GET THE WPVR VIDEO'S INFO
-                    $video_id = $video['id'];
-
-                    if (isset($_REQUEST['status'])) {
-                        $video_id = $video;
-
-                        $post = $wpdb->get_results("SELECT * FROM $wpdb->posts WHERE ID = $video_id");
-
-                        $video_exists = $wpdb->get_row( "SELECT * FROM $wpdb->posts WHERE post_title = '".$post[0]->post_title."' AND post_type='videogallery'");
-                        echo '('.$video_id.') change video status: ' . $_REQUEST['status'];
-
-
-                        echo  "\n" . PHP_EOL;
-                    } else {
-
-                        // ATTEMPT TO PUBLISH WPVR VIDEO AS SNAPTUBE VIDEOS
-                        $post = $wpdb->get_results("SELECT * FROM $wpdb->posts WHERE ID = $video_id");
-
-                        // SET FILE (youtube link) FIELDS, USED TO ADD/REMOVE SNAPTUBE VIDEO
-                        $file = $video['file'];
-                        $video_exists = $wpdb->get_row( "SELECT vid FROM " . HDFLVVIDEOSHARE ." WHERE file = '$file'");
-                    }
-
-
-
-                    echo 'video id: ' . $video_id;
-                    echo  "\n" . PHP_EOL;
-                    // FIELDS TO CREATE THE SNAPTUBE VIDEO FROM WPVR VIDEO
-                    $description = $post[0]->post_content;
-                    $post_date = $post[0]->post_date;
-                    $name = $post[0]->post_title;
-                    $vid = $wpdb->get_results("SELECT vid FROM " . HDFLVVIDEOSHARE ." ORDER BY vid DESC LIMIT 1");
-                    $vid = $vid[0]->vid + 1;
-
-
-
-                    // CHECK THAT VIDEO GALLERY POST DOESN'T ALREADY EXIST
-                    if (isset($video_exists)) {
-                        echo 'this video exists as vid-> '.$video_exists->vid ;
-                        echo  "\n" . PHP_EOL;
-                        print_r($video_exists);
-                        echo  "\n" . PHP_EOL;
-
-
-                        $video_published = $wpdb->get_row( "SELECT * FROM $wpdb->posts WHERE post_title = '".$post[0]->post_title."' AND post_type='videogallery'");;
-
-                        echo '('.$video_published->ID.') video exists!!! ';
-                        echo  "\n" . PHP_EOL;
-                        echo '('.$post[0]->ID.') video exists!!! ';
-                        echo  "\n" . PHP_EOL;
-
-                        $wpvr_video_id = $post[0]->ID;
-
-                        if (isset($_REQUEST['status'])) {
-
-                            // VIDEO IS ALREADY IN SNAPTUBE
-                            echo($post[0]->post_title.' => '. $_REQUEST['status']);
-
-                            $vid_gallery_post = $wpdb->get_row("SELECT * FROM $wpdb->posts WHERE post_title = '".$post[0]->post_title."' AND post_type='videogallery'");
-                            // print_r($vid_gallery_post);
-                            // echo  "\n" . PHP_EOL;
-
-                            $snaptube_video = $wpdb->get_row( "SELECT * FROM " . HDFLVVIDEOSHARE ." WHERE slug = ". $wpvr_video_id);
-
-                            // CLEAN THE HDFLVVIDEOSHARE
-                            echo 'trying to clean out : '.$snaptube_video->vid;
-                            echo  "\n" . PHP_EOL;
-
-                            $wpdb->delete( HDFLVVIDEOSHARE, array( 'vid' => $snaptube_video->vid ) );
-
-                            // CLEAN THE MED2PLAY (POSTS IN PLAYLISTS)
-                            $wpdb->delete( WVG_MED2PLAY, array( 'media_id' => $snaptube_video->vid ) );
-
-                            // CLEAN THE POSTS TABLE FROM THE SNAPTUBE VIDEOS
-                            // $wpdb->delete( $wpdb->posts, array( 'ID' => $video_published->ID ) );
-
-                            // CLEAN THE POST META
-                            $wpdb->delete( $wpdb->postmeta, array( 'post_id' => $video_id ) );
-                            $wpdb->delete( $wpdb->postmeta, array( 'post_id' => $video_published->ID ) );
-
-
-                        } else {
-                            echo $post[0]->post_title.':  already published, '. get_site_url() .'/wp-json/cutv/v2/videos/'. $wpvr_video_id;
-                            echo  "\n" . PHP_EOL;
-                        }
-                    } else {
-
-                        echo 'video  does NOT exists!!! -> ';
-                        // found no videos in snaptube...
-                        echo '('.$file.') should be added to snaptube';
-                        echo  "\n" . PHP_EOL;
-
-
-                        // FIELDS ADDED TO CREATE SNAPTUBE VIDEOS
-                        $slug = $post[0]->post_name;
-                        $member_id = $post[0]->post_author;
-                        $duration = $video['duration'];
-                        $image = $video['image'];
-                        $opimage = $video['opimage'];
-                        $link = $video['link'];
-
-                        // STANDARD SNAPTUBE VIDEO SHITg
-                        $featured       = 1;
-                        $download       = 0;
-                        $publish        = 1;
-                        $file_type      = 1;
-                        $islive         = 0;
-                        $amazon_buckets = 0;
-
-                        // GET ALL SNAPTUBE VIDEOS TO GET COUNT & ORDERING
-                        $videos = $wpdb->get_results("SELECT * FROM " . HDFLVVIDEOSHARE);
-                        $ordering = count($videos) + 1;
-
-
-                        // FIELDS TO CREATE THE SNAPTUBE VIDEO POST (THIS IS THE POST DISPLAYED ON THE SITE)
-                        $categories = $video['categories'];
-
-
-                        // CREATE POST DATA, USE THAT ID AS THE SLUG FOR THE VIDEO ROW
-                        $my_post = array();
-                        $my_post['post_title']    = $name;
-                        $my_post['post_content']  = '[hdvideo id='.$vid.']';
-                        $my_post['post_status']   = 'publish';
-                        $my_post['post_author']   = $member_id;
-                        $my_post['post_type']   = 'videogallery';
-                        $my_post['post_category'] = $categories;
-
-
-
-                        // IF VIDEO IS ALREADY IN wp_posts TABLE, USE THAT DATA
-                        $update_posts = $wpdb->get_results("SELECT * FROM $wpdb->posts WHERE post_content = '".$description."' AND post_type = 'wpvr_video'");
-
-                        echo  "updating post?"." => SELECT * FROM $wpdb->posts WHERE post_content = '".$description."' AND post_type = 'wpvr_video'";
-                        echo  "\n" . PHP_EOL;
-
-                        if (count($update_posts) > 0) {
-                            echo  "\n" . PHP_EOL;
-                            echo  'how many posts were updated? '.count($update_posts);
-                            echo  "\n" . PHP_EOL;
-
-                            foreach ($update_posts as $wpvr_update_post) {
-
-
-                                if (isset($_REQUEST['status'])) {
-                                    echo '(do: '.$_REQUEST['status'].') update post => '. $wpvr_update_post->ID;
-                                    echo  "\n" . PHP_EOL;
-
-                                    $snaptube_video = $wpdb->get_row( "SELECT * FROM " . HDFLVVIDEOSHARE ." WHERE slug = ". $wpvr_update_post->ID);
-
-                                    print_r($snaptube_video);
-                                    echo  "\n" . PHP_EOL;
-
-                                    // CLEAN THE POSTS TABLE FROM THE SNAPTUBE VIDEOS
-                                    $wp_video_post = $wpdb->get_results("SELECT * FROM $wpdb->posts WHERE post_content = '".$my_post['post_content']."'");
-                                    //$wpdb->delete( $wpdb->posts, array( 'ID' => $wp_video_post->vid ) );
-                                    echo 'found the wpvr video post: '.$wp_video_post->ID;
-                                    echo  "\n" . PHP_EOL;
-                                    print_r($wp_video_post);
-                                    echo  "\n" . PHP_EOL;
-
-                                    if ($_REQUEST['status'] != 'delete') {
-
-                                        echo 'trying to clean out snaptube video id #'.$snaptube_video->vid;
-                                        echo  "\n" . PHP_EOL;
-
-                                        // CLEAN THE HDFLVVIDEOSHARE
-                                        $wpdb->delete( HDFLVVIDEOSHARE, array( 'vid' => $snaptube_video->vid ) );
-
-                                        // CLEAN THE MED2PLAY (POSTS IN PLAYLISTS)
-                                        $wpdb->delete( WVG_MED2PLAY, array( 'media_id' => $snaptube_video->vid ) );
-
-                                        // CLEAN THE POST META
-                                        //$wpdb->delete( $wpdb->postmeta, array( 'post_id' => $video_id ) );
-                                        //$wpdb->delete( $wpdb->postmeta, array( 'post_id' => $wpvr_update_post->ID ) );
-
-                                    } else if ($_REQUEST['status'] != 'untrash') {
-                                        // Update post to pending since we don't necessarily want to publish it either
-                                        $update_wpvr_post = array(
-                                            'ID'           => $wp_video_post->ID,
-                                            'post_status'   => 'pending',
-                                        );
-
-                                        echo 'update_wpvr_post => ';
-                                        print_r($update_wpvr_post);
-                                        echo  "\n" . PHP_EOL;
-
-                                        // Update the post into the database
-        //                                wp_update_post( $my_post );
-                                    }
-                                } else {
-
-                                    echo '(do: publish) add wpvr video => '. $wpvr_update_post->ID;
-                                    echo  "\n" . PHP_EOL;
-
-                                    add_post_meta( $wpvr_update_post->ID, '_vc_post_settings', 'a:1:{s:10:"vc_grid_id";a:0:{}}', true );
-
-                                    // INSERT INTO SNAPTUBE VIDEO TABLE (HDFLVVIDEOSHARE)
-                                    $query_vids = $wpdb->prepare("INSERT INTO " . HDFLVVIDEOSHARE ." (vid, name, description, file, slug, file_type, duration, image, opimage, download, link, featured, post_date, publish, islive, member_id, ordering, amazon_buckets) VALUES ( %d, %s, %s, %s, %d, %d, %s, %s, %s, %d, %s, %d, %s, %d, %d, %d, %d, %d )",
-                                        array($vid, $name, $description, $file, $wpvr_update_post->ID, $file_type, $duration, $image, $opimage, $download, $link, $featured, $post_date, $publish, $islive, $member_id, $ordering, $amazon_buckets)
-                                    );
-
-                                    // echo  "\n" . PHP_EOL;
-                                    // print_r($query_vids);
-                                    $wpdb->query($query_vids);
-
-                                    // INSERT INTO MED2PLAY TABLE
-                                    // @this is the category table sort of
-                                    foreach ($categories as $value) {
-
-                                        $med2play = $wpdb->get_results('SELECT * FROM ' . WVG_MED2PLAY);
-                                        $query_med2play = $wpdb->prepare("INSERT INTO " . WVG_MED2PLAY . " (rel_id, media_id, playlist_id, porder, sorder) VALUES ( %d, %d, %d, %d, %d )",
-                                            array( $vid, count($med2play) + 1, $value, 0, 0)
-                                        );
-                                        // echo  "\n" . PHP_EOL;
-                                        // print_r($query_med2play);
-                                        $wpdb->query($query_med2play);
-                                    }
-
-                                    // INSERT THE POST TO wp_posts AS A video_gallery, WITH UNIQUE VC POST META
-                                    $post_id = wp_insert_post( $my_post );
-                                    add_post_meta( $post_id, '_vc_post_settings', 'a:1:{s:10:"vc_grid_id";a:0:{}}', true );
-                                    // INSERT INTO SNAPTUBE VIDEO TABLE (HDFLVVIDEOSHARE)
-                                    $query_vids = $wpdb->prepare("INSERT INTO " . HDFLVVIDEOSHARE ." (vid, name, description, file, slug, file_type, duration, image, opimage, download, link, featured, post_date, publish, islive, member_id, ordering, amazon_buckets) VALUES ( %d, %s, %s, %s, %d, %d, %s, %s, %s, %d, %s, %d, %s, %d, %d, %d, %d, %d )",
-                                        array($vid, $name, $description, $file, $post_id, $file_type, $duration, $image, $opimage, $download, $link, $featured, $post_date, $publish, $islive, $member_id, $ordering, $amazon_buckets)
-                                    );
-                                    // echo  "\n" . PHP_EOL;
-                                    // print_r($query_vids);
-                                    $wpdb->query($query_vids);
-
-                                }
-
-
-                            }
-                        } else {
-
-
-                        }
-
-
-
-
-
-                    }
-                    echo  "\n" . PHP_EOL;
-
-
-
-                }
-        */
-
 
     }
 
