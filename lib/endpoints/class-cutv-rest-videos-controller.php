@@ -1707,6 +1707,7 @@ class CUTV_REST_Videos_Controller extends CUTV_REST_Controller {
 			'description'       => __( 'Limit result set to posts assigned a specific status.' ),
 			'sanitize_callback' => 'sanitize_key',
 			'type'              => 'string',
+            'enum'               => array( 'publish', 'pending', 'trash' ),
 			'validate_callback' => array( $this, 'validate_user_can_query_private_statuses' ),
 		);
 		$params['filter'] = array(

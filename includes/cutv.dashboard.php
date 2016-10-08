@@ -8,123 +8,13 @@
 	wp_enqueue_script( 'cutv-api' );
 ?>
 
-<script>
-	jQuery(document).ready(function($) {
-
-		// We'll pass this variable to the PHP function cutv_add_channel
-
-
-		$('body')
-
-            .on('click', '.wpvr_manage_bulkApply', function() {
-                console.log('save the posts');
-                // find the IDs thar are getting edited
-                console.log($('.wpvr_video.checked').length);
-            })
-            // CREATE A WPVR CATEGORY
-            .on('click', '#add-category-button', function(){
-                var channelName = $('[name="cutv-new-channel-name"]').val();
-                var slug = channelName.toLowerCase();
-                    slug = slug.replace(/ /g, '-');
-
-                _cutv.ajax(wpApiSettings.root + 'cutv/v2/categories', {
-                        description: 'Mlkshk flannel deep v marfa hashtag brooklyn.',
-                        name: channelName,
-                        slug: slug
-                    }
-                ).then(function (data) {
-                    console.log(data);
-                    _cutv.ajax(ajaxurl, {
-                            'action' : 'cutv_add_channel',
-                            channelName: data.name,
-                            slug: data.slug,
-                            description: data.description,
-                            cat_id: data.id
-                        }
-                    ).then(function (data) {
-                        console.log(data);
-                    });
-                });
-
-            });
-
-
-		var _cutv = {
-			ajax : function(url, data, options) {
-				return new MakePromise({ url: url, data: data, options: options });
-			}
-		};
-
-		DEBUG_LEVEL = window.location.hostname == 'cutv.dev' ? 3 : 0;
-		if (navigator.appName == "Microsoft Internet Explorer") DEBUG_LEVEL = 0;
-		function log(options) {
-
-			var defaults = {
-				msg: null,
-				level: DEBUG_LEVEL,
-				group: false,
-				color: 'blue'
-			};
-			$.extend(defaults, options);
-
-			if ( DEBUG_LEVEL > 2 && navigator.appName != "Microsoft Internet Explorer") {
-				console.log("%c" + options.msg, "color:"+options.color+";");
-			}
-		}
-		function MakePromise(options){
-
-			//log({msg: "A promise is being made...", color: 'purple' });
-
-			var defaults = {
-				method: 'POST',
-				cache: true,
-				showErrors: true,
-				success: function(result) {
-					//log({msg:"Promise went through!", color: 'purple' });
-					//console.groupEnd();
-					promise.resolve(result);
-				},
-				error: function(jqXHR, textStatus, error) {
-
-					if ( jqXHR.status == 400 ) {
-						errorMessage = jqXHR.responseText;
-						log({msg: "%c(╯°□°）╯ should be accompanied by custom message to display", color: 'red' });
-						log({msg: errorMessage , color: 'red' });
-
-
-					} else {
-						log({msg: "%c(╯°□°）╯", color: 'red' });
-						errorMessage = { error: jqXHR.message, statusCode: jqXHR.code};
-					}
-
-					promise.reject(errorMessage);
-				}
-			};
-
-			$.extend(options, defaults);
-//			console.log(options, defaults);
-
-			var promise = $.Deferred();
-			$.ajax({
-				type: options.method,
-				url: options.url,
-				data: options.data,
-				success: options.success,
-				error: options.error,
-				beforeSend: function ( xhr ) {
-					xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
-				}
-			});
-
-			return promise;
-		}
-	});
-
-</script>
 
 <div class="ui">
     <h2 class="ui dividing header">Site</h2>
-
+    <?php
+        // get all the catgeories
+        print_r(get_terms())   ;
+    ?>
     </div>
     <div class="ui three column stackable grid">
 
