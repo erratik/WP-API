@@ -1,6 +1,6 @@
 <?php
 
-class CUTV_REST_Videos_Controller extends CUTV_REST_Controller {
+class CUTV_REST_WPVR_Controller extends CUTV_REST_Controller {
 
     protected $post_type;
 

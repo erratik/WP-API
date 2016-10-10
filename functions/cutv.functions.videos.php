@@ -53,7 +53,7 @@
 
 		}
 	}
-	
+
 	/* Check if a video is valid */
 	if( ! function_exists( 'cutv_is_valid_video' ) ) {
 		function cutv_is_valid_video( $video_id , $video_service ) {
@@ -102,7 +102,7 @@
 				} else {
 					$obj_post_date = cutv_make_postdate();
 				}
-				
+
 				$video_post_date = $obj_post_date->format( 'Y-m-d H:i:s' );
 			}
 
@@ -179,8 +179,8 @@
 				else
 					add_post_meta( $newPostId , 'cutv_video_views' , 0 , TRUE );
 			}
-			
-			
+
+
 			add_post_meta( $newPostId , 'cutv_video_service_views' , $videoItem[ 'views' ] , TRUE );
 			add_post_meta( $newPostId , 'cutv_video_service_url' , $videoItem[ 'url' ] , TRUE );
 			add_post_meta( $newPostId , 'cutv_video_service_thumb' , $videoItem[ 'thumb' ] , TRUE );
@@ -303,7 +303,7 @@
 			return $newPostId;
 		}
 	}
-	
+
 	/*Get Videos*/
 	if( ! function_exists( 'cutv_get_videos' ) ) {
 		function cutv_get_videos( $args = array() ) {
@@ -421,7 +421,7 @@
 			return $videos;
 		}
 	}
-	
+
 	/* UPDATE IMPORTED VIDEOS */
 	if( ! function_exists( 'cutv_clear_imported_videos' ) ) {
 		function cutv_clear_imported_videos() {
@@ -433,7 +433,7 @@
 			update_option( 'cutv_imported' , $cutv_imported );
 		}
 	}
-	
+
 	/* UPDATE IMPORTED VIDEOS */
 	if( ! function_exists( 'cutv_update_imported_videos' ) ) {
 		function cutv_update_imported_videos() {
@@ -553,7 +553,7 @@
 			}
 		}
 	}
-	
+
 	/* Get Videos Stats*/
 	if( ! function_exists( 'cutv_videos_stats' ) ) {
 		function cutv_videos_stats() {
@@ -693,8 +693,8 @@
 				AND P.post_type = '" . CUTV_VIDEO_TYPE . "'
 				and P.post_status in ('trash','pending','publish','draft','invalid')
 		";
-			
-			
+
+
 			$sService = $wpdb->get_results( $qService , OBJECT );
 
 			//new dBug( $sService );

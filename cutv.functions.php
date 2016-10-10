@@ -10,3 +10,7 @@
 	
 	/* Require Source Functions */
 	require_once( CUTV_PATH. 'functions/cutv.functions.utils.php');
+
+
+    /* Require CUTV Functions */
+    require_once( CUTV_PATH. 'functions/cutv.functions.admin.php');

@@ -1,11 +1,11 @@
 <?php
 
-class CUTV_REST_Videos_Controller extends CUTV_REST_Controller {
+class CUTV_REST_Sources_Controller extends CUTV_REST_Controller {
 
     protected $post_type;
 
     public function __construct( $post_type ) {
-        $this->post_type = 'wpvr_video';
+        $this->post_type = 'wpvr_source';
         $this->namespace = 'cutv/v2';
         $obj = get_post_type_object( $post_type );
         $this->rest_base = ! empty( $obj->rest_base ) ? $obj->rest_base : $obj->name;
@@ -102,7 +102,7 @@ class CUTV_REST_Videos_Controller extends CUTV_REST_Controller {
         $args['post_status']          = $request['status'];
         $args['s']                    = $request['search'];
         // Force the post_type argument, since it's not a user input variable.
-        $args['post_type'] = 'wpvr_video';
+        $args['post_type'] = 'wpvr_source';
 //        $args['post_type'] = ! isset( $request['search'] ) ? $request['search'] : $this->post_type;
 
         $args['date_query'] = array();

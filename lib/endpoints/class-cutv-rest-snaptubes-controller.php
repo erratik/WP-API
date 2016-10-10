@@ -95,14 +95,14 @@ class CUTV_REST_Snaptubes_Controller extends CUTV_REST_Controller {
         $args['paged']                = $request['page'];
         $args['post__in']             = $request['include'];
         $args['post__not_in']         = $request['exclude'];
-        $args['posts_per_page']       = $request['per_page'];
+        $args['posts_per_page']       = 40;
         $args['name']                 = $request['slug'];
         $args['post_parent__in']      = $request['parent'];
         $args['post_parent__not_in']  = $request['parent_exclude'];
         $args['post_status']          = $request['status'];
         $args['s']                    = $request['search'];
         // Force the post_type argument, since it's not a user input variable.
-        $args['post_type'] = $this->post_type;
+        $args['post_type'] = 'videogallery';
 //        $args['post_type'] = ! isset( $request['search'] ) ? $request['search'] : $this->post_type;
 
         $args['date_query'] = array();
