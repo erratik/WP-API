@@ -151,17 +151,21 @@ class CUTV_REST_Sources_Controller extends CUTV_REST_Controller {
         }
 
         $posts_query = new WP_Query();
-        $query_result = $posts_query->query( $query_args );
+        $query_result = query_posts( $query_args );
 
         $posts = array();
         foreach ( $query_result as $post ) {
-            if ( ! $this->check_read_permission( $post ) ) {
+//            print_r($post);
+//            echo $this->post_type, " - ", $post->post_type, "\n";
+            if ( ! $this->check_read_permission( $post ) && $post->post_type != $this->post_type) {
                 continue;
             }
 
             $data = $this->prepare_item_for_response( $post, $request );
             $posts[] = $this->prepare_response_for_collection( $data );
         }
+
+//        print_r($posts);
 
         $page = (int) $query_args['paged'];
         $total_posts = $posts_query->found_posts;

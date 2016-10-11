@@ -155,6 +155,7 @@ function cutv_convert_snaptube()
             $snaptube_video_post['post_status']   = 'publish';
             $snaptube_video_post['post_author']   = $member_id;
             $snaptube_video_post['post_type']   = 'videogallery';
+            $snaptube_video_post['post_type']   = 'videogallery';
             $snaptube_video_post['post_category'] = $categories;
 
 
@@ -228,7 +229,7 @@ function cutv_clear_snaptube_video()
         foreach ($_REQUEST['videos'] as $wpvr_post_id) {
 
             $snaptube_id = cutv_get_snaptube_post_id($wpvr_post_id);
-            echo "[cutv_clear_snaptube_video] snaptube id: $snaptube_id", "\n";
+            echo "-> cutv_clear_snaptube_video] snaptube id: $snaptube_id", "\n";
 
             $snaptube_video = cutv_get_snaptube_video($snaptube_id);
 
@@ -251,7 +252,7 @@ function cutv_clear_snaptube_video()
 //            // CLEAN THE POST META
                 $wpdb->delete( $wpdb->postmeta, array( 'post_id' => $wpvr_post_id ) );
             }
-//            echo "[cutv_clear_snaptube_video] snaptube video", "\n";
+//            echo "-> cutv_clear_snaptube_video] snaptube video", "\n";
 //            print_r($snaptube_video);
 //            echo "\n";
 
@@ -292,15 +293,15 @@ function cutv_update_source_categories()
     // The $_REQUEST contains all the data sent via ajax
     if (isset($_REQUEST)) {
         global $wpdb;
+
         $channel_id = $_REQUEST['channel'];
         $current_source_count = $_REQUEST['source_count'];
-//        $current_sources = $_REQUEST['current_source_ids'];
-        print_r($_REQUEST);
-        echo "[cutv_update_source_categories] there are currently: ", count($current_source_count), " sources mapped to this category", "\n";
-        $sources_mapped_to_channel = 0;
 
+        echo "-> cutv_update_source_categories ::  there are currently: $current_source_count sources mapped to this category", "\n";
 
-        foreach ($_REQUEST['sources'] as $i => $source_id) {
+        $sources = json_decode($_REQUEST['sources']);
+
+        foreach ($sources as $i => $source_id) {
 
 
             // update the categories on each source
@@ -311,49 +312,41 @@ function cutv_update_source_categories()
             $key = array_search($channel_id, $current_cats);
 //            echo "key: ", $key, "\n";
             if ($key === FALSE) {
-//                echo "need to add $source_id to channel ". $channel_id, "\n";
-                add_post_meta( $source_id, 'wpvr_source_postCats', '["'.$channel_id.'"]', true );
-                add_post_meta( $source_id, 'wpvr_source_postCats_', $channel_id, true );
+                echo "need to add $source_id to channel ". $channel_id, "\n";
+
+                if ( ! add_post_meta( $source_id, 'wpvr_source_postCats', '["'.$channel_id.'"]', true) ) {
+                    update_post_meta($source_id, 'wpvr_source_postCats', '["'.$channel_id.'"]', true );
+                }
+
+                if ( ! add_post_meta( $source_id, 'wpvr_source_postCats_', $channel_id, true)) {
+                    update_post_meta($source_id, 'wpvr_source_postCats_', $channel_id);
+                }
             } else {
 
-                echo "[cutv_update_source_categories]  $source_name ($source_id) is already mapped to channel ". $channel_id, "\n";
+                echo "-> cutv_update_source_categories ::   $source_name ($source_id) is already mapped to channel ". $channel_id, "\n";
             }
-            $sources_mapped_to_channel++;
 
-            // find out how many sources have this source
-//            echo "there are currently ", count($current_cats), " cats mapped to source ($source_id)", "\n";
+
+
 
         }
-//        $test_cats = get_numerics(get_post_meta($source_id, 'wpvr_source_postCats', true));
-//        print_r($test_cats);
-        $new_cat_str = "\"";
 
-        foreach ($_REQUEST['removing_sources'] as $k => $source_id) {
+        $removing_sources = json_decode($_REQUEST['removing_sources']);
 
+        foreach ($removing_sources as $k => $source_id) {
 
-            $new_cat_str = "[\"";
             $test_cats = get_numerics(get_post_meta($source_id, 'wpvr_source_postCats', true));
-//            unset($test_cats[$key]);
-//            $key = array_/search($channel_id, $current_cats);
-            echo "[removing_sources] looking for channel id#$channel_id in source  $source_name ($source_id), found at position : ", array_search($channel_id, $test_cats), "\n";
-
-            print_r($test_cats);
 
             if(($key = array_search($channel_id, $test_cats)) !== FALSE) {
-//                if ($k != count($_REQUEST['removing_sources'])) {
-                    unset($test_cats[$key]);
+                //echo "[removing_sources] looking for channel id#$channel_id in source  $source_name ($source_id), found at position : ", array_search($channel_id, $test_cats), "\n";
 
+                unset($test_cats[$key]);
             }
-//            }
 
-//            $new_cat_str = '"';
-//            $new_cat_str += implode("\",\"",$test_cats);
-//            $new_cat_str += '"';
-//            echo $new_cat_str, "\n"   ;
+            $new_cat_str = "[\"";
             $new_cat_str .= implode("\",\"",$test_cats);
-
             $new_cat_str .= "\"]";
-            echo $new_cat_str;
+
 
             if ( ! add_post_meta( $source_id, 'wpvr_source_postCats', $new_cat_str, true ) ) {
                 update_post_meta($source_id, 'wpvr_source_postCats', $new_cat_str);
@@ -362,42 +355,8 @@ function cutv_update_source_categories()
         }
 
 
-
-
-//        print_r($test_cats);
-
-
-//        $new_cat_str += implode("\",\"",$current_cats);
-//        $new_cat_str += '"';
-//        echo $new_cat_str, "\n";
-//
-//        $source_rows = $wpdb->get_results("SELECT * FROM " . $wpdb->postmeta ." WHERE  meta_key='wpvr_source_postCats'");
-//
-//
-//        $channel_source_count = 0;
-//        foreach ($source_rows as $src) {
-//
-//            $src_cats = get_numerics($src->meta_value);
-////            print_r($src_cats);
-//
-//            $key = array_search($channel_id, $src_cats);
-////            echo "key: ", $key, "\n";
-//            if ($key) {
-//                $channel_source_count++;
-//            }
-//        }
-
-//        echo $sources_mapped_to_channel, "\n";
-//        echo $current_source_count, "\n";
-//        if (count($_REQUEST['sources']) < $current_source_count) {
-//            $new_cat_str = '"';
-//            $new_cat_str += implode("\",\"",$_REQUEST['sources']);
-//            $new_cat_str += '"';
-//
-//
-//            echo $new_cat_str, "\n";
-//
-//        }
+        print_r(cutv_get_sources_by_channel($channel_id));
+        echo "data:".json_encode(cutv_get_sources_by_channel($channel_id));
 
 
 
@@ -406,7 +365,6 @@ function cutv_update_source_categories()
     // Always die in functions echoing ajax content
     die();
 }
-add_action('wp_ajax_cutv_update_source_categories', 'cutv_update_source_categories');
 
 function cutv_make_snaptube_tags($tags, $snaptube_id) {
     global $wpdb;
@@ -478,6 +436,7 @@ function cutv_make_snaptube_cats($video_id, $snaptube_video) {
     global $wpdb;
     // INSERT INTO SNAPTUBE_PLAYLIST_RELATIONS TABLE
     // this is happening regardless of the post existing or not
+    // this is happening regardless of the post existing or not
     // what is this video's source?
     $wpvr_video_source_id = get_post_meta($video_id, 'wpvr_video_sourceId', true);
     echo '[cutv_make_snaptube_cats::video source id]', $video_id, "=>", $wpvr_video_source_id, ': ', get_post_meta($video_id,  'wpvr_video_sourceName', true), "\n";
@@ -504,7 +463,7 @@ function cutv_make_snaptube_cats($video_id, $snaptube_video) {
 
         if (null != $playlist_attr_exists) {
 
-            echo "[cutv_make_snaptube_cats] existing vid => " . $snaptube_video->vid , ",  updating playlist value => " . $value;
+            echo "-> cutv_make_snaptube_cats] existing vid => " . $snaptube_video->vid , ",  updating playlist value => " . $value;
             echo "\n" . PHP_EOL;
 
             $updated = $wpdb->update(
@@ -601,45 +560,23 @@ function cutv_get_sources_info($abridged = true) {
 //    echo "*********** DASHBOARD ***********", "\n";
     return $sourceObj;
 }
+function get_meta_values( $key = '', $source_id) {
 
-function cutv_get_sources_by_channel($orphans = false, $abridged = true) {
     global $wpdb;
 
-    $args = array(
-        'post_type' => 'wpvr_source',
-        'posts_per_page' => -1
-    );
+    if( empty( $key ) )
+        return;
 
-
-    // find out if the source is already in a channel(category)?
-
-
-    // build source object
-    $sourceObj = [];
-    $sources = get_posts( $args );
-
-    foreach ($sources as $source) {
-//        echo  "[cutv_get_sources_info] ", get_post_meta($source->ID, 'wpvr_source_name', true), "\n";
-
-
-//        $videoObject = cutv_get_source();
-        $source_categories = get_numerics(get_post_meta($source->ID, 'wpvr_source_postCats', true));
-//        $sources_categories = [];
-
-        // only send unassigned sources (have no category)
-        if (!count($source_categories)) {
-            $sourceObj[] = (object) [
-                'name' => get_post_meta($source->ID, 'wpvr_source_name', true),
-                'categories' => $source_categories,
-                'ytPlaylist' => 'https://www.youtube.com/playlist?list=' . get_post_meta($source->ID, 'wpvr_source_playlistIds_yt', true),
-                'ID' => $source->ID,
-                'videos' => cutv_get_source($source->ID)
-            ];
-        }
+    $r = $wpdb->get_results("SELECT post_id FROM wp_postmeta WHERE meta_key='wpvr_source_postCats' AND meta_value LIKE '%\"$source_id\"%'") ;
+    foreach ($r as $meta_row) {
+        $source_ids[] = $meta_row->post_id;
     }
+    return $source_ids;
+}
+function cutv_get_sources_by_channel($channel_id, $abridged = true) {
 
-//    echo "*********** DASHBOARD ***********", "\n";
-    return $sourceObj;
+    return get_meta_values( 'wpvr_source_postCats', $channel_id );
+
 }
 
 function cutv_get_source($source_id, $abridged = true) {

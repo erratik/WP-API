@@ -102,7 +102,7 @@ class CUTV_REST_WPVR_Controller extends CUTV_REST_Controller {
         $args['post_status']          = $request['status'];
         $args['s']                    = $request['search'];
         // Force the post_type argument, since it's not a user input variable.
-        $args['post_type'] = 'wpvr_video';
+        $args['post_type'] = $this->post_type;
 //        $args['post_type'] = ! isset( $request['search'] ) ? $request['search'] : $this->post_type;
 
         $args['date_query'] = array();
@@ -162,6 +162,7 @@ class CUTV_REST_WPVR_Controller extends CUTV_REST_Controller {
             $data = $this->prepare_item_for_response( $post, $request );
             $posts[] = $this->prepare_response_for_collection( $data );
         }
+
 
         $page = (int) $query_args['paged'];
         $total_posts = $posts_query->found_posts;

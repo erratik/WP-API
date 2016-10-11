@@ -195,13 +195,26 @@ class CUTV_Channel {
 	 * @return  void
 	 */
 	public function admin_enqueue_scripts ( $hook = '' ) {
-		wp_register_script( $this->_token . '-admin', esc_url( $this->assets_url ) . 'js/admin' . $this->script_suffix . '.js', array( 'jquery' ), $this->_version );
-		wp_enqueue_script( $this->_token . '-admin' );
 		wp_register_script( $this->_token . '-lodash', esc_url( $this->assets_url ) . 'js/lodash' . $this->script_suffix . '.js', array( 'jquery' ), $this->_version );
 		wp_enqueue_script( $this->_token . '-lodash' );
 		wp_register_script( $this->_token . '-moment', esc_url( $this->assets_url ) . 'js/moment' . $this->script_suffix . '.js', array( 'jquery' ), $this->_version );
 		wp_enqueue_script( $this->_token . '-moment' );
-	} // End admin_enqueue_scripts ()
+
+        wp_register_script( $this->_token . '-ng', esc_url( trailingslashit( plugins_url( '/bower_components/', $this->file ) ) ). 'angular/angular' . $this->script_suffix . '.js', $this->_version );
+        wp_enqueue_script( $this->_token . '-ng' );
+        wp_register_script( $this->_token . '-ngroute', esc_url( trailingslashit( plugins_url( '/bower_components/', $this->file ) ) ). 'angular-route/angular-route' . $this->script_suffix . '.js', $this->_version );
+        wp_enqueue_script( $this->_token . '-ngroute' );
+        wp_register_script( $this->_token . '-ngflow', esc_url( trailingslashit( plugins_url( '/bower_components/', $this->file ) ) ). 'ng-flow/dist/ng-flow-standalone.min' . $this->script_suffix . '.js', $this->_version );
+        wp_enqueue_script( $this->_token . '-ngflow' );
+
+        wp_register_script( $this->_token . '-app', esc_url( $this->assets_url ) . 'scripts/app' . $this->script_suffix . '.js', $this->_version );
+        wp_enqueue_script( $this->_token . '-app' );
+        wp_register_script( $this->_token . '-ctrl-main', esc_url( trailingslashit( plugins_url( '/assets/scripts/controllers/', $this->file ) ) ). 'main' . $this->script_suffix . '.js', $this->_version );
+        wp_enqueue_script( $this->_token . '-ctrl-main' );
+        wp_register_script( $this->_token . '-admin', esc_url( $this->assets_url ) . 'js/admin' . $this->script_suffix . '.js', array( 'jquery' , $this->_token . '-ctrl-main'), $this->_version );
+        wp_enqueue_script( $this->_token . '-admin' );
+
+    } // End admin_enqueue_scripts ()
 
 	/**
 	 * Load plugin localisation

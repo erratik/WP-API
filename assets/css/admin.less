@@ -1,6 +1,9 @@
 // general
 .flex {
   display: flex;
+  &.vertical {
+    flex-direction: column;
+  }
 }
 
 // videos
@@ -15,11 +18,7 @@
 .wp-core-ui .button-secondary {
   height: inherit;
 }
-//
-//.ui.items>.item .extra>* {
-//  display: flex;
-//  float: left;
-//}
+
 
 #wpcontent {
 
@@ -28,3 +27,4 @@
   }
 }
 
+#wpfooter {  position: relative;}

@@ -1,1 +1,1 @@
-.flex{display:flex}.cutv_bulk_apply,.wpvr_manage_bulkApply{display:none!important}.wp-core-ui .button,.wp-core-ui .button-primary,.wp-core-ui .button-secondary{height:inherit}#wpcontent .ui.label>.icon{margin:0 .75em -.75em 0}
+.flex{display:flex}.flex.vertical{flex-direction:column}.cutv_bulk_apply,.wpvr_manage_bulkApply{display:none!important}.wp-core-ui .button,.wp-core-ui .button-primary,.wp-core-ui .button-secondary{height:inherit}#wpcontent .ui.label>.icon{margin:0 .75em -.75em 0}#wpfooter{position:relative}

@@ -37,6 +37,13 @@ if (!class_exists('CUTV_REST_Snaptubes_Controller')) {
 }
 
 /**
+ * CUTV_REST_Channels_Controller class.
+ */
+if (!class_exists('CUTV_REST_Snaptubes_Controller')) {
+    require_once dirname(__FILE__) . '/lib/endpoints/class-cutv-rest-channels-controller.php';
+}
+
+/**
  * CUTV_REST_Sources_Controller class.
  */
 if (!class_exists('CUTV_REST_Sources_Controller')) {
@@ -125,25 +132,24 @@ function _add_extra_cutv_api_post_type_arguments()
 {
     global $wp_post_types;
 
+
     if (isset($wp_post_types['post'])) {
         $wp_post_types['post']->show_in_rest = true;
         $wp_post_types['post']->rest_base = 'posts';
         $wp_post_types['post']->rest_controller_class = 'CUTV_REST_Posts_Controller';
     }
-//
-////
-//    if (isset($wp_post_types['wpvr_video'])) {
-//        $wp_post_types['wpvr_video']->show_in_rest = true;
-//        $wp_post_types['wpvr_video']->rest_base = 'videos';
-//        $wp_post_types['wpvr_video']->rest_controller_class = 'CUTV_REST_WPVR_Controller';
-//    }
+
+    if (isset($wp_post_types['wpvr_video'])) {
+        $wp_post_types['wpvr_video']->show_in_rest = true;
+        $wp_post_types['wpvr_video']->rest_base = 'videos';
+        $wp_post_types['wpvr_video']->rest_controller_class = 'CUTV_REST_WPVR_Controller';
+    }
 
     if (isset($wp_post_types['wpvr_source'])) {
         $wp_post_types['wpvr_source']->show_in_rest = true;
         $wp_post_types['wpvr_source']->rest_base = 'sources';
         $wp_post_types['wpvr_source']->rest_controller_class = 'CUTV_REST_Sources_Controller';
     }
-
 
     if (isset($wp_post_types['videogallery'])) {
         $wp_post_types['videogallery']->show_in_rest = true;
@@ -176,7 +182,6 @@ function _add_extra_cutv_api_post_type_arguments()
 function _add_extra_cutv_api_taxonomy_arguments()
 {
     global $wp_taxonomies;
-
     if (isset($wp_taxonomies['category'])) {
         $wp_taxonomies['category']->show_in_rest = true;
         $wp_taxonomies['category']->rest_base = 'categories';
@@ -188,6 +193,7 @@ function _add_extra_cutv_api_taxonomy_arguments()
         $wp_taxonomies['post_tag']->rest_base = 'tags';
         $wp_taxonomies['post_tag']->rest_controller_class = 'CUTV_REST_Terms_Controller';
     }
+//    print_r($wp_taxonomies);
 }
 
 if (!function_exists('create_initial_rest_routes')) {
@@ -553,6 +559,7 @@ function get_numerics ($str) {
 }
 
 
+add_action('wp_ajax_cutv_update_source_categories', 'cutv_update_source_categories');
 
 function cutv_api_init()
 {
@@ -562,6 +569,7 @@ function cutv_api_init()
 
 }
 add_action('init', 'cutv_api_init');
+
 
 //create a function that will attach our new 'channel' taxonomy to the 'post' post type
 //function add_channel_taxonomy_to_post()
