@@ -46,20 +46,20 @@
 
 
             _.forEach(sources['unassigned'], function(source){
+                source = _.clone(source);
                 channel['sources'].push(source);
                 source.selected = false;
             });
 
         });
     }
+
     var sources = <?php echo json_encode($all_sources); ?>
 
     makeSourceObj(sources);
 
 </script>
 
-    <div>
-        <div ng-view=""></div>
-    </div>
-
-
+<div>
+    <div ng-view=""></div>
+</div>

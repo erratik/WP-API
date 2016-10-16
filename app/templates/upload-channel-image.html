@@ -1,0 +1,14 @@
+
+<div class="ui small image">
+    <img class="channel-image" flow-img="$flow.files[0]"/>
+    <img src="https://placeholdit.imgix.net/~text?txtsize=33&txt={{channel.playlist_name}}&w=200&h=200"
+         ng-hide="$flow.files.length">
+</div>
+<div class="divider">
+    <span class="ui button tiny" ng-hide="$flow.files.length" flow-btn flow-attrs="{accept:'image/*'}" flow-btn><i
+            class="icon file"></i>Upload File</span>
+    <span class="ui button tiny" ng-show="$flow.files.length" flow-btn flow-attrs="{accept:'image/*'}" flow-btn><i
+            class="icon file"></i>Change</span>
+    <span class="ui button tiny" ng-show="$flow.files.length" ng-click="$flow.cancel()"><i
+            class="icon trash"></i></span>
+</div>

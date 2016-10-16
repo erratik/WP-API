@@ -13,11 +13,11 @@ angular
         'ngRoute',
         'flow'
     ])
-    .config(function ($routeProvider) {
+    .config(function ($routeProvider, flowFactoryProvider) {
 
         $routeProvider
             .when('/', {
-                templateUrl: '/wp-content/plugins/cutv-api/views/main.html',
+                templateUrl: '/wp-content/plugins/cutv-api/views/channels.html',
                 controller: 'MainCtrl',
                 controllerAs: 'main'
             })
@@ -34,5 +34,17 @@ angular
             .otherwise({
                 redirectTo: '/'
             });
+        //
+        // flowFactoryProvider.defaults = {
+        //     target: '/upload.php',
+        //     permanentErrors: [404, 500, 501],
+        //     maxChunkRetries: 1,
+        //     chunkRetryInterval: 5000,
+        //     simultaneousUploads: 4
+        // };
+        // flowFactoryProvider.on('catchAll', function (event) {
+        //     // console.log('catchAll', arguments);
+        // });
+
     });
 

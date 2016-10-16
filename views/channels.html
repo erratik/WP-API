@@ -1,0 +1,18 @@
+<h2 class="ui dividing header">Site</h2>
+<h2 class="ui header">
+    <i class="config icon"></i>
+    <div class="content">
+        CUTV Channel Management
+    </div>
+</h2>
+<div class="ui divided items">
+    <!--<pre>{{ channels | json }}</pre>-->
+    <div class="item" ng-repeat="channel in channels">
+        <manage-channel channel="channel" channels="channels" class="ui two column stackable divided grid" channel-index="$index" ></manage-channel>
+    </div>
+</div>
+
+<div class="ui divider"></div>
+<div class="ui divided">
+
+</div>

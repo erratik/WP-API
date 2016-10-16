@@ -16,7 +16,8 @@
     },
     "require": {
         "composer/installers": "~1.0",
-        "php": ">=5.3"
+        "php": ">=5.3",
+        "flowjs/flow-php-server": "^1.0"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "2.3.4",
