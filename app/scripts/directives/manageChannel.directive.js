@@ -7,7 +7,7 @@
  * # manageChannel
  */
 angular.module('cutvApiAdminApp')
-    .directive('manageChannel', function (ChannelService, $templateRequest) {
+    .directive('manageChannel', function (ChannelService, $templateRequest, $http) {
         return {
             restrict: 'E',
             replace: true,
@@ -30,9 +30,13 @@ angular.module('cutvApiAdminApp')
 
                     return $http.get(ajaxurl , {params: data}).then(function(res) {
                         res = JSON.parse(res.data.split('data:')[1]);
-                        console.log(res);
+                        // console.log(res);
                         $scope.channel.source_count = res.length;
+
+                        // $scope.$broadcast('save_channel_image', {name: data.channel});
+
                     });
+
                 };
 
 
@@ -45,7 +49,6 @@ angular.module('cutvApiAdminApp')
 
                 }).then(function () {
 
-                    console.log('then again');
                     var angularElement = angular.element('<channel-image-uploader ' +
                         'flow-init="{target: \'/wp-content/plugins/cutv-api/upload.php?channel='+$scope.channel.pid+'\', singleFile:true}" ' +
                         'flow-files-submitted="$flow.upload()" ' +
@@ -54,9 +57,8 @@ angular.module('cutvApiAdminApp')
                     );
 
                     $element.find('.row').prepend(angularElement);
-
-
                     $compile(angularElement)($scope);
+
                 });
 
 

@@ -297,7 +297,7 @@ function cutv_update_source_categories()
         $channel_id = $_REQUEST['channel'];
         $current_source_count = $_REQUEST['source_count'];
 
-        echo "-> cutv_update_source_categories ::  there are currently: $current_source_count sources mapped to this category", "\n";
+        echo "-> cutv_update_source_categories :::: $current_source_count sources mapped to this category", "\n";
 
         $sources = json_decode($_REQUEST['sources']);
 
@@ -312,18 +312,19 @@ function cutv_update_source_categories()
             $key = array_search($channel_id, $current_cats);
 //            echo "key: ", $key, "\n";
             if ($key === FALSE) {
-                echo "need to add $source_id to channel ". $channel_id, "\n";
+                echo "-> cutv_update_source_categories ~ need to add $source_name ($source_id) to channel ". $channel_id, "\n";
 
                 if ( ! add_post_meta( $source_id, 'wpvr_source_postCats', '["'.$channel_id.'"]', true) ) {
-                    update_post_meta($source_id, 'wpvr_source_postCats', '["'.$channel_id.'"]', true );
+                    update_post_meta($source_id, 'wpvr_source_postCats', '["'.$channel_id.'"]' );
                 }
 
                 if ( ! add_post_meta( $source_id, 'wpvr_source_postCats_', $channel_id, true)) {
                     update_post_meta($source_id, 'wpvr_source_postCats_', $channel_id);
                 }
+
             } else {
 
-                echo "-> cutv_update_source_categories ::   $source_name ($source_id) is already mapped to channel ". $channel_id, "\n";
+                echo "-> cutv_update_source_categories :: $source_name ($source_id) is already mapped to channel ". $channel_id, "\n";
             }
 
 
@@ -613,7 +614,15 @@ function cutv_get_source($source_id, $abridged = true) {
 
 function cutv_get_channels() {
     global $wpdb;
+    $channels_rows = $wpdb->get_results("SELECT * FROM " . SNAPTUBE_PLAYLISTS ." WHERE pid > 1" );
 
-    return $wpdb->get_results("SELECT * FROM " . SNAPTUBE_PLAYLISTS ." WHERE pid > 1" );
+    $channels = [];
+    foreach ($channels_rows as $channel) {
+        $channel->cutv_channel_img = get_term_meta( $channel->pid, 'cutv_channel_img', true );
+        $channels[] = $channel;
+    };
+
+//    print_r($channels) ;
+    return $channels;
 
 }
