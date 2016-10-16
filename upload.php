@@ -7,9 +7,6 @@ $file = new \Flow\File($config);
 $request = new \Flow\Request($config);
 
 
-//if (\Flow\Basic::save('.' . $file->getIdentifier(), $config, $request)) {
-////    // file saved successfully and can be accessed at './final_file_destination'
-///*
 if ($_SERVER['REQUEST_METHOD'] === 'GET' ) {
 
 
@@ -47,19 +44,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' ) {
 
 
         print_r($_REQUEST); echo ' ::: saving chunk ::: ';
-//        if ($_REQUEST['updateChannel']) {
-//
-//  if (isset($_REQUEST['updateChannel'])) {
 
-
+        // saving right away for now...
         echo ' ::: we are updating so skip this check, save channel image right away ::: ';
         saveChannelImage($file->getIdentifier());
-//        header("HTTP/1.1 200 Ok");
-//        return;
-//    }
 
-//        }
-//        return;
 
     } else {
         // error, invalid chunk upload request, retry

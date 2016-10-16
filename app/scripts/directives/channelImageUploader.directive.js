@@ -28,26 +28,8 @@ angular.module('cutvApiAdminApp')
                 scope.$on('flow::fileAdded', function (event, $flow, flowFile) {
                     console.log(flowFile);
                     scope.filename = flowFile.name;
-                    // event.preventDefault();//prevent file from uploading
                 });
 
-                // scope.$on('save_channel_image', function(mass){
-                //     // scope.$flow.upload();
-                //     // console.log(scope.$flow);
-                //     // return $http.post('/wp-content/plugins/cutv-api/upload.php/?'+ObjectToUrl({'updateChannel': true, 'channel': 2, 'filename': scope.filename})).then(function(res) {
-                //     //
-                //     //     console.log(res);
-                //     //
-                //     // });
-                // });
-                //
-                // function ObjectToUrl(myData) {
-                //     var mapped = _.map(myData, function(o, k){
-                //         return k + '=' + o;
-                //     });
-                //     var out = _.join(mapped, '&');
-                //     return out;
-                // }
 
             }
         };
