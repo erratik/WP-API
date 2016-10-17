@@ -6,18 +6,44 @@ describe('Controller: MainCtrl', function () {
   beforeEach(module('cutvApiAdminApp'));
 
   var MainCtrl,
-    scope;
-
+    scope, httpLocalBackend;
   // Initialize the controller and a mock scope
-  beforeEach(inject(function ($controller, $rootScope) {
+  beforeEach(inject(function ($injector, $controller, $rootScope) {
     scope = $rootScope.$new();
+
     MainCtrl = $controller('MainCtrl', {
       $scope: scope
       // place here mocked dependencies
     });
+
   }));
 
-  it('should attach a list of awesomeThings to the scope', function () {
-    expect(MainCtrl.awesomeThings.length).toBe(3);
-  });
+  beforeEach(inject(function ($httpBackend) {
+    httpLocalBackend = $httpBackend;
+  }));
+
+
+  // it('should attach a list of channels to the scope', function () {
+  //   expect(MainCtrl.channels.length).toBeDefined();
+  // });
+
+  it('should get stuff', function () {
+
+        httpLocalBackend.whenGET('*').respond(readJSON('test/mock/channels.json'));
+
+        expect(MainCtrl.channels.length).toBe(2);
+
+      }
+  );
+
+
+
+  // it('should attach a list of channels to the scope', function () {
+  //     // console.log(MainCtrl);
+  //     var valid_respond = readJSON('test/mock/channels.json');
+  //     $httpBackend.whenGET(/.*/).respond(valid_respond);
+  //       expect(MainCtrl).toBeDefined();
+  // });
+
+
 });

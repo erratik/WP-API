@@ -3,11 +3,14 @@
 
 var gulp = require('gulp');
 var $ = require('gulp-load-plugins')();
+var gulpKarma = require('gulp-karma');
+var gulpConnect = require('gulp-connect');
+var gulpAutoPrefixer = require('gulp-autoprefixer');
+var gulpJsHint = require('gulp-jshint');
 var openURL = require('open');
 var lazypipe = require('lazypipe');
 var rimraf = require('rimraf');
 var wiredep = require('wiredep').stream;
-var runSequence = require('run-sequence');
 
 var yeoman = {
   app: require('./bower.json').appPath || 'app',
@@ -19,16 +22,15 @@ var paths = {
   styles: [yeoman.app + '/styles/**/*.css'],
   test: ['test/spec/**/*.js'],
   testRequire: [
-    yeoman.app + '/bower_components/angular/angular.js',
-    yeoman.app + '/bower_components/angular-mocks/angular-mocks.js',
-    yeoman.app + '/bower_components/angular-resource/angular-resource.js',
-    yeoman.app + '/bower_components/angular-cookies/angular-cookies.js',
-    yeoman.app + '/bower_components/angular-sanitize/angular-sanitize.js',
-    yeoman.app + '/bower_components/angular-route/angular-route.js',
-    'test/mock/**/*.js',
+    'bower_components/angular/angular.js',
+    'bower_components/angular-mocks/angular-mocks.js',
+    'bower_components/ng-flow/dist/ng-flow-standalone.js',
+    'node_modules/karma-read-json/karma-read-json.js',
+    'bower_components/angular-route/angular-route.js',
+    'test/mock/*.json',
     'test/spec/**/*.js'
   ],
-  karma: 'karma.conf.js',
+  karma: 'test/karma.conf.js',
   views: {
     main: yeoman.app + '/index.html',
     files: [yeoman.app + '/views/**/*.html']
@@ -135,11 +137,26 @@ gulp.task('test', ['start:server:test'], function () {
 // inject bower components
 gulp.task('bower', function () {
   return gulp.src(paths.views.main)
-    .pipe(wiredep({
-      directory: './bower_components',
-      ignorePath: '..'
-    }))
-  .pipe(gulp.dest(yeoman.app + '/views'));
+        .pipe(wiredep({
+          directory: './bower_components',
+          ignorePath: '..'
+        }))
+        .pipe(gulp.dest(yeoman.app + '/views'))
+        .pipe(gulp.src(paths.karma))
+        .pipe(wiredep({
+          directory: './bower_components',
+          ignorePath: '..'
+        }))
+        .pipe(gulp.dest(yeoman.app + '/test/spec/**'));
+});
+
+gulp.task('bower-karma', function () {
+  return gulp.src(paths.karma)
+        .pipe(wiredep({
+          directory: './bower_components',
+          ignorePath: '..'
+        }))
+        .pipe(gulp.dest(yeoman.app + '/test/spec/**'));
 });
 
 ///////////

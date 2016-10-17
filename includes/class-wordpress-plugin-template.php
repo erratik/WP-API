@@ -285,10 +285,10 @@ class CUTV_Channel {
             wp_enqueue_script( $this->_token . '-moment' );
             wp_register_script( $this->_token . '-admin', esc_url( $this->assets_url ) . 'js/admin' . $this->script_suffix . '.js', array( 'jquery' ), $this->_version );
             wp_enqueue_script( $this->_token . '-admin' );
+            echo '79789789';
 
-
-        } else if (isset($_REQUEST['page']) && $_REQUEST['page'] == 'cutv_manage_channels') {
-
+        } else if (!isset($_REQUEST['vc_action']) || isset($_REQUEST['page']) && $_REQUEST['page'] == 'cutv_manage_channels') {
+            echo 'hjkhkjhk';
             wp_register_script( $this->_token . '-ng', esc_url( trailingslashit( plugins_url( '/bower_components/', $this->file ) ) ). 'angular/angular' . $this->script_suffix . '.js', $this->_version );
             wp_enqueue_script( $this->_token . '-ng' );
             wp_register_script( $this->_token . '-ngroute', esc_url( trailingslashit( plugins_url( '/bower_components/', $this->file ) ) ). 'angular-route/angular-route' . $this->script_suffix . '.js', $this->_version );
@@ -309,10 +309,30 @@ class CUTV_Channel {
 
         } else {
 
+            echo 'opp[op[';
             wp_register_script( $this->_token . '-admin', esc_url( $this->assets_url ) . 'js/admin' . $this->script_suffix . '.js', array( 'jquery' ), $this->_version );
             wp_enqueue_script( $this->_token . '-admin' );
 
         }
+
+
+        wp_register_script( $this->_token . '-ng', esc_url( trailingslashit( plugins_url( '/bower_components/', $this->file ) ) ). 'angular/angular' . $this->script_suffix . '.js', $this->_version );
+        wp_enqueue_script( $this->_token . '-ng' );
+        wp_register_script( $this->_token . '-ngroute', esc_url( trailingslashit( plugins_url( '/bower_components/', $this->file ) ) ). 'angular-route/angular-route' . $this->script_suffix . '.js', $this->_version );
+        wp_enqueue_script( $this->_token . '-ngroute' );
+        wp_register_script( $this->_token . '-ngflow', esc_url( trailingslashit( plugins_url( '/bower_components/', $this->file ) ) ). 'ng-flow/dist/ng-flow-standalone.min' . $this->script_suffix . '.js', $this->_version );
+        wp_enqueue_script( $this->_token . '-ngflow' );
+
+        wp_register_script( $this->_token . '-app', esc_url( trailingslashit( plugins_url( '/app/scripts/', $this->file ) ) ) . 'app' . $this->script_suffix . '.js', $this->_version );
+        wp_enqueue_script( $this->_token . '-app' );
+        wp_register_script( $this->_token . '-ctrl-main', esc_url( trailingslashit( plugins_url( '/app/scripts/controllers/', $this->file ) ) ). 'main.ctrl' . $this->script_suffix . '.js', $this->_version );
+        wp_enqueue_script( $this->_token . '-ctrl-main' );
+        wp_register_script( $this->_token . '-dir-mng-channel', esc_url( trailingslashit( plugins_url( '/app/scripts/directives/', $this->file ) ) ). 'manageChannel.directive' . $this->script_suffix . '.js', $this->_version );
+        wp_enqueue_script( $this->_token . '-dir-mng-channel' );
+        wp_register_script( $this->_token . '-dir-upload-wrapper', esc_url( trailingslashit( plugins_url( '/app/scripts/directives/', $this->file ) ) ). 'channelImageUploader.directive' . $this->script_suffix . '.js', $this->_version );
+        wp_enqueue_script( $this->_token . '-dir-upload-wrapper' );
+        wp_register_script( $this->_token . '-admin', esc_url( $this->assets_url ) . 'js/admin' . $this->script_suffix . '.js', array( 'jquery' , $this->_token . '-ctrl-main'), $this->_version );
+        wp_enqueue_script( $this->_token . '-admin' );
 
 
     } // End admin_enqueue_scripts ()

@@ -1,3 +1,4 @@
+/*
 'use strict';
 
 describe('Directive: manageChannel', function () {
@@ -18,3 +19,4 @@ describe('Directive: manageChannel', function () {
     expect(element.text()).toBe('this is the manageChannel directive');
   }));
 });
+*/

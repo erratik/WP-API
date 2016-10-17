@@ -1,0 +1,110 @@
+[
+  {
+    "pid": "2",
+    "playlist_name": "Music",
+    "playlist_slugname": "music",
+    "playlist_desc": "",
+    "is_publish": "1",
+    "playlist_order": "2",
+    "cutv_channel_img": "mixtape-1-12_1x.png"
+  },
+  {
+    "pid": "3",
+    "playlist_name": "Cinema & Film",
+    "playlist_slugname": "cinema-film",
+    "playlist_desc": "",
+    "is_publish": "1",
+    "playlist_order": "3",
+    "cutv_channel_img": ""
+  },
+  {
+    "pid": "4",
+    "playlist_name": "Documentary",
+    "playlist_slugname": "documentary",
+    "playlist_desc": "",
+    "is_publish": "1",
+    "playlist_order": "4",
+    "cutv_channel_img": ""
+  },
+  {
+    "pid": "5",
+    "playlist_name": "Concordia Community",
+    "playlist_slugname": "concordia-community",
+    "playlist_desc": "",
+    "is_publish": "1",
+    "playlist_order": "5",
+    "cutv_channel_img": ""
+  },
+  {
+    "pid": "307",
+    "playlist_name": "Current Events",
+    "playlist_slugname": "current-events",
+    "playlist_desc": "",
+    "is_publish": "1",
+    "playlist_order": "4",
+    "cutv_channel_img": ""
+  },
+  {
+    "pid": "479",
+    "playlist_name": "Arts & Culture",
+    "playlist_slugname": "arts-culture",
+    "playlist_desc": "",
+    "is_publish": "1",
+    "playlist_order": "6",
+    "cutv_channel_img": ""
+  },
+  {
+    "pid": "486",
+    "playlist_name": "CUTV News",
+    "playlist_slugname": "cutv-news",
+    "playlist_desc": "",
+    "is_publish": "1",
+    "playlist_order": "5",
+    "cutv_channel_img": ""
+  },
+  {
+    "pid": "574",
+    "playlist_name": "Montr\u00e9al Student Strikes 2012",
+    "playlist_slugname": "montreal-student-strikes-2012",
+    "playlist_desc": "",
+    "is_publish": "1",
+    "playlist_order": "7",
+    "cutv_channel_img": ""
+  },
+  {
+    "pid": "891",
+    "playlist_name": "Social Issues",
+    "playlist_slugname": "social-issues",
+    "playlist_desc": "",
+    "is_publish": "1",
+    "playlist_order": "8",
+    "cutv_channel_img": ""
+  },
+  {
+    "pid": "892",
+    "playlist_name": "Web Series",
+    "playlist_slugname": "web-series",
+    "playlist_desc": "",
+    "is_publish": "1",
+    "playlist_order": "9",
+    "cutv_channel_img": ""
+  },
+  {
+    "pid": "893",
+    "playlist_name": "Fiction",
+    "playlist_slugname": "fiction",
+    "playlist_desc": "",
+    "is_publish": "1",
+    "playlist_order": "10",
+    "cutv_channel_img": ""
+  },
+  {
+    "pid": "908",
+    "playlist_name": "Montreal Community ",
+    "playlist_slugname": "montreal-community",
+    "playlist_desc": "",
+    "is_publish": "1",
+    "playlist_order": "11",
+    "cutv_channel_img": ""
+  }
+]
