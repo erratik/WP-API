@@ -34,9 +34,10 @@
                     </div>
                 </div>
 
-                <div class="ui list">
+                <div class="ui list" ng-hide="!editSourceForm">
                     <h4 class="ui header">Unassigned sources to attach</h4>
-                    <div class="item unassigned" ng-repeat="source in channel.sources" ng-if="!source.selected">
+                    <input type="text" ng-model="query">
+                    <div class="item unassigned" ng-repeat="source in channel.sources | orderBy:'name':false | filter: query" ng-if="!source.selected">
                         <div class="ui checkbox">
                             <input type="checkbox" name="{{source.ID}}" ng-model="source.selected">
                             <label>{{source.name}}</label>

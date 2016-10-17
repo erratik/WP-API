@@ -19,10 +19,10 @@
 //		if( $can_show_menu_links === TRUE ) {
 
 			add_menu_page(
-				'en' ,
+                'CUTV Channel Management',
 				'CUTV Admin' ,
 				'read' ,
-				'en' ,
+                'cutv_manage_channels' ,
 				'cutv_action_render' ,
 				CUTV_URL . "assets/images/wpadmin.icon.png"
 			//'dashicons-lightbulb'
@@ -37,14 +37,14 @@
 				'cutv_welcome_render'
 			);
 //
-//			add_submenu_page(
-//				'en' ,
-//				__( 'VIDEOS | CUTV Admin' , 'en' ) ,
-//				__( 'Manage Videos' , 'en' ) ,
-//				'read' ,
-//				'cutv-manage' ,
-//				'cutv_manage_render'
-//			);
+			add_submenu_page(
+				'en' ,
+				__( 'VIDEOS | CUTV Admin' , 'en' ) ,
+				__( 'Manage Videos' , 'en' ) ,
+				'read' ,
+				'cutv-manage' ,
+				'cutv_manage_render'
+			);
 //
 //			add_submenu_page(
 //				'en' ,

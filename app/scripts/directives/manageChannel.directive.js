@@ -17,7 +17,7 @@ angular.module('cutvApiAdminApp')
             template: '<div><div class="ui active inverted dimmer"><div class="ui text loader">LOADING CHANNELS</div></div></div>',
             controller: function($scope, $element, $compile) {
 
-
+                $scope.query = '';
                 $scope.updateChannel = function() {
 
                     var data = {

@@ -9,7 +9,7 @@ var video_batches;
 
 jQuery(function($) {
 
-    angular.bootstrap(document, ['cutvApiAdminApp']);
+    if (typeof angular != 'undefined') angular.bootstrap(document, ['cutvApiAdminApp']);
 
     var video_idx = 0;
     var adding_video_count = 0;
@@ -91,38 +91,7 @@ jQuery(function($) {
                 });
             });
 
-        })
-
-        // .on('submit', '.source-form', function (e) {
-        //     e.preventDefault();
-        //     // console.log($form.serializeArray());
-        //     var $form = $(this);
-        //     var form_values = $(this).serializeArray();
-        //
-        //     var sources = [];
-        //     _.forEach(form_values, function (category) {
-        //         var convertedNum = Number(category.name);
-        //         if (!_.isNaN(convertedNum)) {
-        //
-        //             sources.push(category.name);
-        //         }
-        //     });
-        //
-        //     var removingSources = [];
-        //     $.each($form.find('.assigned [type="checkbox"]:not(:checked)'), function () {
-        //         removingSources.push($(this).prop('name'));
-        //     });
-        //
-        //     _cutv.ajax('/wp-admin/admin-ajax.php',  {
-        //         action: 'cutv_update_source_categories',
-        //         sources: sources,
-        //         channel: Number($form.find('[name="channel_id"]').val()),
-        //         removing_sources: removingSources,
-        //         source_count: Number($form.find('.item.assigned').length)
-        //     }).then(function (data) {
-        //         console.log(data);
-        //     });
-        // });
+        });
 
 }).ajaxSuccess(function( event, xhr, settings ) {
     var url = settings.url;

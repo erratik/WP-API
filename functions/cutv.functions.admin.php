@@ -75,6 +75,7 @@ function cutv_set_wpvr_videos_status()
                 // find out if the video already exists as a snaptube video
                 $wpvr_video = get_post($wpvr_video_id);
 
+
                 $snaptube_post = $wpdb->get_row( "SELECT * FROM $wpdb->posts WHERE post_name = '".$wpvr_video->post_name."' AND post_type='videogallery'");
 
                 $videos_to_convert = [];
@@ -86,7 +87,7 @@ function cutv_set_wpvr_videos_status()
                     if ($status == 'publish') {
                         // UPDATE THE TAGS AND CATEGORIES
                         cutv_make_snaptube_cats($wpvr_video_id, cutv_get_snaptube_video($snaptube_post->ID));
-                        cutv_make_snaptube_tags(get_the_tags($wpvr_video_id), $snaptube_post->ID);
+                        cutv_make_snaptube_tags(get_the_tags($wpvr_video_id), $wpvr_video_id);
                         echo "cutv_get_snaptube_id(", $wpvr_video_id, "), get_the_tags(", $wpvr_video_id, ")", "\n";
                     } else {
                         $videos_to_convert[] = $post_id;
@@ -144,9 +145,6 @@ function cutv_convert_snaptube()
             $vid = $vid[0]->vid + 1;
 
 
-            // FIELDS TO CREATE THE SNAPTUBE VIDEO POST (THIS IS THE POST DISPLAYED ON THE SITE)
-            $categories = cutv_make_snaptube_cats($wpvr_id, $snaptube_video);
-            $tags = cutv_make_snaptube_tags($video['tags'], $snaptube_video->vid);
 
             // CREATE POST DATA, USE THAT ID AS THE SLUG FOR THE VIDEO ROW
             $snaptube_video_post = array();
@@ -175,6 +173,7 @@ function cutv_convert_snaptube()
             add_post_meta( $wpvr_id, '_cutv_snaptube_referential', $vid, true );
 
 
+
             // FIELDS ADDED TO CREATE SNAPTUBE VIDEOS
             $slug = $wpvr_video->post_name;
             $member_id = $wpvr_video->post_author;
@@ -197,12 +196,18 @@ function cutv_convert_snaptube()
 
             // INSERT INTO SNAPTUBE VIDEO TABLE (SNAPTUBE_VIDEOS)
             $query_vids = $wpdb->prepare("INSERT INTO " . SNAPTUBE_VIDEOS ." (vid, name, description, file, slug, file_type, duration, image, opimage, download, link, featured, post_date, publish, islive, member_id, ordering, amazon_buckets) VALUES ( %d, %s, %s, %s, %d, %d, %s, %s, %s, %d, %s, %d, %s, %d, %d, %d, %d, %d )",
-                array($vid, $name, $description, $file, $post_id, $file_type, $duration, $image, $opimage, $download, $link, $featured, $post_date, $publish, $islive, $member_id, $ordering, $amazon_buckets)
+                array($vid, sanitizeTitle($name), $description, $file, $post_id, $file_type, $duration, $image, $opimage, $download, $link, $featured, $post_date, $publish, $islive, $member_id, $ordering, $amazon_buckets)
             );
 
             // echo  "\n" . PHP_EOL;
             // print_r($query_vids);
             $wpdb->query($query_vids);
+
+
+
+            // FIELDS TO CREATE THE SNAPTUBE VIDEO POST (THIS IS THE POST DISPLAYED ON THE SITE)
+            $categories = cutv_make_snaptube_cats($wpvr_id, $snaptube_video);
+            $tags = cutv_make_snaptube_tags($video['tags'], $wpvr_id);
 
 
             echo '[snaptube video converted] '. get_site_url() .'/wp-json/cutv/v2/videos/'. $wpvr_id, "\n";
@@ -327,7 +332,33 @@ function cutv_update_source_categories()
                 echo "-> cutv_update_source_categories :: $source_name ($source_id) is already mapped to channel ". $channel_id, "\n";
             }
 
+            echo "SELECT post_id FROM " . $wpdb->postmeta ." WHERE meta_key='wpvr_video_sourceId' AND meta_value=$source_id", "\n";
+            $source_videos = $wpdb->get_results("SELECT post_id FROM " . $wpdb->postmeta ." WHERE meta_key='wpvr_video_sourceId' AND meta_value=$source_id" );
+            echo 'there are ' . count($source_videos) . " videos associated to $source_name ($source_id) ", "\n";
 
+
+            foreach ($source_videos as $key => $video) {
+
+                // find out if the video already exists as a snaptube video
+                $wpvr_video_id = $video->post_id;
+
+                $wpvr_video = get_post($wpvr_video_id);
+
+                $snaptube_post = $wpdb->get_row( "SELECT * FROM $wpdb->posts WHERE post_name = '".$wpvr_video->post_name."' AND post_type='videogallery'");
+
+
+                if ($snaptube_post != null) {
+                    echo '[update_video_posts] found wpvr video, #'.$snaptube_post->ID . ', '.$snaptube_post->post_title, "\n", "\$wpvr_video_id: $wpvr_video_id ", "\n";
+//
+//                    // UPDATE THE TAGS AND CATEGORIES
+                    cutv_make_snaptube_cats($wpvr_video_id, cutv_get_snaptube_video($snaptube_post->ID));
+
+
+                } else {
+                    echo "[update_video_posts] video not published yet, do nothing ( $wpvr_video_id )", "\n";
+
+                }
+            }
 
 
         }
@@ -367,11 +398,10 @@ function cutv_update_source_categories()
     die();
 }
 
-function cutv_make_snaptube_tags($tags, $snaptube_id) {
+function cutv_make_snaptube_tags($tags, $wpvr_id) {
     global $wpdb;
 
-    $vid = cutv_get_snaptube_video($snaptube_id);
-    $vid = $vid->vid;
+    $vid = cutv_get_snaptube_vid($wpvr_id);
 
     // INSERT INTO SNAPTUBE_TAGS TABLE
     // @this is the category table sort of
@@ -424,6 +454,7 @@ function cutv_make_snaptube_tags($tags, $snaptube_id) {
             $query_tags = $wpdb->prepare("INSERT INTO " . SNAPTUBE_TAGS . " (vtag_id, tags_name, seo_name, media_id) VALUES ( %d, %s, %s, %d) ",
                 array($new_tag_id, $tag_str, strtolower($safe_concat_str), $vid)
             );
+            echo $query_tags, "\n";
             $wpdb->query($query_tags);
 
 
@@ -447,8 +478,11 @@ function cutv_make_snaptube_cats($video_id, $snaptube_video) {
 
     // @this is the category table sort of
     $categories = get_numerics($wpvr_video_source_cats);
-    echo '[categories ('.count($categories).')] ',  "\n";
-
+    print_r($categories);
+    $snaptube_id = cutv_get_snaptube_vid($video_id);
+    echo '[categories ('.count($categories).')] cutv_get_snaptube_id->'. $snaptube_id,  "\n";
+//    print_r(cutv_get_snaptube_id($video_id));
+//    echo cutv_get_snaptube_id($video_id);
     if (count($categories) == 0) {
         $categories = array(1);
     }
@@ -460,11 +494,11 @@ function cutv_make_snaptube_cats($video_id, $snaptube_video) {
 
         $rel_id = $med2play[0]->rel_id + 1;
 
-        $playlist_attr_exists = $wpdb->get_row("SELECT * FROM " . SNAPTUBE_PLAYLIST_RELATIONS . " WHERE media_id = " . $snaptube_video->vid);
+        $playlist_attr_exists = $wpdb->get_row("SELECT * FROM " . SNAPTUBE_PLAYLIST_RELATIONS . " WHERE media_id = " . $snaptube_id);
 
         if (null != $playlist_attr_exists) {
 
-            echo "-> cutv_make_snaptube_cats] existing vid => " . $snaptube_video->vid , ",  updating playlist value => " . $value;
+            echo "-> cutv_make_snaptube_cats] existing vid => " . $snaptube_id, ",  updating playlist value => " . $value;
             echo "\n" . PHP_EOL;
 
             $updated = $wpdb->update(
@@ -472,7 +506,7 @@ function cutv_make_snaptube_cats($video_id, $snaptube_video) {
                 array(
                     'playlist_id' => $value    // integer (number)
                 ),
-                array('media_id' => $snaptube_video->vid ),
+                array('media_id' => $snaptube_id ),
                 array(
                     '%d'    // value2
                 ),
@@ -491,7 +525,7 @@ function cutv_make_snaptube_cats($video_id, $snaptube_video) {
             $vid = $vid[0]->vid + 1;
 
             $query_med2play = $wpdb->prepare("INSERT INTO " . SNAPTUBE_PLAYLIST_RELATIONS . " (rel_id, media_id, playlist_id, porder, sorder) VALUES ( %d, %d, %d, %d, %d ) ",
-                array($rel_id, $snaptube_video->vid, $value, 0, 0)
+                array($rel_id, $snaptube_id, $value, 0, 0)
             );
 
             $wpdb->query($query_med2play);
@@ -553,6 +587,7 @@ function cutv_get_sources_info($abridged = true) {
         if ($k == count($sources)-1) {
             $sourceObj['assigned'] = $assignedSources;
             $sourceObj['unassigned'] = $unassignedSources;
+            $sourceObj['all'] = array_merge($assignedSources, $unassignedSources);
 
         }
 
@@ -622,7 +657,15 @@ function cutv_get_channels() {
         $channels[] = $channel;
     };
 
-//    print_r($channels) ;
-    return $channels;
+
+    if (isset($_REQUEST) && $_REQUEST['json']) {
+        header('Content-Type: application/json');
+        echo json_encode($channels);
+    } else {
+        return $channels;
+    }
+
+    die();
 
 }
+add_action('wp_ajax_cutv_get_channels', 'cutv_get_channels');

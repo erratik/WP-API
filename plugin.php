@@ -494,10 +494,21 @@ function cutv_get_snaptube_post_id($id) {
 
 function cutv_get_snaptube_video($id) {
     global $wpdb;
-    echo "[cutv_get_snaptube_video] getting snaptube video for wpvr video post: $id", "\n";
+//    echo "[cutv_get_snaptube_video] getting snaptube video for wpvr video post: $id", "\n";
 //    echo "SELECT * FROM " . SNAPTUBE_VIDEOS ." WHERE slug = $id", "\n";
     // GET TEH SNAPTUBE VIDEO USING THE WPVR VIDEO ID
     return $wpdb->get_row( "SELECT * FROM " . SNAPTUBE_VIDEOS ." WHERE slug = $id");
+}
+
+function cutv_get_snaptube_vid($id) {
+    global $wpdb;
+    $wpvr_video = get_post($id);
+    $video_title = sanitizeTitle($wpvr_video->post_title);
+//    echo "[cutv_get_snaptube_vid] getting snaptube video id for wpvr video post: $id", "\n";
+    $snaptube_video = $wpdb->get_row( "SELECT vid FROM " . SNAPTUBE_VIDEOS ." WHERE name = '$video_title'");
+
+    // GET TEH SNAPTUBE VIDEO USING THE WPVR VIDEO ID
+    return $snaptube_video->vid;
 }
 
 function cutv_get_source_videos($source_id, $meta = true) {
@@ -537,6 +548,16 @@ function cutv_get_source_videos($source_id, $meta = true) {
     return $meta ? $response : count($source_videos);
 }
 
+
+
+function sanitizeTitle($string) {
+    return
+        preg_replace(
+            array('#[^A-Za-z0-9\-. ]#'),
+            array(''),
+            urldecode($string)
+        );
+}
 
 function hyphenize($string) {
     return

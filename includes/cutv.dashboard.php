@@ -29,27 +29,27 @@
                 published   : 0
             };
 
-            _.forEach(sources['assigned'], function(source) {
+            _.forEach(sources['all'], function(source){
+                source = _.clone(source);
+                channel['sources'].push(source);
+                source.selected = false;
+            });
+
+            _.forEach(sources['assigned'], function(source, i) {
                 _.findIndex(source.categories, function(o) {
                     if (o == channel_id) {
 
-                        source.selected = true;
-                        channel['sources'].push(source);
+                        channel['sources'][i].selected = true;
 
                         channel['counts']['unpublished'] =  channel['counts']['unpublished']+Number(source['videos']["unpublished_count"]);
                         channel['counts']['published'] =  channel['counts']['published']+Number(source['videos']['published_count']) ;
+
 
                     }
                 });
             });
             channel.source_count = channel['sources'].length;
 
-
-            _.forEach(sources['unassigned'], function(source){
-                source = _.clone(source);
-                channel['sources'].push(source);
-                source.selected = false;
-            });
 
         });
     }
