@@ -35,11 +35,14 @@
     "gulp-util": "^3.0.6",
     "gulp-watch": "^4.2.4",
     "jasmine-core": "^2.5.2",
+    "jasmine-jquery": "^2.1.1",
     "jshint": "^2.9.3",
     "jshint-stylish": "^1.0.0",
     "karma": "^0.13.22",
     "karma-chrome-launcher": "^2.0.0",
     "karma-jasmine": "^1.0.2",
+    "karma-jasmine-jquery": "^0.1.1",
+    "karma-ng-html2js-preprocessor": "^1.0.0",
     "karma-phantomjs-launcher": "^1.0.2",
     "karma-read-json": "^1.1.0",
     "lazypipe": "^1.0.1",
@@ -48,5 +51,8 @@
     "rimraf": "^2.5.4",
     "run-sequence": "^1.2.2",
     "wiredep": "^4.0.0"
+  },
+  "dependencies": {
+    "jquery": "^3.1.1"
   }
 }
