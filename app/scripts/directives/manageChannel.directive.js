@@ -21,6 +21,7 @@ angular.module('cutvApiAdminApp')
 
 
             },
+            controllerAs: 'fatherCtrl',
             link: function (scope, element, attrs) {
 
 

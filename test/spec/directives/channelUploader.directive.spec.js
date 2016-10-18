@@ -1,47 +1,30 @@
-/*
+describe('test childDirective', function(){
+    var $rootScope, $compile,
+        scope, element, ctrl;
 
-'use strict';
+    console.log('test2');
+    var mockedFatherCtrl = {
 
-describe('Directive: channelUploader', function () {
-
-    beforeEach(module('cutvApiAdminApp', 'flow'));
-    beforeEach(module('my.templates'));
-
-
-    var element,
-        $scope,
-        tplCache,
-        template;
-    var channels = readJSON('test/mock/channels.json');
+    };
 
 
-    // // Initialize the controller and a mock scope
-    beforeEach(inject(function ($rootScope, $compile, $templateCache) {
-
-        $scope = $rootScope.$new();
-        tplCache = $templateCache;
-        template = tplCache.get('upload-channel-image.html');
-
-        $scope.channel = channels[0];
-
-        var channelStr = JSON.stringify($scope.channel);
-        expect(channelStr).toContain('pid');
-        expect(channelStr).toContain('playlist_name');
-        expect(channelStr).toContain('playlist_order');
-
-        element = angular.element(template);
-        element = $compile(element)($scope);
-        $scope.$digest();
-
-    }));
-
-
-    it('should make the element visible', inject(function ($compile, $templateRequest) {
-
-        // var channelName = $scope.channel.playlist_name;
-        // expect(element.find('a').text()).toEqual(channelName);
-
-    }));
-
-});
-*/
+    beforeEach(inject(function($rootScope, $compile){
+            console.log('test3');
+            scope = $rootScope.$new();
+            // element = $compile(angular.element('<div><channel-image-uploader></channel-image-uploader></div>'))(scope);
+            // console.log(element)
+            // // add the mock controller to the father
+            // element.data('$manageChannelController', mockedFatherCtrl);
+            //
+            // // get the child directive's element
+            // element = element.find('channel-image-uploader');
+            //
+            // // get the child directive's controller
+            // ctrl = element.scope().childCtrl;
+        })
+    );
+    
+    it('', function () {
+        
+    });
+})

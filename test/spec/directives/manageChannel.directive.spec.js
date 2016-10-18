@@ -8,6 +8,7 @@ describe('Directive: manageChannel', function () {
 
     var element,
         childElem,
+        childElemTpl,
         childScope,
         childTpl,
         $scope,
@@ -22,7 +23,6 @@ describe('Directive: manageChannel', function () {
         $scope = $rootScope.$new();
         tplCache = $templateCache;
         template = tplCache.get('manage-channel.html');
-        // console.log(template);
         $scope.channel = channels[0];
 
         var channelStr = JSON.stringify($scope.channel);
@@ -43,51 +43,46 @@ describe('Directive: manageChannel', function () {
         var channelName = $scope.channel.playlist_name;
         expect(element.find('a').text()).toEqual(channelName);
 
-       /* var angularElement = angular.element('<channel-image-uploader ' +
+
+    }));
+
+    var mockedFatherCtrl
+
+    it('should add the <channel-image-uploader> directive', inject(function ($compile) {
+
+
+        var compiledDirective = '<div class="row">';
+        var angularElement = angular.element(compiledDirective + '<channel-image-uploader ' +
             'flow-init="{target: \'/wp-content/plugins/cutv-api/upload.php?channel='+$scope.channel.pid+'\', singleFile:true}" ' +
             'flow-files-submitted="$flow.upload()" ' +
             'flow-name="flow"> ' +
-            '</channel-image-uploader>'
+            '</channel-image-uploader>' +
+           template.split(/<div class="row">\s+/gmi)[1]
         );
-        console.log(document.getElementsByClassName('row'));
-        element.find('.row').prepend(angularElement);
-        $compile(angularElement)($scope);
-        $scope.$digest();*/
 
-
-    }));
-/*
-
-    it('should check that the title of the channel is rendered', inject(function ($compile) {
-
-        console.log(element);
-        childElem = element.find('channel-image-uploader');
-        childScope = element.scope();
-
-        console.log(childScope);
-        // childElem = $compile(childElem)(childScope);
-        // console.log(childElem);
-        //
-        // childScope.$digest();
-        //
-        // console.log(childElem);
-       /!* childTpl = tplCache.get('upload-channel-image.html');
-        childElem = angular.element(element.find('channel-image-uploader'));
-        childElem = $compile(childElem)($scope);
+        element = $compile(angularElement)($scope);
         $scope.$digest();
-        // get the child directive's controller
-        childScope = element.scope();*!/
 
-        // console.log(childScope);
+        childTpl = tplCache.get('upload-channel-image.html');
 
-        // console.log(childElem);
+        expect(childTpl).toContain('flow-btn flow-attrs="{accept:\'image/\*\'}"');
 
+        childElem = angular.element(element.find('channel-image-uploader'));
+        childElem.html(childTpl);
+        childScope = element.scope();
+        childElem = $compile(childElem)(childScope);
+        $scope.$digest();
 
-
+        var cutv_channel_img =  (typeof childScope.channel['cutv_channel_img'] == 'undefined') ? false : childScope.channel['cutv_channel_img'];
+        if (cutv_channel_img) {
+            expect(childElem.find('img')[1].getAttribute('src')).toContain(cutv_channel_img);
+        } else {
+            // console.log(childElem.find('img')[1].getAttribute('src'));
+            expect(childElem.find('img')[1].getAttribute('src')).toContain('placeholdit');
+        }
 
 
     }));
-*/
 
 
 });
