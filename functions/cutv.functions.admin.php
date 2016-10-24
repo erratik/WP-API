@@ -492,8 +492,8 @@ function cutv_make_snaptube_cats($video_id, $snaptube_video) {
 
         $med2play = $wpdb->get_results("SELECT rel_id FROM " . SNAPTUBE_PLAYLIST_RELATIONS . " ORDER BY rel_id DESC LIMIT 1");
 
-        $rel_id = $med2play[0]->rel_id + 1;
 
+        $rel_id = $snaptube_id;
         $playlist_attr_exists = $wpdb->get_row("SELECT * FROM " . SNAPTUBE_PLAYLIST_RELATIONS . " WHERE media_id = " . $snaptube_id);
 
         if (null != $playlist_attr_exists) {
@@ -516,6 +516,7 @@ function cutv_make_snaptube_cats($video_id, $snaptube_video) {
             echo "\n" . PHP_EOL;
         }
         else {
+
 
             // INSERT INTO SNAPTUBE_PLAYLIST_RELATIONS TABLE
             echo "rel_id => " . $rel_id, ",  new playlist value => " . $value;
