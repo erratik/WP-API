@@ -5,6 +5,7 @@ jQuery( document ).ready( function ( e ) {
     $('.video-carousel-title, .video-module-title, .video-block-container-wrapper .more_title').each(function(){
         $(this).children().wrapAll('<div></div>');
     });
+    $('.main-inner .first-entry:not(:first-child)').remove();
 
     _cutv.ajax(ajaxurl, {
             action : 'cutv_get_channels',
