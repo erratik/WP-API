@@ -168,6 +168,7 @@ class CUTV_Channel {
         // Add your templates to this array.
         $this->templates = array(
             'snaptube-template.php' => 'CUTV Snaptube',
+            'catalog.php' => 'CUTV Catalog'
         );
 
         add_action( 'plugins_loaded', array( 'CUTV_Channel', 'get_instance' ) );
@@ -284,7 +285,9 @@ class CUTV_Channel {
                 if ($_REQUEST['page'] == 'cutv_manage_channels') {
 //                echo ;
                     wp_register_script($this->_token . '-lodash', esc_url($this->assets_url) . 'js/lodash' . $this->script_suffix . '.js', array('jquery'), $this->_version);
-                    wp_enqueue_script($this->_token . '-lodash');
+                    wp_enqueue_script($this->_token . '-lodash');;
+                    wp_register_script($this->_token . '-semantic', esc_url($this->assets_url) . 'js/semantic.min' . $this->script_suffix . '.js', array('jquery'), $this->_version);
+                    wp_enqueue_script($this->_token . '-semantic');
 
 
                     wp_register_script($this->_token . '-ng', esc_url(trailingslashit(plugins_url('/bower_components/', $this->file))) . 'angular/angular' . $this->script_suffix . '.js', $this->_version);

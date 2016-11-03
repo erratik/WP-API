@@ -13,7 +13,15 @@ angular
         'ngRoute',
         'flow'
     ])
-    .config(function ($routeProvider, flowFactoryProvider) {
+    .config(function ($routeProvider, flowFactoryProvider, $httpProvider) {
+
+        $httpProvider.defaults.transformRequest = function(data){
+            if (data === undefined) {
+                return data;
+            }
+            return $.param(data);
+        };
+        $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8';
 
         $routeProvider
             .when('/', {
@@ -21,30 +29,9 @@ angular
                 controller: 'MainCtrl',
                 controllerAs: 'main'
             })
-            // .when('/about', {
-            //   templateUrl: 'views/about.html',
-            //   controller: 'AboutCtrl',
-            //   controllerAs: 'about'
-            // })
-            // .when('/myroute', {
-            //   templateUrl: 'views/myroute.html',
-            //   controller: 'MyrouteCtrl',
-            //   controllerAs: 'myroute'
-            // })
             .otherwise({
                 redirectTo: '/'
             });
-        //
-        // flowFactoryProvider.defaults = {
-        //     target: '/upload.php',
-        //     permanentErrors: [404, 500, 501],
-        //     maxChunkRetries: 1,
-        //     chunkRetryInterval: 5000,
-        //     simultaneousUploads: 4
-        // };
-        // flowFactoryProvider.on('catchAll', function (event) {
-        //     // console.log('catchAll', arguments);
-        // });
 
     });
 

@@ -2,7 +2,7 @@ var ajaxurl = '/wp-admin/admin-ajax.php';
 
 jQuery( document ).ready( function ( e ) {
 
-    $('.video-carousel-title, .video-module-title, .video-block-container-wrapper h4').each(function(){
+    $('.video-carousel-title, .video-module-title, .video-block-container-wrapper .more_title').each(function(){
         $(this).children().wrapAll('<div></div>');
     });
 

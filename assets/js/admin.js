@@ -11,6 +11,7 @@ jQuery(function($) {
 
     if (typeof angular != 'undefined') angular.bootstrap(document, ['cutvApiAdminApp']);
 
+
     var video_idx = 0;
     var adding_video_count = 0;
 
@@ -18,7 +19,13 @@ jQuery(function($) {
         + '<button class="ui labeled icon button"><i class="add circle icon"></i>Apply to  <span class="wpvr_count_checked"></span> videos</button></div>';
     $('.wpvr_manage_bulk_actions').append(button_html);
 
+
+
     $('body')
+        .on('mouseover', '.ui.checkbox', function () {
+
+            $(this).checkbox();
+        })
         .on('change', '.wpvr_manage_bulk_actions_select', function() {
 
             // SET THE CHOSEN BULK ACTION
@@ -70,6 +77,7 @@ jQuery(function($) {
             var channelName = $('[name="cutv-new-channel-name"]').val();
             var slug = channelName.toLowerCase();
             slug = slug.replace(/ /g, '-');
+
 
             _cutv.ajax(wpApiSettings.root + 'cutv/v2/categories', {
                     description: 'Mlkshk flannel deep v marfa hashtag brooklyn.',

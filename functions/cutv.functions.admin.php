@@ -7,34 +7,29 @@ function cutv_add_channel()
     // The $_REQUEST contains all the data sent via ajax
     if (isset($_REQUEST)) {
         global $wpdb;
-        $channelName = $_REQUEST['channelName'];
-        $description = $_REQUEST['description'];
-        $slug = $_REQUEST['slug'];
-        $cat_id = $_REQUEST['cat_id'];
 
-        // Let's take the data that was sent and do something with it
-//        if ( $channelName == 'Banana' ) {
-//            $channelName = 'Apple';
-//        }
-//        $parent_term = term_exists( 'channel' ); // array is returned if taxonomy is given
-//        $parent_term_id = $parent_term['term_id']; // get numeric term id
+        $cat_id = wp_insert_category(
+            array(
+                'cat_name' => $_REQUEST['channelName'],
+                'category_description' => '',
+                'category_nicename' => $_REQUEST['slug'],
+                'category_parent' => ''
+            )
+        );
+
+        // Set Channel Status
+        if ( ! add_term_meta( $cat_id, 'cutv_channel_enabled', $_REQUEST['enabled'], true)) {
+            update_term_meta($cat_id, 'cutv_channel_enabled', $_REQUEST['enabled']);
+        }
 
         $playlists = $wpdb->get_results( 'SELECT * FROM ' . SNAPTUBE_PLAYLISTS );
 
         $query = $wpdb->prepare("INSERT INTO " . SNAPTUBE_PLAYLISTS . " (pid, playlist_name, playlist_slugname, playlist_desc, is_publish, playlist_order) VALUES ( %d, %s, %s, %s, %d, %d )",
-            array($cat_id, $channelName, $slug, $description, 1, count($playlists))
+            array($cat_id, $_REQUEST['channelName'], $_REQUEST['slug'], '', 1, count($playlists))
         );
         $wpdb->query($query);
 
-
-        $playlistsUpdated = $wpdb->get_results('SELECT * FROM ' . SNAPTUBE_PLAYLISTS);
-
-        // Now we'll return it to the javascript function
-        // Anything outputted will be returned in the response
-        print_r($playlistsUpdated);
-
-        // If you're debugging, it might be useful to see what was sent in the $_REQUEST
-        // print_r($_REQUEST);
+        echo json_encode(end(cutv_get_channels()));
 
     }
 
@@ -42,6 +37,29 @@ function cutv_add_channel()
     die();
 }
 add_action('wp_ajax_cutv_add_channel', 'cutv_add_channel');
+
+function cutv_remove_channel()
+{
+
+    // The $_REQUEST contains all the data sent via ajax
+    if (isset($_REQUEST)) {
+        global $wpdb;
+
+        $cat_id =  $_REQUEST['id'];
+
+        wp_delete_category($cat_id);
+        $wpdb->delete( $wpdb->termmeta, array( 'term_id' => $cat_id ) );
+        $wpdb->delete( SNAPTUBE_PLAYLISTS, array( 'pid' => $cat_id ) );
+        $wpdb->delete( SNAPTUBE_PLAYLIST_RELATIONS, array( 'playlist_id' => $cat_id ) );
+
+        header("HTTP/1.1 200 Ok");
+
+    }
+
+    // Always die in functions echoing ajax content
+    die();
+}
+add_action('wp_ajax_cutv_remove_channel', 'cutv_remove_channel');
 
 function cutv_set_wpvr_videos_status()
 {
@@ -308,6 +326,10 @@ function cutv_update_source_categories()
 
         foreach ($sources as $i => $source_id) {
 
+
+            if ( ! add_term_meta( $channel_id, 'cutv_channel_enabled', $_REQUEST['enabled'], true)) {
+                update_term_meta($channel_id, 'cutv_channel_enabled', $_REQUEST['enabled']);
+            }
 
             // update the categories on each source
             $source_name = get_post_meta($source_id, 'wpvr_source_name', true);
@@ -655,6 +677,7 @@ function cutv_get_channels() {
     $channels = [];
     foreach ($channels_rows as $channel) {
         $channel->cutv_channel_img = get_term_meta( $channel->pid, 'cutv_channel_img', true );
+        $channel->enabled = get_term_meta( $channel->pid, 'cutv_channel_enabled', true );
         $channels[] = $channel;
     };
 
@@ -670,3 +693,26 @@ function cutv_get_channels() {
 
 }
 add_action('wp_ajax_cutv_get_channels', 'cutv_get_channels');
+
+function get_the_catalog_cat( $id = false ) {
+    $categories = get_the_terms( $id, 'catablog-terms' );
+    if ( ! $categories || is_wp_error( $categories ) )
+        $categories = array();
+
+    $categories = array_values( $categories );
+
+    foreach ( array_keys( $categories ) as $key ) {
+        _make_cat_compat( $categories[$key] );
+    }
+
+    /**
+     * Filters the array of categories to return for a post.
+     *
+     * @since 3.1.0
+     * @since 4.4.0 Added `$id` parameter.
+     *
+     * @param array $categories An array of categories to return for the post.
+     * @param int   $id         ID of the post.
+     */
+    return apply_filters( 'get_the_categories', $categories, $id );
+}

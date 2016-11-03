@@ -11,7 +11,7 @@ angular.module('cutvApiAdminApp')
         return {
             restrict: 'E',
             replace: true,
-            template: '<div class="flex vertical column uploader-content"><div class="ui active inverted dimmer"><div class="ui loader"></div></div></div>',
+            template: '<div class="flex vertical three wide column uploader-content"><div class="ui active inverted dimmer"><div class="ui loader"></div></div></div>',
             scope: true,
             controllerAs: 'childCtrl',
             require: '^^manageChannel',

@@ -41,12 +41,12 @@ describe('Directive: manageChannel', function () {
     it('should check that the title of the channel is rendered', inject(function ($compile) {
 
         var channelName = $scope.channel.playlist_name;
-        expect(element.find('a').text()).toEqual(channelName);
+        expect(element.find('h3').text()).toEqual(channelName);
 
 
     }));
 
-    var mockedFatherCtrl
+    var mockedFatherCtrl;
 
     it('should add the <channel-image-uploader> directive', inject(function ($compile) {
 

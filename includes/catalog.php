@@ -36,7 +36,7 @@ if ( LAYOUT == 'sidebar-no' ) {
                     <?php } ?>
                     <?php
                     if ( !is_front_page() && !is_home() ) {
-                        echo vh_breadcrumbs();
+//                        echo the_breadcrumbs();
                     } ?>
                     <?php
                     if ( isset($img[0]) ) { ?>
@@ -46,16 +46,47 @@ if ( LAYOUT == 'sidebar-no' ) {
                     <?php } ?>
                     <div class="main-inner">
                         <?php
-                        if (have_posts ()) {
-                            while (have_posts()) {
-                                the_post();
-                                the_content();
+                        $args = array(
+                            'numberposts' => -1,
+                            'post_type'   => 'catablog-items'
+                        );
+
+                        $posts = get_posts($args);
+
+                        $categories = get_categories( array('taxonomy' => 'catablog-terms') ) ;
+
+                        foreach ($categories as $category) {
+
+                            echo "<h2 style=\"color: white;\">$category->name</h2>";
+
+                            foreach ($posts as $post) {
+
+                                $item_cat = get_the_catalog_cat($post->ID);
+                                if ($post->post_type == $args['post_type'] && $item_cat[0]->name == $category->name) {
+
+                                    $image = '/wp-content/uploads/catablog/thumbnails/'.get_post_meta($post->ID, 'catablog-post-meta', true )['image'];
+                                    ?>
+
+                                    <a href="/?p=<?php echo $post->ID; ?>">
+
+                                        <div class="flex catalog-item">
+                                            <div class="image">
+                                                <img src="<?php echo $image; ?>" alt="">
+                                            </div>
+                                            <div class="description">
+                                                <h3><?php echo $post->post_title; ?></h3>
+                                                <!--<div class="content"><?php echo $post->post_content; ?></div>-->
+                                            </div>
+                                        </div>
+                                    </a>
+
+                                    <?php
+                                }
+
                             }
-                        } else {
-                            echo '
-							<h2>Nothing Found</h2>
-							<p>Sorry, it appears there is no content in this section.</p>';
+
                         }
+
                         ?>
                     </div>
                 </div>
@@ -79,20 +110,21 @@ if ( LAYOUT == 'sidebar-no' ) {
         </div><!--end of content-->
         <div class="clearfix"></div>
     </div><!--end of page-wrapper-->
-<script id="cutv-channels" type="handlebars/template">
-    <ul>
-    {{#each this}}
-        {{#if this.enabled}}
-        <li>
-            <a href="/channels/?playid={{this.pid}}">
-                {{#if this.cutv_channel_img }}<img src="/wp-content/uploads/channels/{{this.cutv_channel_img}}">
-                {{^}}<img src="https://placeholdit.imgix.net/~text?txtsize=33&txt={{this.playlist_name}}&w=200&h=200">
-                {{/if}}
-            </a>
-        </li>
-        {{/if}}
+    <script id="cutv-channels" type="handlebars/template">
+        <ul>
+            {{#each this}}
+            {{#if this.enabled}}
+            <li>
+                <a href="/channels/?playid={{this.pid}}">
+                    {{#if this.cutv_channel_img }}<img src="/wp-content/uploads/channels/{{this.cutv_channel_img}}">
+                    {{^}}<img src="https://placeholdit.imgix.net/~text?txtsize=33&txt={{this.playlist_name}}&w=200&h=200">
+                    {{/if}}
+                </a>
+            </li>
+            {{/if}}
 
-        {{/each}}
-    </ul>
-</script>
+            {{/each}}
+        </ul>
+    </script>
 <?php get_footer();
+?>

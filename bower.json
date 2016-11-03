@@ -21,7 +21,8 @@
     "angular-resource": "^1.5.8",
     "handlebars": "^4.0.5",
     "ng-flow": "~2",
-    "angular": "^1.5.8"
+    "angular": "^1.5.8",
+    "angular-slugify": "^1.0.1"
   },
   "devDependencies": {
     "angular-jasmine-matchers": "angularjs-jasmine-matchers#*"

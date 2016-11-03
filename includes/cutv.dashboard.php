@@ -10,54 +10,10 @@
     $all_sources = cutv_get_sources_info(true);
 ?>
 <script>
-
     var cutv = {
         channels: <?php echo json_encode($cutv_channels); ?>
     };
-
-    function makeSourceObj(sources) {
-
-        if ( typeof sources == 'string') sources = JSON.parse(sources);
-
-        _.forEach(cutv.channels, function(channel){
-
-            var channel_id = channel.pid;
-
-            channel['sources'] = [];
-            channel['counts'] = {
-                unpublished : 0,
-                published   : 0
-            };
-
-            _.forEach(sources['all'], function(source){
-                source = _.clone(source);
-                channel['sources'].push(source);
-                source.selected = false;
-            });
-
-            _.forEach(sources['assigned'], function(source, i) {
-                _.findIndex(source.categories, function(o) {
-                    if (o == channel_id) {
-
-                        channel['sources'][i].selected = true;
-
-                        channel['counts']['unpublished'] =  channel['counts']['unpublished']+Number(source['videos']["unpublished_count"]);
-                        channel['counts']['published'] =  channel['counts']['published']+Number(source['videos']['published_count']) ;
-
-
-                    }
-                });
-            });
-            channel.source_count = channel['sources'].length;
-
-
-        });
-    }
-
     var sources = <?php echo json_encode($all_sources); ?>
-
-    makeSourceObj(sources);
-
 </script>
 
 <div>

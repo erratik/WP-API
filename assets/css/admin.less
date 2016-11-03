@@ -6,6 +6,11 @@
   }
 }
 
+.full {
+  width: 100%;
+  &.grid.ui {margin: inherit !important;}
+}
+
 // videos
 .cutv_bulk_apply, .wpvr_manage_bulkApply {
   display: none !important;
@@ -27,4 +32,24 @@
   }
 }
 
-#wpfooter {  position: relative;}
+#wpfooter {  position: relative;
+  display: block;}
+
+.ui.list.columns {
+
+  display: flex;
+  flex-flow: column wrap;
+  max-height: 300px;
+
+  > * {
+    flex: 1 1 100%;
+  }
+  > .item {
+    flex: 1 1 25%;
+  }
+}
+
+.content .header {
+  font-size: 17px;
+  font-weight: bold;
+}
