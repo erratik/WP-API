@@ -692,7 +692,7 @@ function cutv_get_channels() {
     die();
 
 }
-add_action('wp_ajax_cutv_get_channels', 'cutv_get_channels');
+add_action('wp_ajax_nopriv_cutv_get_channels', 'cutv_get_channels');
 
 function get_the_catalog_cat( $id = false ) {
     $categories = get_the_terms( $id, 'catablog-terms' );

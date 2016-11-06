@@ -11,8 +11,6 @@ jQuery( document ).ready( function ( e ) {
             action : 'cutv_get_channels',
             json: true
     }).then(function (data) {
-        console.log(data);
-
         $('.page-wrapper').prepend($('.cutv-channels'));
         _cutv.render({
             target: $('.cutv-channels'), // $el
@@ -21,6 +19,7 @@ jQuery( document ).ready( function ( e ) {
             callback: null
         });
     });
+
 });
 
 _cutv.render = function (options) {

@@ -594,49 +594,6 @@ function cutv_api_init()
 add_action('init', 'cutv_api_init');
 
 
-//create a function that will attach our new 'channel' taxonomy to the 'post' post type
-//function add_channel_taxonomy_to_post()
-//{
-//
-//    //set the name of the taxonomy
-//    $taxonomy = 'channel';
-//    //set the post types for the taxonomy
-//    $object_type = 'page';
-//
-//    //populate our array of names for our taxonomy
-//    $labels = array(
-//        'name' => 'Channels',
-//        'singular_name' => 'Channel',
-//        'search_items' => 'Search Channels',
-//        'all_items' => 'All Channels',
-//        'parent_item' => 'Parent Channel',
-//        'parent_item_colon' => 'Parent Channel:',
-//        'update_item' => 'Update Channel',
-//        'edit_item' => 'Edit Channel',
-//        'add_new_item' => 'Add New Channel',
-//        'new_item_name' => 'New Channel Name',
-//        'menu_name' => 'Channel'
-//    );
-//
-//    //define arguments to be used
-//    $args = array(
-//        'labels' => $labels,
-//        'hierarchical' => true,
-//        'show_ui' => true,
-//        'how_in_nav_menus' => true,
-//        'public' => true,
-//        'show_admin_column' => true,
-//        'query_var' => true,
-//        'rewrite' => array('slug' => 'channel')
-//    );
-//
-//    //call the register_taxonomy function
-//    register_taxonomy($taxonomy, $object_type, $args);
-//}
-//add_action('init', 'add_channel_taxonomy_to_post');
-// If you wanted to also use the function for non-logged in users (in a theme for example)
-// add_action( 'wp_ajax_nopriv_cutv_add_channel', 'cutv_add_channel' );
-
 // Load plugin class files
 require_once('includes/class-wordpress-plugin-template.php');
 require_once('includes/class-wordpress-plugin-template-settings.php');
