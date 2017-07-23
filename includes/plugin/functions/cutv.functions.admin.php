@@ -8,29 +8,40 @@ function cutv_add_channel()
     if (isset($_REQUEST)) {
         global $wpdb;
 
-        $cat_id = wp_insert_category(
+        $channel_name = $_REQUEST['channelName'];
+        $slug = sanitize_title_with_dashes($channel_name);
+
+        $term_parent = $wpdb->get_results("SELECT term_id FROM " . $wpdb->postmeta . " WHERE slug='channels'" )->term_id;
+
+        $channel_id = wp_insert_category(
             array(
-                'cat_name' => $_REQUEST['channelName'],
-                'category_description' => '',
-                'category_nicename' => $_REQUEST['slug'],
-                'category_parent' => ''
+                'cat_name' => $channel_name,
+                // 'category_description' => '',
+                'category_nicename' => $slug,
+                'category_parent' => $term_parent
             )
         );
 
-        // Set Channel Status
-        update_term_meta($cat_id, 'cutv_channel_enabled', $_REQUEST['enabled']);
+        // Set Channel Status & Visibility
+        if (isset($_REQUEST['featured'])) {
+            update_term_meta($channel_id, 'cutv_channel_featured', $_REQUEST['featured']);
+        }
+
+        if (isset($_REQUEST['enabled'])) {
+            update_term_meta($channel_id, 'cutv_channel_enabled', $_REQUEST['enabled']);
+        }
 
 
         $playlists = $wpdb->get_results( 'SELECT * FROM ' . SNAPTUBE_PLAYLISTS );
-
         $query = $wpdb->prepare("INSERT INTO " . SNAPTUBE_PLAYLISTS . " (pid, playlist_name, playlist_slugname, playlist_desc, is_publish, playlist_order) VALUES ( %d, %s, %s, %s, %d, %d )",
-            array($cat_id, $_REQUEST['channelName'], $_REQUEST['slug'], '', 1, count($playlists))
+            array($channel_id, $channel_name, $slug, '', 1, count($playlists))
         );
         $wpdb->query($query);
 
+        echo json_encode(cutv_get_channel($channel_id));
+
     }
 
-    // Always die in functions echoing ajax content
     die();
 }
 add_action('wp_ajax_cutv_add_channel', 'cutv_add_channel');
@@ -67,6 +78,13 @@ function cutv_update_channel() {
 
         $channel_id = $_REQUEST['channel'];
 
+        // channel featured = shows up in .cutv-channels-top
+        if (isset($_REQUEST['featured'])) {
+            $enabled = $_REQUEST['featured'];
+            update_term_meta($channel_id, 'cutv_channel_featured', $enabled);
+        }
+
+        // channel exists, can be worked on, but not visible on website
         if (isset($_REQUEST['enabled'])) {
             $enabled = $_REQUEST['enabled'];
             update_term_meta($channel_id, 'cutv_channel_enabled', $enabled);
@@ -131,7 +149,8 @@ function cutv_get_channel($channel_id) {
     global $wpdb;
     $channel = $wpdb->get_row("SELECT * FROM " . SNAPTUBE_PLAYLISTS ." WHERE pid = $channel_id" );
     $channel->cutv_channel_img = get_term_meta( $channel_id, 'cutv_channel_img', true );
-    $channel->enabled = get_term_meta( $channel_id, 'cutv_channel_enabled', true );
+    $channel->enabled = filter_var(get_term_meta( $channel_id, 'cutv_channel_enabled', true ), FILTER_VALIDATE_BOOLEAN);
+    $channel->featured = filter_var(get_term_meta( $channel_id, 'cutv_channel_featured', true ), FILTER_VALIDATE_BOOLEAN);
 
     return $channel;
 }

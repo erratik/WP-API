@@ -264,7 +264,7 @@ class CUTV_Channel {
     public function admin_enqueue_styles ( $hook = '' ) {
         wp_register_style( $this->_token . '-admin', esc_url( $this->assets_url ) . 'css/admin.css', array(), $this->_version );
         wp_enqueue_style( $this->_token . '-admin' );
-        wp_register_style( $this->_token . '-semantic', esc_url( $this->assets_url ) . 'styles/semantic/semantic.rtl.min.css', array(), $this->_version );
+        wp_register_style( $this->_token . '-semantic', esc_url( $this->assets_url ) . 'styles/semantic/semantic.min.css', array(), $this->_version );
         wp_enqueue_style( $this->_token . '-semantic' );
     } // End admin_enqueue_styles ()
 

@@ -1,34 +1,43 @@
-
-<form name="displayForm" class="ui grid sixteen wide column">
+<div class="ui grid sixteen wide column">
 
     <div class="two wide column">
 
-        <channel-image-uploader
-            flow-init="{target: '/wp-content/plugins/cutv-api/upload.php?channel='+channelId, singleFile:true}"
-            flow-files-submitted="$flow.upload()" flow-file-error="error( $file, $message, $flow )"
-            flow-error="error( $file, $message, $flow )"
+        <channel-image-uploader flow-init="{target: '/wp-content/plugins/cutv-api/upload.php?channel='+channel.pid, singleFile:true}" flow-files-submitted="$flow.upload()" flow-file-error="error( $file, $message, $flow )" flow-error="error( $file, $message, $flow )"
             flow-name="flow"></channel-image-uploader>
 
-
     </div>
-    <div class="fourteen wide column">
+    <form name="displayForm" class="fourteen wide column">
+
         <div class="ui form">
 
             <div class="field">
                 <label>Channel Name</label>
                 <input type="text" ng-model="channel.playlist_name">
             </div>
+            <hr>
+            <h5>Channel Visibility</h5>
             <div class="field">
-                <div class="">
-                    <label ng-click="channel.enabled  = !channel.enabled">Toggle channel in the list on the website (set to: {{channel.enabled}})</label>
-                    <input type="checkbox" tabindex="0" ng-model="channel.enabled">
+                <div class="flex center">
+                    <input type="checkbox" tabindex="0" ng-model="channel.enabled" id="enabledChannel_{{channel.pid}}">
+                    <label for="enabledChannel_{{channel.pid}}">Appears in top channels</label>
+                </div>
+            </div>
+            <div class="field">
+                <div class="flex center">
+                    <input type="checkbox" tabindex="0" ng-model="channel.featured" id="featureChannel_{{channel.pid}}">
+                    <label for="featureChannel_{{channel.pid}}">Channel is featured (shows up in top channels list)</label>
                 </div>
             </div>
 
             <button class="ui positive button" ng-click="updateChannel()" ng-if="displayForm.$dirty">Save</button>
 
         </div>
+        <div class="ui success mini message" ng-show="updateSuccess">
+            <div class="header">
+                Channel updated!
+            </div>
+        </div>
 
-    </div>
+    </form>
 
-</form>
+</div>

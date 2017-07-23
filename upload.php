@@ -18,8 +18,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' ) {
     $config->setTempDir($chunkDir);
     $file = new \Flow\File($config);
 
-    print_r($file); echo ' ::: get request';
-
 
     if ($file->checkChunk()) {
         header("HTTP/1.1 200 Ok");
@@ -30,23 +28,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' ) {
     }
 
 } else {
-    echo ' ::: post request ::: > '. $file->getIdentifier() .' < ::: ';
 
-    $chunkDir = './app/.tmp' . DIRECTORY_SEPARATOR . $file->getIdentifier();
-    $config->setTempDir($chunkDir);
     $file = new \Flow\File($config);
 
 
 
     if ($file->validateChunk()) {
-        echo ' ::: chunk validate okay ::: ';
+        // echo ' ::: chunk validate okay ::: ', "\n";
         $file->saveChunk();
-
-
-        print_r($_REQUEST); echo ' ::: saving chunk ::: ';
-
-        // saving right away for now...
-        echo ' ::: we are updating so skip this check, save channel image right away ::: ';
         saveChannelImage($file->getIdentifier());
 
 
@@ -60,44 +49,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' ) {
 //    die();
 }
 
-if (isset($_REQUEST['updateChannel'])) {
-    print_r($_REQUEST);
-}
-
-echo ' ::: end';
 
 function saveChannelImage($identifier) {
     global $wpdb;
 
-    echo $identifier, ' ? ::: ';
+    // echo "[identifier] $identifier";
+    $channel_id = $_REQUEST['channel'];
+
     $config = new \Flow\Config();
-    $chunkDir = './app/.tmp' . DIRECTORY_SEPARATOR . $identifier;
+
+    $tmpDir = '../../uploads/.tmp';
+    $chunkDir = $tmpDir . DIRECTORY_SEPARATOR . $identifier;
+    if (!file_exists($tmpDir)) mkdir($tmpDir,0777,false);
+    if (!file_exists($chunkDir)) mkdir($chunkDir,0777,false);
+
     $config->setTempDir($chunkDir);
     $file = new \Flow\File($config);
 
-    if ($file->validateFile() ) {
-        $channelImgDir = '../../uploads/channels';
-//        echo ' ', $channelImgDir;
-        if (!file_exists($channelImgDir)) {
-            mkdir($channelImgDir);
-            chmod($channelImgDir, 0777);
-            // File upload was completed
-            echo 'created uploads/channels folder';
-        }
+    $channelImgDir = '../../uploads/channels';
 
-        $request = new \Flow\Request();
-
-        print_r($request); echo ' ::: request in saveChannelImage ::: ', $request->getFileName();
-        if (\Flow\Basic::save($channelImgDir . DIRECTORY_SEPARATOR . $request->getFileName(), $config, $request)) {
-            echo "Hurray, file was saved in " .$channelImgDir . DIRECTORY_SEPARATOR . $request->getFileName();
-
-            echo 'update this channel! ('.$_REQUEST['channel'].')';
-            if ( ! add_term_meta( $_REQUEST['channel'], 'cutv_channel_img', $request->getFileName(), true ) ) {
-                update_term_meta($_REQUEST['channel'], 'cutv_channel_img', $request->getFileName());
-            }
-
-        }
-    } else {
-        // This is not a final chunk, continue to upload
+    if (!file_exists($channelImgDir)) {
+        mkdir($channelImgDir);
+        chmod($channelImgDir, 0777);
+        // echo '... created uploads/channels folder', "\n";
     }
+
+    $request = new \Flow\Request();
+    $imgPath = $channelImgDir . DIRECTORY_SEPARATOR . $request->getFileName();
+
+    // echo '[upload path]', $imgPath, "\n";
+    if (file_exists($imgPath)) unlink($imgPath);
+
+    if (\Flow\Basic::save($imgPath, $config, $request)) {
+        // echo "Hurray, file was saved in " .$imgPath, "\n";
+        // echo '[upload channel image] updating channel '. get_term($channel_id)->name.' ('.$channel_id.')', "\n";
+        update_term_meta($channel_id, 'cutv_channel_img', $request->getFileName());
+
+        header('Content-Type: application/json');
+        echo json_encode($request->getFileName());
+
+    }
+
 }

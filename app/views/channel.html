@@ -1,8 +1,5 @@
-
-
 <a class="ui labeled icon button teal right" href="#/">
-    <i class="angle left icon"></i>
-    Channels
+    <i class="angle left icon"></i> Channels
 </a>
 <div class="ui teal header">
     <div class="ui small image channel">
@@ -17,13 +14,13 @@
 </div>
 <div class="ui divider"></div>
 <div class="ui tabular menu">
-  <a class="item" ng-click="activeTab = 'videos'" ng-class="{'active': activeTab === 'videos' }">
+    <a class="item" ng-click="activeTab = 'videos'" ng-class="{'active': activeTab === 'videos' }">
     Videos
   </a>
-  <a class="item" ng-click="activeTab = 'sources'" ng-class="{'active': activeTab === 'sources' }">
+    <a class="item" ng-click="activeTab = 'sources'" ng-class="{'active': activeTab === 'sources' }">
     Sources
   </a>
-  <a class="item" ng-click="activeTab = 'display'" ng-class="{'active': activeTab === 'display' }">
+    <a class="item" ng-click="activeTab = 'display'" ng-class="{'active': activeTab === 'display' }">
     Display
   </a>
 </div>
@@ -48,14 +45,12 @@
             <div class="active loader ui" ng-if="working"></div>
             <div class="item">
                 <div class="ui icon input">
-                <input type="text" placeholder="Search...">
-                <i class="search icon"></i>
+                    <input type="text" placeholder="Search...">
+                    <i class="search icon"></i>
                 </div>
             </div>
             <div class="item" ng-show="selectedVideos.length">
-                <select
-                ng-model="selectedAction"
-                ng-options="option.name for option in options">
+                <select ng-model="selectedAction" ng-options="option.name for option in options">
                 </select>
             </div>
             <div class="item" ng-if="selectedVideos.length">
@@ -84,17 +79,14 @@
                             Manage Videos
                         </button>
                         <a class="ui blue basic button right icon" href="/wp-admin/post.php?post={{source.source_id}}&action=edit" target="_blank">
-                            <i class="youtube play icon"></i>
-                            Edit source
+                            <i class="youtube play icon"></i> Edit source
                         </a>
                         </button>
                         <a class="ui purple basic button right icon" href="/wp-admin/admin.php?page=wpvr&run_sources&ids={{source.source_id}}" target="_blank">
-                            <i class="refresh icon"></i>
-                            Run source
+                            <i class="refresh icon"></i> Run source
                         </a>
                         <a class="ui red basic button right icon" ng-click="openDeleteSourceDialog(source)">
-                            <i class="refresh icon"></i>
-                            Delete source
+                            <i class="refresh icon"></i> Delete source
                         </a>
                     </div>
 
@@ -127,78 +119,77 @@
 
                 </div>
                 <div class="ui grid sixteen wide column">
-                        <div class="eight wide column">
-                            <div class="ui list">
-                                <div class="item">
+                    <div class="eight wide column">
+                        <div class="ui list">
+                            <div class="item">
 
-                                    <div class="ui left labeled tiny button" ng-click="setSourceFilter(source, {status: 'published'}); publishSelected = !publishSelected;">
-                                        <a class="ui green left pointing label" ng-class="{'basic': publishSelected }">
+                                <div class="ui left labeled tiny button" ng-click="setSourceFilter(source, {status: 'published'}); publishSelected = !publishSelected;">
+                                    <a class="ui green left pointing label" ng-class="{'basic': publishSelected }">
                                             {{source.source_video_counts.published.length}}
                                         </a>
-                                        <div class="ui button green tiny" ng-class="{'basic': !publishSelected}">
-                                            Published Videos
-                                        </div>
+                                    <div class="ui button green tiny" ng-class="{'basic': !publishSelected}">
+                                        Published Videos
                                     </div>
                                 </div>
-                                <div class="item">
-                                    <div class="ui left labeled tiny button" ng-click="setSourceFilter(source, {status: 'pending'}); pendingSelected = !pendingSelected;">
-                                        <a class="ui purple left pointing label" ng-class="{'basic': pendingSelected }">
+                            </div>
+                            <div class="item">
+                                <div class="ui left labeled tiny button" ng-click="setSourceFilter(source, {status: 'pending'}); pendingSelected = !pendingSelected;">
+                                    <a class="ui purple left pointing label" ng-class="{'basic': pendingSelected }">
                                             {{source.source_video_counts.pending.length}}
                                         </a>
-                                        <div class="ui button purple tiny" ng-class="{'basic': !pendingSelected}">
-                                            Pending Videos
-                                        </div>
+                                    <div class="ui button purple tiny" ng-class="{'basic': !pendingSelected}">
+                                        Pending Videos
                                     </div>
                                 </div>
-                                <div class="item">
-                                    <div class="ui left labeled tiny button" ng-click="setSourceFilter(source, {status: 'unpublished'}); unpublishSelected = !unpublishSelected;">
-                                        <a class="ui grey left pointing label" ng-class="{'basic': unpublishSelected }">
+                            </div>
+                            <div class="item">
+                                <div class="ui left labeled tiny button" ng-click="setSourceFilter(source, {status: 'unpublished'}); unpublishSelected = !unpublishSelected;">
+                                    <a class="ui grey left pointing label" ng-class="{'basic': unpublishSelected }">
                                             {{source.source_video_counts.unpublished.length}}
                                         </a>
-                                        <div class="ui button grey tiny" ng-class="{'basic': !unpublishSelected}">
-                                            Unpublished Videos
-                                        </div>
+                                    <div class="ui button grey tiny" ng-class="{'basic': !unpublishSelected}">
+                                        Unpublished Videos
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
                 </div>
 
                 <div class="row content videos" ng-show="source.managingVideos">
 
 
-                                <!-- <div>
+                    <!-- <div>
                                     <div class="ui icon input">
                     <input type="text" ng-model="source.query" placeholder="Filter unassigned sources">
                                         <i class="search icon"></i>
                                     </div>
                                     {{source.query}}
                                 </div> -->
-                <div class="ui link cards">
-                    <div class="card" ng-repeat="video in source.video_posts track by $index" ng-click="toggleVideoSelected(video)" ng-class="{'selected': video.selected}">
+                    <div class="ui link cards">
+                        <div class="card" ng-repeat="video in source.video_posts track by $index" ng-click="toggleVideoSelected(video)" ng-class="{'selected': video.selected}">
 
-                        <div class="image">
-                        <img ng-src="{{video.youtube_thumbnail}}">
-                        </div>
-                        <div class="content">
-                            <div class="header">{{video.post_title}}</div>
-                            <!--<div class="meta">
+                            <div class="image">
+                                <img ng-src="{{video.youtube_thumbnail}}">
+                            </div>
+                            <div class="content">
+                                <div class="header">{{video.post_title}}</div>
+                                <!--<div class="meta">
                                 <div>
                                     <i class="ui icon user clock"></i>
                                     {{video.video_duration}}
                                 </div>
                             </div>-->
 
-                            <div class="ui label {{video.snaptube_status}}" ng-class="{'green': video.snaptube_status === 'published', 'grey' : video.snaptube_status === 'unpublished', 'purple' : video.snaptube_status === 'pending'}">
-                                <i class="fa wpvr_video_status_icon fa-check-square "></i>{{video.snaptube_status}}
-                            </div>
+                                <div class="ui label {{video.snaptube_status}}" ng-class="{'green': video.snaptube_status === 'published', 'grey' : video.snaptube_status === 'unpublished', 'purple' : video.snaptube_status === 'pending'}">
+                                    <i class="fa wpvr_video_status_icon fa-check-square "></i>{{video.snaptube_status}}
+                                </div>
 
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+
         </div>
-
     </div>
-</div>
-

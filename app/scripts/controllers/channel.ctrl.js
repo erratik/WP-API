@@ -9,31 +9,22 @@
  */
 angular.module('cutvApiAdminApp')
 
-    .controller('ChannelCtrl', function ($scope, $http, $location, $routeParams, ChannelService) {
+.controller('ChannelCtrl', function($scope, $http, $location, $routeParams, ChannelService) {
 
-        // init
-        $scope.channelName = $routeParams.channelName;
 
-        ChannelService.getChannels($routeParams.channelId).then(channel => {
-            $scope.channel = channel;
-            console.log(channel);
-
-                $scope.channel.counts = {};
-
-            return channel;
-        }).then(channel => {
-            ChannelService.getChannelSources(channel.pid).then((sources) => {
-                $scope.sources = sources;
-                ChannelService.countSourceVideos($scope);
-
-                $scope.activeTab = !sources.length ? 'sources' : 'videos';
-            });
+    ChannelService.getChannels($routeParams.channelId).then(channel => {
+        $scope.channel = channel;
+        $scope.channel.counts = {};
+        return channel;
+    }).then(channel => {
+        ChannelService.getChannelSources(channel.pid).then((sources) => {
+            $scope.sources = sources;
+            ChannelService.countSourceVideos($scope);
+            $scope.activeTab = !sources.length ? 'sources' : 'videos';
         });
-
-        // utils
-        $scope.selectAction = () => {
-            console.log($scope.selectedOption);
-        };
-
-
     });
+
+    $scope.$on('channelImageUpdated', (e) => $scope.channel.cutv_channel_img = e.targetScope.filename);
+    $scope.$on('channelUpdated', (e) => $scope.channel = e.targetScope.channel);
+
+});
