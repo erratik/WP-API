@@ -1,0 +1,60 @@
+
+
+<div class="ui menu channel">
+    <div class="item">
+        <div class="ui icon input">
+                    <input type="text" ng-model="query" placeholder="Filter unassigned sources">
+        <!--<input type="text" placeholder="Search...">-->
+        <i class="search icon"></i>
+        </div>
+    </div>
+</div>
+
+<div class="ui content">
+    <div class="relative-wrapper">
+        <div class="ui success mini message" ng-show="updateSuccess">
+            <div class="header">
+                Channel sources updated!
+            </div>
+        </div>
+        <div class="active loader inline ui" ng-if="!sources.length"></div>
+        <div class="ui grid"  ng-if="sources.length">
+            <div class="four wide column">
+
+                <h4 class="ui header">Assigned sources to attach</h4>
+                
+                <div class="ui teal message" ng-if="!sourcesSelected(sources).length">
+                    <div class="header">
+                        No sources attached to this channel yet!
+                    </div>
+                    <p>Select sources to attach to this channel by selecting them below. If you need to merge sources into this channel, add them, hit the video stab and delete the source from there!</p>
+                </div>
+                <div class="item assigned" ng-repeat="source in sources | orderBy:'name':false | filter: query" ng-if="source.selected">
+                    <div class="ui ">
+                        <input type="checkbox" id="{{source.ID}}" ng-model="source.selected" >
+                        <label for="{{source.ID}}">{{source.name}}</label>
+                    </div>
+                </div>
+                <button class="ui positive button" ng-click="updateChannel()" ng-if="sourcesSelected(sources).length">Save</button>
+            </div>
+            <div class="twelve wide column">
+                <h4 class="ui header">Unassigned sources to attach</h4>
+                <div class="ui list columns">
+
+                    <div class="item unassigned" ng-repeat="source in sources | orderBy:'name':false | filter: query" ng-if="!source.selected">
+                        <div class="ui ">
+                            <input type="checkbox" id="{{source.ID}}" ng-model="source.selected" >
+                            <label for="{{source.ID}}">{{source.name}}</label>
+                            <span class="ui teal tag label mini" ng-if="source.in_channel">{{source.in_channel}}</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="column three wide">
+    </div>
+
+</div>

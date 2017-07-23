@@ -1,0 +1,27 @@
+<div ng-switch="display">
+    display: {{display}}
+
+    <div class="ui list" ng-switch-default>
+        <div class="item">
+            <div class="ui left labeled tiny button">
+                <a class="ui green left pointing label">
+                    {{channel.counts.published}}
+                </a>
+                <div class="ui button green tiny basic">
+                    Published Videos
+                </div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="ui left labeled tiny button">
+                <a class="ui purple left pointing label ">
+                    {{channel.counts.pending}}
+                </a>
+                <div class="ui button purple tiny basic">
+                    Pending Videos
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
