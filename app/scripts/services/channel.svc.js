@@ -11,6 +11,11 @@ angular.module('cutvApiAdminApp')
 
     .service('ChannelService', function ($http) {
         var ChannelService = {};
+
+        ChannelService.getChannel = function(channelId) {
+            return $http.get(`/wp-admin/admin-ajax.php?action=cutv_get_channel&channel_id=${channelId}`).then(res => res.data);
+        };
+
         ChannelService.getChannels = function(channelId = null) {
             return $http.get('/wp-admin/admin-ajax.php?action=cutv_get_channels&json=true').then(function (res) {
                 // console.log(res.data.filter(c => c.pid === channelId));
@@ -50,7 +55,7 @@ angular.module('cutvApiAdminApp')
         };
 
 
-        ChannelService.countSourceVideos = function($scope) {
+        ChannelService.countSourceVideos = function($scope, perSource) {
 
             $scope.channel.counts = {};
             $scope.sources = $scope.sources.map(source => {

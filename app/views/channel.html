@@ -61,7 +61,7 @@
 
         <div class="ui divided items">
 
-            <div class="ui grid item" ng-repeat="source in channelSources | orderBy:'source_id':false">
+            <div class="ui grid item" ng-repeat="source in sources | orderBy:'source_id':false">
 
 
                 <div class="ui grid fourteen row source-header">
@@ -96,7 +96,7 @@
                         <div class="content">
                             <div class="grouped fields">
                                 <label for="fruit">Move videos to another source:</label>
-                                <div class="field" ng-repeat="newSrc in channelSources" ng-if="newSrc.source_id != source.source_id">
+                                <div class="field" ng-repeat="newSrc in sources" ng-if="newSrc.source_id != source.source_id">
                                     <div>
                                         <input type="radio" ng-model="source.newSrc" ng-value="newSrc.source_id">
                                         <label>{{newSrc.source_name}}</label>
@@ -122,7 +122,6 @@
                     <div class="eight wide column">
                         <div class="ui list">
                             <div class="item">
-
                                 <div class="ui left labeled tiny button" ng-click="setSourceFilter(source, {status: 'published'}); publishSelected = !publishSelected;">
                                     <a class="ui green left pointing label" ng-class="{'basic': publishSelected }">
                                             {{source.source_video_counts.published.length}}
@@ -180,7 +179,7 @@
                                     {{video.video_duration}}
                                 </div>
                             </div>-->
-
+                                {{getSnaptubeStatus(video)}}
                                 <div class="ui label {{video.snaptube_status}}" ng-class="{'green': video.snaptube_status === 'published', 'grey' : video.snaptube_status === 'unpublished', 'purple' : video.snaptube_status === 'pending'}">
                                     <i class="fa wpvr_video_status_icon fa-check-square "></i>{{video.snaptube_status}}
                                 </div>

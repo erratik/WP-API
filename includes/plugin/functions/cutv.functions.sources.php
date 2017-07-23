@@ -8,16 +8,9 @@ function cutv_update_source_categories() {
 
         $channel_id = $_REQUEST['channel'];
 
-        // // toggle channel on/off
-        // if ( ! add_term_meta( $channel_id, 'cutv_channel_enabled', $_REQUEST['enabled'], true)) {
-        //     update_term_meta($channel_id, 'cutv_channel_enabled', $_REQUEST['enabled']);
-        // }
-
         $sources =  json_decode($_REQUEST['sources']);
 
         $sourceObj = [];
-        // cutv_log(4, "-> cutv_update_source_categories :::: " . count($sources) . " sources mapped to this category");
-
         // if there is metadata matching the channel and the post_id is not in this source list, delete it
         $wpdb->delete( $wpdb->postmeta, array( 'meta_key' => 'wpvr_source_postCats_', 'meta_value' => $channel_id) );
 
@@ -175,11 +168,14 @@ function cutv_get_sources_by_channel($channel_id) {
             $source_videos->published = [];
             $source_videos->pending = [];
 
+            // cutv_log(3, $posts, true);
+
 
             foreach ($posts as $post) {
                 // cutv_log(3, 'vid: '. $post->snaptube_vid . ' => '. get_post_meta($post->ID, '_cutv_snaptube_video', true) . ' (' . $post->post_status.') ' . $post->post_title, true);
 
-                if ($post->status == 'pending') { // pending
+                if ($post->post_status == 'pending') { // pending
+
                     $source_videos->unpublished[] = $post->ID;
                 } elseif ($post->post_status == 'draft') { // draft
                     $source_videos->pending[] = $post->ID;

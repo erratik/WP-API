@@ -26,5 +26,16 @@ angular.module('cutvApiAdminApp')
 
     $scope.$on('channelImageUpdated', (e) => $scope.channel.cutv_channel_img = e.targetScope.filename);
     $scope.$on('channelUpdated', (e) => $scope.channel = e.targetScope.channel);
+    $scope.$on('sourceVideosUpdated', (e, source) => {
+
+        $scope.sources = $scope.sources.map(src => {
+            if (src.source_id == source.source_id) {
+                src.source_video_counts = source.source_video_counts;
+                debugger;
+            }
+            return src;
+        });
+        ChannelService.countSourceVideos($scope);
+    });
 
 });

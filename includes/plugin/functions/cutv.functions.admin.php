@@ -72,9 +72,9 @@ add_action('wp_ajax_cutv_remove_channel', 'cutv_remove_channel');
 
 function cutv_update_channel() {
 
+        global $wpdb;
     // The $_REQUEST contains all the data sent via ajax
     if (isset($_REQUEST)) {
-        global $wpdb;
 
         $channel_id = $_REQUEST['channel'];
 
@@ -154,6 +154,8 @@ function cutv_get_channel($channel_id) {
 
     return $channel;
 }
+add_action('wp_ajax_cutv_get_channel', 'cutv_get_channel');
+
 function cutv_get_channels() {
     global $wpdb;
     $channels_rows = $wpdb->get_results("SELECT * FROM " . SNAPTUBE_PLAYLISTS ." WHERE pid > 1" );
