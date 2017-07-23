@@ -14,18 +14,18 @@ angular.module('cutvApiAdminApp')
 
         ChannelService.getChannels($routeParams.channelId).then(channel => $scope.channel = channel);
 
-        console.log('test');
-        // todo: update .spec for deleteChannel()
-        $scope.updateVisibility = function(moveVideos) {
-            // acking it becase of semantic sucking
-            $scope.channel.enabled  = !$scope.channel.enabled;
-            var data = {
-                action: 'cutv_update_source_categories',
-                channel: $scope.channel.pid
+        $scope.updateChannel = function() {
+
+            var query = {
+                action: 'cutv_update_channel',
+                channel: $scope.channel.pid,
+                name: $scope.channel.playlist_name,
+                enabled: $scope.channel.enabled,
+                image: ''
             };
 
+            ChannelService.wpRequest(query).then(channel => $scope.channel = channel);
+
         };
-
-
 
     });

@@ -20,15 +20,12 @@ angular.module('cutvApiAdminApp')
 
         ChannelService.getChannelSources = function(channelId) {
             return $http.get(`/wp-admin/admin-ajax.php?action=cutv_get_sources_by_channel&channel_id=${channelId}&json=true`).then(function (res) {
-
-
                 return res.data;
             });
         };
 
         ChannelService.getSources = function(channelId) {
             return $http.get(`/wp-admin/admin-ajax.php?action=cutv_get_sources_info&channel_id=${channelId}&json=true`).then(function (res) {
-                // console.log(res);
                 return res.data;
             });
         };
@@ -41,23 +38,21 @@ angular.module('cutvApiAdminApp')
         };
 
         ChannelService.getSourceVideos = function(sourceId) {
-            // console.log($location);
-            // debugger;
             return $http.get(`/wp-admin/admin-ajax.php?action=cutv_get_source_video_posts&source_id=${sourceId}&json=true`).then(function (res) {
-                // console.log(res);
                 return res.data;
             });
         };
 
         ChannelService.wpRequest = function(query) {
             return $http.get(`/wp-admin/admin-ajax.php?${toQueryString(query)}&json=true`).then(function (res) {
-                console.log(res);
                 return res.data;
             });
         };
 
 
         ChannelService.countSourceVideos = function($scope) {
+
+            $scope.channel.counts = {};
             $scope.sources = $scope.sources.map(source => {
 
                 Object.keys(source.source_video_counts).forEach(status => {
@@ -73,7 +68,6 @@ angular.module('cutvApiAdminApp')
                 });
             });
 
-            console.log($scope.channel.counts);
         };
 
         var toQueryString = function(obj) {

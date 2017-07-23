@@ -18,17 +18,17 @@ angular.module('cutvApiAdminApp')
             template: '<div><div class="ui active inverted dimmer"><div class="ui text loader">LOADING CHANNELS</div></div></div>',
             link: function (scope, element, attrs) {
 
-
                 ChannelService.getChannelSources(scope.channel.pid).then((sources) => {
                     scope.sources = sources;
-                    ChannelService.countSourceVideos(scope);
+
+                    if (sources.length) {
+                        ChannelService.countSourceVideos(scope);
+                    }
 
                     $templateRequest('/wp-content/plugins/cutv-api/app/templates/channel-item.html').then(function(html){
-
                         var template = angular.element(html);
                         element.html(template);
                         $compile(template)(scope);
-
                     });
                 });
 

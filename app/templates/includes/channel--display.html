@@ -1,5 +1,6 @@
 
-<div class="ui grid sixteen wide column">
+<form name="displayForm" class="ui grid sixteen wide column">
+
     <div class="two wide column">
 
         <channel-image-uploader
@@ -12,13 +13,22 @@
     </div>
     <div class="fourteen wide column">
         <div class="ui form">
-            <div class="inline field">
-            <input type="text" ng-model="channel.playlist_name">
-                <div class="ui toggle checkbox" id="enabled-channel_{{channel.pid}}">
-                    <input type="checkbox" tabindex="0" class="hidden" ng-model="channel.enabled">
-                    <label ng-click="updateVisibility(channel)">Toggle channel in the list on the website (set to: {{channel.enabled}})</label>
+
+            <div class="field">
+                <label>Channel Name</label>
+                <input type="text" ng-model="channel.playlist_name">
+            </div>
+            <div class="field">
+                <div class="">
+                    <label ng-click="channel.enabled  = !channel.enabled">Toggle channel in the list on the website (set to: {{channel.enabled}})</label>
+                    <input type="checkbox" tabindex="0" ng-model="channel.enabled">
                 </div>
             </div>
+
+            <button class="ui positive button" ng-click="updateChannel()" ng-if="displayForm.$dirty">Save</button>
+
         </div>
+
     </div>
-</div>
+
+</form>
