@@ -61,7 +61,7 @@ angular.module('cutvApiAdminApp')
             $scope.sources = $scope.sources.map(source => {
 
                 Object.keys(source.source_video_counts).forEach(status => {
-                    source.source_video_counts[status] = source.source_video_counts[status].length;
+                    source.source_video_counts[status] = !source.source_video_counts[status] ? 0 : source.source_video_counts[status].length;
                 })
 
                 return source;

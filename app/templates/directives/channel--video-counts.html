@@ -1,6 +1,19 @@
-<div ng-switch="display">
-    display: {{display}}
+<div ng-switch="display" class="ui right item">
 
+    <div  ng-switch-when="label" class="ui flex list center">
+        <div class="item">
+            <span class="ui green circular tiny label">{{channel.counts.published}}</span>
+            Videos
+        </div>
+        <div class="item">
+            <span class="ui purple circular tiny label">{{channel.counts.pending}}</span>
+            New
+        </div>
+        <div class="item">
+            <span class="ui grey circular tiny label">{{channel.counts.unpublished}}</span>
+            Disabled
+        </div>
+    </div>
     <div class="ui list" ng-switch-default>
         <div class="item">
             <div class="ui left labeled tiny button">

@@ -125,8 +125,8 @@ angular.module('cutvApiAdminApp')
                         // using a clone so the counts from channels don't overwrite these
                         // needs to be an array of videos, not a total number, for selecting purpose
                         source.source_video_counts = _.clone(this_source.source_video_counts);
-                        $scope.$emit('sourceVideosUpdated', this_source);
 
+                        $scope.$emit('sourceVideosUpdated', sources);
                         $scope.working = false;
                     });
                 }
@@ -137,16 +137,33 @@ angular.module('cutvApiAdminApp')
 
     };
 
-    $scope.openDeleteSourceDialog = (source) => {
-        source.isDeletingSource = true;
-        $(`#deleteSources_${source.source_id}`).modal('show');
+    $scope.openSourceDialog = (source, action) => {
+
+
+        switch (action) {
+            case 'edit':
+                $http.get(`/wp-admin/post.php?post=${source.source_id}&action=edit`).then((res) => {
+                    console.log(JSON.parse(res))
+                });
+                $(`#${action}Sources_${source.source_id}`).find('.content').html(`<iframe src="/wp-admin/post.php?post=${source.source_id}&action=edit"></iframe>`);
+              break;
+            // case '':
+
+            //   break;
+            default:
+
+        }
+
+        $(`#${action}Sources_${source.source_id}`).modal('show');
+
     };
+    $scope.closeSourceDialog = (source, action) => $(`#${action}Sources_${source.source_id}`).modal('hide');
 
     $scope.deleteSource = (source) => {
         const deletingSourceId = source.source_id;
         ChannelService.moveSourceVideos(deletingSourceId, source.newSrc, source.movePlaylists).then(() => {
             $scope.sources = _.reject($scope.sources, { source_id: deletingSourceId });
-            console.log('success');
+            // console.log('success');
         });
     };
 
