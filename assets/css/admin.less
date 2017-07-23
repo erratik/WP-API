@@ -3,9 +3,8 @@
 // general
 .flex {
   display: flex;
-  &.vertical {
-    flex-direction: column;
-  }
+  &.vertical { flex-direction: column; }
+  &.center { align-items: center; }
 }
 
 .full {
@@ -20,7 +19,9 @@
 .relative-wrapper {
   position: relative;
 }
-
+input[type=radio], input[type=checkbox] {
+  margin-top: inherit;
+}
 // idiot-proofing
 // hiding access to wp/vr videos page
 .wp-admin-bar-wpvr_ab_videos,
