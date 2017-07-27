@@ -1,72 +1,49 @@
-
-<div class="ui small image channel">
-    <img ng-src="/wp-content/uploads/channels/{{channel.cutv_channel_img}}" ng-if="channel.cutv_channel_img">
-    <img ng-src="https://placeholdit.imgix.net/~text?txtsize=33&txt={{channel.playlist_name}}&w=200&h=200" ng-if="!channel.cutv_channel_img">
+<div class="two wide column">
+    <div class="ui small image channel">
+        <img ng-src="/wp-content/uploads/channels/{{channel.cutv_channel_img}}" ng-if="channel.cutv_channel_img">
+        <img ng-src="https://placeholdit.imgix.net/~text?txtsize=33&txt={{channel.playlist_name}}&w=200&h=200" ng-if="!channel.cutv_channel_img">
+    </div>
 </div>
 
-<div class="content column thirteen wide">
-    <!--<button class="ui small right icon red button" ng-click="deleteChannel()">
-        <i class="trash icon"></i>
-        Delete channel
-    </button>
-    <button class="ui small right icon blue button" ng-click="editSourceForm=!editSourceForm"  ng-hide="editSourceForm">
-        <i class="edit icon"></i>
-        Edit channel
-    </button>-->
+<div class="content fourteen wide column paddingless">
 
-    <a class="ui small icon green button right" href="#channel/edit/{{channel.pid}}">
-        <i class="edit icon"></i>
-        Manage videos
-    </a>
 
-    <div class="ui buttons" ng-style="{'float':'right'}" ng-hide="!editSourceForm">
-        <button class="ui button"ng-click="editSourceForm=!editSourceForm">Cancel</button>
-        <div class="or"></div>
-        <button class="ui positive button" ng-click="updateChannel()">Save</button>
-    </div>
+    <div class="fourteen wide column grid ui flex paddingless full">
+        <div class="fourteen wide column">
 
-    <input type="text" ng-model="channel.playlist_name"  ng-hide="!editSourceForm" />
-    <h3 class="header"  ng-hide="editSourceForm">{{channel.playlist_name}}</h3>
+            <video-counts channel="channel" ng-if="channel.counts.published + channel.counts.pending" list-style="inline"></video-counts>
 
-    <!--<div class="ui form">
-        <div class="inline field">
-            <div class="ui toggle checkbox" id="enabled-channel_{{channel.pid}}">
-                <input type="checkbox" tabindex="0" class="hidden" ng-model="channel.enabled">
-                <label ng-click="updateVisibility(channel)">Toggle channel in the list on the website (set to: {{channel.enabled}})</label>
+            <hr ng-show="sources.length">
+            <div class="ui labeled tiny icon">
+                <i class="folder open icon"></i>
+                {{(sources.length) > 0 && sources.length || 'No'}} Sources
             </div>
-        </div>
-    </div>-->
-
-
-    <div class="extra">
-
-        <div class="ui list" >
-            <div class="item">
-                <div class="ui left labeled tiny button">
-                    <a class="ui green left pointing label">
-                        {{channel.counts.published}}
-                    </a>
-                    <div class="ui button green tiny basic">
-                        Published Videos
+            <hr>
+            <div class="field">
+                <div class="flex center">
+                    <div class="ui  icon tiny" ng-click="channel.enabled = !channel.enabled; updateChannel();">
+                        <i class="toggle icon" ng-class="{ 'on blue': channel.enabled , 'off grey': !channel.enabled }"></i>
+                        {{(channel.enabled?'Enabled':'Disabled')}}
                     </div>
                 </div>
             </div>
-            <div class="item">
-                <div class="ui left labeled tiny button">
-                    <a class="ui purple left pointing label ">
-                        {{channel.counts.pending}}
-                    </a>
-                    <div class="ui button purple tiny basic">
-                        Pending Videos
+            <div class="field">
+                <div class="flex center">
+                    <div class="ui  icon tiny" ng-click="channel.featured = !channel.featured; updateChannel();">
+                        <i class="icon" ng-class="{ 'checkmark positive': channel.featured , 'remove negative': !channel.featured }"></i>
+                        {{(channel.featured?'Featured':'Not featured')}}
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="ui labeled tiny icon">
-            <i class="folder open icon"></i>
-            {{(sources.length) > 0 && sources.length || 'No'}} Sources
+        <div class="two wide column paddingless">
+            <a class="ui small icon blue basic button right" href="#channel/edit/{{channel.pid}}">
+                <i class="wrench icon"></i>
+                Manage channel
+            </a>
         </div>
+
     </div>
 
 </div>

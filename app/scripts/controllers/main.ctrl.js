@@ -11,13 +11,14 @@ angular.module('cutvApiAdminApp')
 
     .controller('MainCtrl', function ($scope, $http, $location, ChannelService) {
 
-        // if (typeof cutv == 'undefined') {
-        // } else {
-        //     $scope.channels = cutv.channels;
-        //     $scope.sources = sources;
-        // }
+
         ChannelService.getChannels().then((data) => {
             $scope.channels = data;
+
+            $scope.channels = $scope.channels.map(channel => {
+                channel.isLoading = true;
+                return channel;
+            });
             return $scope.channels;
         });
 
@@ -35,19 +36,20 @@ angular.module('cutvApiAdminApp')
                 'action' : 'cutv_add_channel',
                 channelName: $scope.newChannel.name,
                 enabled: $scope.newChannel.enabled,
+                featured: $scope.newChannel.featured,
                 slug: slug
             };
 
 
             return $http.post(ajaxurl, createChannelRequest).then(function(addedCategory) {
-
                 $scope.channels.unshift(addedCategory.data);
-
-                console.log($scope.channels);
-
-
-
             });
+
+        };
+
+        $scope.openAddChannelDialog = () => {
+
+            $('#addChannel').modal('show');
 
         };
 

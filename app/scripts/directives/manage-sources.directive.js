@@ -62,23 +62,6 @@ angular.module('cutvApiAdminApp')
                 };
 
 
-                // todo: update .spec for deleteChannel()
-                scope.deleteChannel = function() {
-                    var createChannelRequest = {
-                        'action' : 'cutv_remove_channel',
-                        id: scope.channel.pid
-                    };
-
-
-                    return $http.post(ajaxurl, createChannelRequest).then(function(res) {
-
-                        element.parent().remove();
-                        scope.$destroy();
-
-                    });
-
-                };
-
                 function makeSourceObj(updatingSources) {
 
                     var channel_id = scope.channelId;

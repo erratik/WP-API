@@ -38,6 +38,26 @@ angular.module('cutvApiAdminApp')
 
     };
 
+
+    $scope.openDeleteDialog = (source, action) => {
+
+        $(`#deleteSource`).modal('show');
+
+    };
+
+    $scope.deleteChannel = function() {
+        var query = {
+            action: 'cutv_delete_channel',
+            channel: $scope.channel.pid
+        };
+
+        ChannelService.wpRequest(query).then(channel => {
+            window.location = '/wp-admin/admin.php?page=cutv_manage_channels';
+        });
+
+
+    };
+
     $scope.$on('channelImageUploaded', (e) => {
         $scope.channel.uploadedImage = e.targetScope.filename;
     });

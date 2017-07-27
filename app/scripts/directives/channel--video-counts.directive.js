@@ -13,7 +13,9 @@ angular.module('cutvApiAdminApp')
             replace: true,
             scope: {
                 channel: '=',
-                display: '@'
+                pre: '@',
+                display: '@',
+                listStyle: '@'
             },
             templateUrl: '/wp-content/plugins/cutv-api/app/templates/directives/channel--video-counts.html',
             link: function (scope, element, attrs) {

@@ -19,7 +19,7 @@
             <div class="field">
                 <div class="flex center">
                     <input type="checkbox" tabindex="0" ng-model="channel.enabled" id="enabledChannel_{{channel.pid}}">
-                    <label for="enabledChannel_{{channel.pid}}">Appears in top channels</label>
+                    <label for="enabledChannel_{{channel.pid}}">Channel is enabled (turn off for test purposes)</label>
                 </div>
             </div>
             <div class="field">
@@ -39,5 +39,27 @@
         </div>
 
     </form>
+            <hr>
+    <button class="ui negative button" ng-click="openDeleteDialog()">Delete Channel</button>
 
+</div>
+
+<div class="ui modal basic" id="deleteSource">
+    <div class="header">Are you sure you want to delete this channel?</div>
+    <div class="content relative-wrapper">
+        <p>Deleting this channel will dissaociate its sources, all videos will no longer apear on the site.</p>
+        <p>To make them visiable again, you must re-associate the sources in this channel to other channels.</p>
+    </div>
+    <div class="actions">
+        <div class="actions">
+            <div class="ui red basic cancel inverted button">
+            <i class="remove icon"></i>
+            Nah, nevermind
+            </div>
+            <div class="ui green ok inverted button" ng-click="deleteChannel()">
+            <i class="checkmark icon"></i>
+            Yes, remove it
+            </div>
+        </div>
+    </div>
 </div>

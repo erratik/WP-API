@@ -11,6 +11,7 @@ jQuery( document ).ready( function ( e ) {
             action : 'cutv_get_channels',
             json: true
     }).then(function (res) {
+
 /*
         $('#menu-item-7736').append('<ul class="channel-links-list"><li></li></ul>');
         $('.page-wrapper .content').before('<div class="cutv-channels-top"></div>');
@@ -64,7 +65,8 @@ jQuery( document ).ready( function ( e ) {
         $('.page-sidebar-no.page-wrapper').prepend('<div class="cutv-channels-top"></div>');
         $.get('/wp-content/plugins/cutv-api/views/channels-top-view.hbs', function (data) {
             var template = Handlebars.compile(data);
-            $('.cutv-channels-top').html(template(JSON.parse(res)));
+            var featuredChannels = _.filter( _.filter(JSON.parse(res), 'enabled') , 'featured');
+            $('.cutv-channels-top').html(template(featuredChannels));
         }, 'html');
 
         $('#menu-item-7736').append('<ul class="cutv-channels"></ul>');

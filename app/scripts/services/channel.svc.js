@@ -9,7 +9,7 @@
  */
 angular.module('cutvApiAdminApp')
 
-    .service('ChannelService', function ($http) {
+    .service('ChannelService', function ($http, $timeout) {
         var ChannelService = {};
 
         ChannelService.getChannel = function(channelId) {
@@ -55,25 +55,59 @@ angular.module('cutvApiAdminApp')
         };
 
 
-        ChannelService.countSourceVideos = function($scope, perSource) {
+        ChannelService.updateChannel = function($scope, update = true) {
 
-            $scope.channel.counts = {};
-            $scope.sources = $scope.sources.map(source => {
 
-                Object.keys(source.source_video_counts).forEach(status => {
-                    source.source_video_counts[status] = !source.source_video_counts[status] ? 0 : source.source_video_counts[status].length;
-                })
+            var query = {
+                action: 'cutv_update_channel',
+                channel: $scope.channel.pid,
+                name: $scope.channel.playlist_name,
+                enabled: $scope.channel.enabled,
+                featured: $scope.channel.featured,
+                image: $scope.channel.uploadedImage || $scope.channel.cutv_channel_img
+            };
 
-                return source;
+            ChannelService.wpRequest(query).then(channel => {
+                if (update) {
+                    $scope.channel = channel;
+                }
+
+                $scope.$emit('channelUpdated');
+
+                $scope.updateSuccess = true;
+                $timeout(() => $scope.updateSuccess = false, 2000);
             });
 
-            $scope.sources.forEach(source => {
-                Object.keys(source.source_video_counts).forEach(status => {
-                    $scope.channel.counts[status] = _.sumBy($scope.sources, function(o) { return o.source_video_counts[status]; });
-                });
-            });
 
         };
+
+        ChannelService.countSourceVideos = function($scope, cb = null) {
+
+            $scope.channel.counts = {};
+            if ($scope.sources.length) {
+
+                $scope.sources = $scope.sources.map(source => {
+
+                    Object.keys(source.source_video_counts).forEach(status => {
+                        source.source_video_counts[status] = !source.source_video_counts[status] ? 0 : source.source_video_counts[status].length;
+                    })
+
+                    return source;
+                });
+
+                $scope.sources.forEach(source => {
+                    Object.keys(source.source_video_counts).forEach(status => {
+                        $scope.channel.counts[status] = _.sumBy($scope.sources, function(o) { return o.source_video_counts[status]; });
+                    });
+                });
+
+            }
+                            $scope.channel.isLoading = false;
+
+
+        };
+
+
 
         var toQueryString = function(obj) {
             return _.map(obj,function(v,k){

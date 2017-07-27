@@ -63,7 +63,6 @@ angular.module('cutvApiAdminApp')
                         return source.video_posts.map(video => {
                             video.selected = $scope.selectedVideos.includes(video.ID);
                             video.status = video.snaptube_vid ? 'published' : 'pending';
-
                             video.snaptube_status = $scope.getSnaptubeStatus(video);
                         });
                     }
@@ -102,33 +101,17 @@ angular.module('cutvApiAdminApp')
                         } else if (video.ID) {
                             source.video_posts = source.video_posts.map(v => {
                                 const vid = $scope.selectedVideos.includes(video.ID) && video.ID === v.ID ? video : v;
-                                vid.snaptube_status = $scope.getSnaptubeStatus(vid);
-                                if (action === 'cutv_unpublish_snaptube_video' && $scope.selectedVideos.includes(video.ID) && video.ID === v.ID) {
-                                    vid.snaptube_status = 'unpublished';
-                                }
-
+                                vid.snaptube_status = (action === 'cutv_unpublish_snaptube_video' && $scope.selectedVideos.includes(video.ID) && video.ID === v.ID) ? 'unpublished' : $scope.getSnaptubeStatus(vid);
                                 return vid;
                             });
 
                             video.selected = false;
                             unselectVideo(video);
-
                         }
 
                     });
-
                     $scope.selectedVideos = [];
-                    ChannelService.getChannelSources($routeParams.channelId).then((sources) => {
-
-                        const this_source = sources.filter(s => { return s.source_id === source.source_id })[0];
-
-                        // using a clone so the counts from channels don't overwrite these
-                        // needs to be an array of videos, not a total number, for selecting purpose
-                        source.source_video_counts = _.clone(this_source.source_video_counts);
-
-                        $scope.$emit('sourceVideosUpdated', sources);
-                        $scope.working = false;
-                    });
+                    $scope.updateSource(source);
                 }
                 return source;
             });
@@ -141,20 +124,25 @@ angular.module('cutvApiAdminApp')
 
 
         switch (action) {
-            case 'edit':
-                $http.get(`/wp-admin/post.php?post=${source.source_id}&action=edit`).then((res) => {
-                    console.log(JSON.parse(res))
-                });
-                $(`#${action}Sources_${source.source_id}`).find('.content').html(`<iframe src="/wp-admin/post.php?post=${source.source_id}&action=edit"></iframe>`);
-              break;
-            // case '':
-
+            // case 'edit':
+            //     $http.get(`/wp-admin/post.php?post=${source.source_id}&action=edit`).then((res) => {
+            //         console.log(JSON.parse(res))
+            //     });
+            //     $(`#${action}Sources_${source.source_id}`).find('.content').html(`<iframe src="/wp-admin/post.php?post=${source.source_id}&action=edit"></iframe>`);
             //   break;
+            case 'run':
+                $http.get(`/wp-admin/admin.php?page=wpvr&run_sources&ids=${source.source_id}`).then((res) => {
+                    var el = document.createElement( 'html' );
+                    el.innerHTML = res.data;
+                    $(`#${action}Sources_${source.source_id}`).find('.content').html($(el.getElementsByClassName('wpvr_source_insights')).html());
+                });
+              break;
             default:
+                // $(`#${action}Sources_${source.source_id}`).modal('show');
 
         }
+                    $(`#${action}Sources_${source.source_id}`).modal('show')
 
-        $(`#${action}Sources_${source.source_id}`).modal('show');
 
     };
     $scope.closeSourceDialog = (source, action) => $(`#${action}Sources_${source.source_id}`).modal('hide');
@@ -167,6 +155,20 @@ angular.module('cutvApiAdminApp')
         });
     };
 
+    $scope.updateSource = (source) => {
+        ChannelService.getChannelSources($routeParams.channelId).then((sources) => {
+
+            const this_source = sources.filter(s => { return s.source_id === source.source_id })[0];
+
+            // using a clone so the counts from channels don't overwrite these
+            // needs to be an array of videos, not a total number, for selecting purpose
+            source.source_video_counts = _.clone(this_source.source_video_counts);
+
+            $scope.$emit('sourceVideosUpdated', sources);
+            $scope.working = false;
+        });
+    };
+
     //video selection
     $scope.setSourceFilter = (source, filter) => {
         // get source's videos by status
@@ -174,13 +176,8 @@ angular.module('cutvApiAdminApp')
         source.filter = _.merge(source.filter, filter);
 
         return source.source_video_counts[source.filter.status].map(id => {
-            let this_video = null;
-            if (source.video_posts) {
-                this_video = source.video_posts.filter(v => {
-                    return v.ID === id;
-                })[0];
-                // });
-            }
+
+            const this_video = source.video_posts ? source.video_posts.filter(v => v.ID === id)[0] : null;
 
             if (this_video) {
                 $scope.toggleVideoSelected(this_video);
@@ -190,14 +187,8 @@ angular.module('cutvApiAdminApp')
                 } else {
                     selectVideo(id, true);
                 }
-
             }
-            // debugger;
-
         });
-
-        // debugger;
-
     };
 
 

@@ -15,6 +15,14 @@
 .inline {
   display: inline-block;
 }
+.paddingless {
+    padding-right: inherit !important;
+    padding-left: inherit !important;
+}
+.marginless {
+    margin-right: inherit !important;
+    margin-left: inherit !important;
+}
 
 .relative-wrapper {
   position: relative;
@@ -27,7 +35,18 @@ input[type=radio], input[type=checkbox] {
     padding-bottom: 0;
     .ui.list>.item { padding: 0; }
 }
+.cutv-app-wrapper {
 
+    .flex.center.ui.list>.item { padding: 0 .5rem 0.5rem 0}
+
+  .ui .item.channel-item {
+      min-height: 60px;
+  }
+}
+    .wpvr_source_insights_title {
+      width: 100%;
+      margin: 0px 0 10px 0;
+    }
 // idiot-proofing
 // hiding access to wp/vr videos page
 .wp-admin-bar-wpvr_ab_videos,
@@ -50,6 +69,19 @@ a[href*="page=wpvr-manage"],
   .ui.cards {
       margin: -.875em 0.875em;
   }
+        .ui.items>.item .meta {
+            font-size: 1.2em;
+            margin-top: 0px;
+            .star {
+              visibility: hidden;
+              font-size: 1.5rem;
+              position: absolute;
+              top: 7%;
+              right: 1%;
+              color: white;
+              &:hover { color: #fecc1d; }
+            }
+        }
   .ui.card, .ui.cards>.card {
       width: 10.15%;
       min-width: inherit;
@@ -65,6 +97,12 @@ a[href*="page=wpvr-manage"],
       &.selected {
           background: #ddd !important;
       }
+        &:hover {
+
+            .star {
+              visibility: visible;
+            }
+        }
   }
   .menu.channel {
      padding-top: inherit;

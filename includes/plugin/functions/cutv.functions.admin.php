@@ -46,19 +46,20 @@ function cutv_add_channel()
 }
 add_action('wp_ajax_cutv_add_channel', 'cutv_add_channel');
 
-function cutv_remove_channel()
+function cutv_delete_channel()
 {
 
     // The $_REQUEST contains all the data sent via ajax
     if (isset($_REQUEST)) {
         global $wpdb;
 
-        $cat_id =  $_REQUEST['id'];
+        $channel_id =  $_REQUEST['channel'];
 
-        wp_delete_category($cat_id);
-        $wpdb->delete( $wpdb->termmeta, array( 'term_id' => $cat_id ) );
-        $wpdb->delete( SNAPTUBE_PLAYLISTS, array( 'pid' => $cat_id ) );
-        $wpdb->delete( SNAPTUBE_PLAYLIST_RELATIONS, array( 'playlist_id' => $cat_id ) );
+        wp_delete_category($channel_id);
+        $wpdb->delete( $wpdb->termmeta, array( 'term_id' => $channel_id ) );
+        $wpdb->delete( $wpdb->postmeta, array( 'wpvr_source_postCats_' => $channel_id ) );
+        $wpdb->delete( SNAPTUBE_PLAYLISTS, array( 'pid' => $channel_id ) );
+        $wpdb->delete( SNAPTUBE_PLAYLIST_RELATIONS, array( 'playlist_id' => $channel_id ) );
 
         header("HTTP/1.1 200 Ok");
 
@@ -67,12 +68,12 @@ function cutv_remove_channel()
     // Always die in functions echoing ajax content
     die();
 }
-add_action('wp_ajax_cutv_remove_channel', 'cutv_remove_channel');
+add_action('wp_ajax_cutv_delete_channel', 'cutv_delete_channel');
 
 
 function cutv_update_channel() {
 
-        global $wpdb;
+    global $wpdb;
     // The $_REQUEST contains all the data sent via ajax
     if (isset($_REQUEST)) {
 
@@ -180,11 +181,24 @@ add_action('wp_ajax_nopriv_cutv_get_channels', 'cutv_get_channels');
 add_action('wp_ajax_cutv_get_channels', 'cutv_get_channels');
 
 
+function cutv_set_featured_video($channel_id) {
+
+    global $wpdb;
+
+    if (isset($_REQUEST['channel_id']) && $_REQUEST['video'] !== '') {
+        update_term_meta($_REQUEST['channel_id'], 'cutv_featured_video', $_REQUEST['video']);
+    }
+
+    die();
+}
+add_action('wp_ajax_cutv_set_featured_video', 'cutv_set_featured_video');
+
+
 function cutv_get_snaptube_post_data($video_post, $wpvr_id) {
     $video_post->snaptube_vid = intval(cutv_get_snaptube_vid($wpvr_id));
     $video_post->snaptube_id = intval(cutv_get_snaptube_post_id($wpvr_id));
     $video_post->source_id = intval(get_post_meta( $wpvr_id, 'wpvr_video_sourceId', true ));
-    // $video_post->snaptube_link_id = get_post_meta($wpvr_id, '_cutv_snaptube_video', true);
+    $video_post->featured_on_channel = get_post_meta($wpvr_id, '_cutv_featured_channel', true);
     $video_post->youtube_thumbnail = get_post_meta($wpvr_id, 'wpvr_video_service_thumb', true );
     $video_post->video_duration = convert_youtube_duration(get_post_meta($wpvr_id, 'wpvr_video_duration', true));
 
