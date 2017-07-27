@@ -23,10 +23,7 @@ angular.module('cutvApiAdminApp')
                         return source;
                     });
 
-                    // if (sources.length) {
-                        ChannelService.countSourceVideos(scope);
-
-                    // }
+                    ChannelService.countSourceVideos(scope);
 
                     $templateRequest('/wp-content/plugins/cutv-api/app/templates/channel-item.html').then(function(html){
                         var template = angular.element(html);
