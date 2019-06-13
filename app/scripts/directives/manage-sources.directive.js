@@ -37,7 +37,6 @@ angular.module('cutvApiAdminApp')
                     }
                 });
 
-
                 scope.selectSource = (source) => {
                     if (source.selected) {
                         scope.selectedSources.add(source);
@@ -51,11 +50,10 @@ angular.module('cutvApiAdminApp')
 
                 scope.updateChannelSources = () => {
 
-                    debugger;
                     if (!scope.channel) {
-
                         return;
                     }
+
                     const data = {
                         action: 'cutv_update_channel_sources',
                         sources: scope.sources.selected.map(s => s.source_id).join(','),
@@ -63,15 +61,13 @@ angular.module('cutvApiAdminApp')
                         move_videos: true
                     };
 
-                    // debugger;
                     ChannelService.handlePluginAction(data).then(channelSourceIds => {
 
                         channelSourceIds = channelSourceIds.map(x => Number(x));
                         scope.sources.selected = scope.sources.selected.filter(source => channelSourceIds.includes(source.source_id));
                         scope.sources.available = scope.sources.available.filter(source => !channelSourceIds.includes(source.source_id));
 
-                        // scope.$emit('sourcesUpdated', [scope.sources]);
-                        $scope.$emit('videosUpdated');
+                        scope.$emit('update');
                         scope.updateSuccess = true;
                     });
 

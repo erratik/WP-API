@@ -1,8 +1,9 @@
 <?php
 
-if ( ! defined( 'ABSPATH' ) ) exit;
+if (!defined('ABSPATH')) exit;
 
-class CUTV_Channel {
+class CUTV_Channel
+{
 
     /**
      * The single instance of CUTV_Channel.
@@ -95,14 +96,14 @@ class CUTV_Channel {
     /**
      * Returns an instance of this class.
      */
-    public static function get_instance() {
+    public static function get_instance()
+    {
 
-        if ( null == self::$instance ) {
+        if (null == self::$instance) {
             self::$instance = new CUTV_Channel();
         }
 
         return self::$instance;
-
     }
 
     /**
@@ -111,34 +112,35 @@ class CUTV_Channel {
      * @since   1.0.0
      * @return  void
      */
-    public function __construct ( $file = '', $version = '1.0.0' ) {
+    public function __construct($file = '', $version = '1.0.0')
+    {
         $this->_version = $version;
-        $this->_token = 'CUTV_Channel';
+        $this->_token = 'cutv';
 
         // Load plugin environment variables
         $this->file = $file;
-        $this->dir = dirname( $this->file );
-        $this->assets_dir = trailingslashit( $this->dir ) . '../assets';
-        $this->vendor_dir = esc_url( trailingslashit( plugins_url('../bower_components', $this->file ) ) );
-        $this->app_scripts_dir = esc_url( trailingslashit( plugins_url('../app/scripts', $this->file ) ) );
-        $this->assets_url = esc_url( trailingslashit( plugins_url( '../assets/', $this->file ) ) );
+        $this->dir = dirname($this->file);
+        $this->assets_dir = trailingslashit($this->dir) . '../assets';
+        $this->vendor_dir = esc_url(trailingslashit(plugins_url('../node_modules', $this->file)));
+        $this->app_scripts_dir = esc_url(trailingslashit(plugins_url('../app/scripts', $this->file)));
+        $this->assets_url = esc_url(trailingslashit(plugins_url('../assets/', $this->file)));
 
-        $this->script_suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '';
+        $this->script_suffix = defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ? '' : '';
 
         $this->templates = array();
 
-        register_activation_hook( $this->file, array( $this, 'install' ) );
+        register_activation_hook($this->file, array($this, 'install'));
 
         // Load frontend JS & CSS
-        add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles' ), 10 );
-        add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ), 10 );
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_styles'), 10);
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'), 10);
 
         // Load admin JS & CSS
-        add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ), 10, 1 );
-        add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_styles' ), 10, 1 );
+        add_action('admin_enqueue_scripts', array($this, 'admin_enqueue_scripts'), 10, 1);
+        add_action('admin_enqueue_scripts', array($this, 'admin_enqueue_styles'), 10, 1);
 
-//		add_action( 'register_post_type', array( $this, 'admin_enqueue_styles' ), 10, 1 );
-//        CUTV_Channel()->register_post_type( 'listing', __( 'Listings', 'cutv-api' ), __( 'Listing', 'cutv-api' ) );
+        //		add_action( 'register_post_type', array( $this, 'admin_enqueue_styles' ), 10, 1 );
+        //        CUTV_Channel()->register_post_type( 'listing', __( 'Listings', 'cutv-api' ), __( 'Listing', 'cutv-api' ) );
         // Add a filter to the attributes metabox to inject template into the cache.
 
 
@@ -148,14 +150,14 @@ class CUTV_Channel {
         // Add a filter to the attributes metabox to inject template into the cache.
         add_filter(
             'page_attributes_dropdown_pages_args',
-            array( $this, 'register_project_templates' )
+            array($this, 'register_project_templates')
         );
 
 
         // Add a filter to the save post to inject out template into the page cache
         add_filter(
             'wp_insert_post_data',
-            array( $this, 'register_project_templates' )
+            array($this, 'register_project_templates')
         );
 
 
@@ -163,7 +165,7 @@ class CUTV_Channel {
         // template assigned and return it's path
         add_filter(
             'template_include',
-            array( $this, 'view_project_template')
+            array($this, 'view_project_template')
         );
 
 
@@ -173,18 +175,17 @@ class CUTV_Channel {
             'catalog.php' => 'CUTV Catalog'
         );
 
-        add_action( 'plugins_loaded', array( 'CUTV_Channel', 'get_instance' ) );
+        add_action('plugins_loaded', array('CUTV_Channel', 'get_instance'));
 
 
         // Load API for generic admin functions
-        if ( is_admin() ) {
+        if (is_admin()) {
             $this->admin = new CUTV_Channel_Admin_API();
-
         }
 
         // Handle localisation
         $this->load_plugin_textdomain();
-        add_action( 'init', array( $this, 'load_localisation' ), 0 );
+        add_action('init', array($this, 'load_localisation'), 0);
     } // End __construct ()
 
     /**
@@ -195,11 +196,12 @@ class CUTV_Channel {
      * @param  string $description Description of post type
      * @return object              Post type class object
      */
-    public function register_post_type ( $post_type = '', $plural = '', $single = '', $description = '', $options = array() ) {
+    public function register_post_type($post_type = '', $plural = '', $single = '', $description = '', $options = array())
+    {
 
-        if ( ! $post_type || ! $plural || ! $single ) return;
+        if (!$post_type || !$plural || !$single) return;
 
-        $post_type = new CUTV_Channel_Post_Type( $post_type, $plural, $single, $description, $options );
+        $post_type = new CUTV_Channel_Post_Type($post_type, $plural, $single, $description, $options);
 
         return $post_type;
     }
@@ -212,11 +214,12 @@ class CUTV_Channel {
      * @param  array  $post_types Post types to which this taxonomy applies
      * @return object             Taxonomy class object
      */
-    public function register_taxonomy ( $taxonomy = '', $plural = '', $single = '', $post_types = array(), $taxonomy_args = array() ) {
+    public function register_taxonomy($taxonomy = '', $plural = '', $single = '', $post_types = array(), $taxonomy_args = array())
+    {
 
-        if ( ! $taxonomy || ! $plural || ! $single ) return;
+        if (!$taxonomy || !$plural || !$single) return;
 
-        $taxonomy = new CUTV_Channel_Taxonomy( $taxonomy, $plural, $single, $post_types, $taxonomy_args );
+        $taxonomy = new CUTV_Channel_Taxonomy($taxonomy, $plural, $single, $post_types, $taxonomy_args);
 
         return $taxonomy;
     }
@@ -227,9 +230,10 @@ class CUTV_Channel {
      * @since   1.0.0
      * @return void
      */
-    public function enqueue_styles () {
-        wp_register_style( $this->_token . '-frontend', esc_url( $this->assets_url ) . 'css/frontend.css', array(), $this->_version );
-        wp_enqueue_style( $this->_token . '-frontend' );
+    public function enqueue_styles()
+    {
+        wp_register_style($this->_token . '-frontend', esc_url($this->assets_url) . 'css/frontend.css', array(), $this->_version);
+        wp_enqueue_style($this->_token . '-frontend');
     } // End enqueue_styles ()
 
     /**
@@ -238,25 +242,26 @@ class CUTV_Channel {
      * @since   1.0.0
      * @return  void
      */
-    public function enqueue_scripts () {
+    public function enqueue_scripts()
+    {
         // wp_localize_script('cutv-api', 'wpApiSettings', array('root' => esc_url_raw(rest_url()), 'nonce' => wp_create_nonce('wp_rest')));
         // wp_enqueue_script('cutv-api');
 
 
-        wp_register_script( $this->_token . '-handlebars', esc_url($this->vendor_dir) . '/handlebars/handlebars.min' . $this->script_suffix . '.js', $this->_version );
-        wp_enqueue_script( $this->_token . '-handlebars' );
+        wp_register_script($this->_token . '-handlebars', esc_url($this->vendor_dir) . '/handlebars/dist/handlebars.min' . $this->script_suffix . '.js', $this->_version);
+        wp_enqueue_script($this->_token . '-handlebars');
 
         wp_register_script($this->_token . '-loadtpl', esc_url($this->assets_url) . 'load-template/loadTemplate' . $this->script_suffix . '.js', array($this->_token . '-handlebars'), $this->_version);
         wp_enqueue_script($this->_token . '-loadtpl');
 
-        
-        wp_register_script( $this->_token . '-admin', esc_url( $this->assets_url ) . 'js/admin' . $this->script_suffix . '.js', array( 'jquery'), $this->_version );
-        wp_enqueue_script( $this->_token . '-admin' );
 
-        wp_register_script( $this->_token . '-frontend', esc_url( $this->assets_url ) . 'js/frontend.js', array(  $this->_token . '-handlebars', $this->_token . '-admin'), $this->_version );
-        wp_enqueue_script( $this->_token . '-frontend' );
-//        exit;
-//
+        wp_register_script($this->_token . '-admin', esc_url($this->assets_url) . 'js/admin' . $this->script_suffix . '.js', array('jquery'), $this->_version);
+        wp_enqueue_script($this->_token . '-admin');
+
+        wp_register_script($this->_token . '-frontend', esc_url($this->assets_url) . 'js/frontend.js', array($this->_token . '-handlebars', $this->_token . '-admin'), $this->_version);
+        wp_enqueue_script($this->_token . '-frontend');
+        //        exit;
+        //
     } // End enqueue_scripts ()
 
     /**
@@ -265,11 +270,14 @@ class CUTV_Channel {
      * @since   1.0.0
      * @return  void
      */
-    public function admin_enqueue_styles ( $hook = '' ) {
-        wp_register_style( $this->_token . '-admin', esc_url( $this->assets_url ) . 'css/admin.css', array(), $this->_version );
-        wp_enqueue_style( $this->_token . '-admin' );
-        wp_register_style( $this->_token . '-semantic', esc_url( $this->assets_url ) . 'styles/semantic/semantic.min.css', array(), $this->_version );
-        wp_enqueue_style( $this->_token . '-semantic' );
+    public function admin_enqueue_styles($hook = '')
+    {
+        wp_register_style($this->_token . '-admin', esc_url($this->assets_url) . 'css/admin.css', array(), $this->_version);
+        wp_enqueue_style($this->_token . '-admin');
+        wp_register_style($this->_token . '-semantic', esc_url($this->assets_url) . 'styles/semantic/semantic.min.css', array(), $this->_version);
+        wp_enqueue_style($this->_token . '-semantic');
+        wp_register_style($this->_token . '-wpvr', esc_url($this->assets_url) . '../../wpvr/assets/css/wpvr.styles.min.css', array(), $this->_version);
+        wp_enqueue_style($this->_token . '-wpvr');
     } // End admin_enqueue_styles ()
 
     /**
@@ -278,18 +286,20 @@ class CUTV_Channel {
      * @since   1.0.0
      * @return  void
      */
-    public function admin_enqueue_scripts ( $hook = '' ) {
+    public function admin_enqueue_scripts($hook = '')
+    {
 
         // wp_localize_script('cutv-api', 'wpApiSettings', array('root' => esc_url_raw(rest_url()), 'nonce' => wp_create_nonce('wp_rest')));
         // wp_enqueue_script('cutv-api');
 
         // //  exit;
 
-        if (!isset($_REQUEST['vc_action']) ||
-            (isset($_REQUEST['page']) && $_REQUEST['page'] == 'wpvr_manage_videos')) {
+        if (
+            !isset($_REQUEST['vc_action']) || (isset($_REQUEST['page']) && $_REQUEST['page'] == 'wpvr_manage_videos')
+        ) {
 
-            wp_register_script( $this->_token . '-moment', esc_url( $this->assets_url ) . 'js/moment' . $this->script_suffix . '.js', array( 'jquery' ), $this->_version );
-            wp_enqueue_script( $this->_token . '-moment' );
+            wp_register_script($this->_token . '-moment', esc_url($this->assets_url) . 'js/moment' . $this->script_suffix . '.js', array('jquery'), $this->_version);
+            wp_enqueue_script($this->_token . '-moment');
             if ($_REQUEST['page'] == 'cutv_manage_channels') {
 
                 wp_register_script($this->_token . '-lodash', esc_url($this->assets_url) . 'js/lodash' . $this->script_suffix . '.js', array('jquery'), $this->_version);
@@ -312,7 +322,7 @@ class CUTV_Channel {
                 wp_enqueue_script($this->_token . '-ctrl-main');
                 wp_register_script($this->_token . '-ctrl-channel', esc_url($this->app_scripts_dir) . 'controllers/channel.ctrl' . $this->script_suffix . '.js', $this->_version);
                 wp_enqueue_script($this->_token . '-ctrl-channel');
-        
+
                 wp_register_script($this->_token . '-dir-channel', esc_url($this->app_scripts_dir) . 'directives/channel.directive' . $this->script_suffix . '.js', $this->_version);
                 wp_enqueue_script($this->_token . '-dir-channel');
                 wp_register_script($this->_token . '-dir-channel-itm', esc_url($this->app_scripts_dir) . 'directives/channel-item.directive' . $this->script_suffix . '.js', $this->_version);
@@ -329,33 +339,23 @@ class CUTV_Channel {
 
                 wp_register_script($this->_token . '-admin', esc_url($this->assets_url) . 'js/admin' . $this->script_suffix . '.js', array('jquery', $this->_token . '-app'), $this->_version);
                 wp_enqueue_script($this->_token . '-admin');
+            } else {
 
-
-
-            }  else {
-
-                wp_register_script( $this->_token . '-admin', esc_url( $this->assets_url ) . 'js/admin' . $this->script_suffix . '.js', array( 'jquery', 'underscore'), $this->_version );
-                wp_enqueue_script( $this->_token . '-admin' );
-
+                wp_register_script($this->_token . '-admin', esc_url($this->assets_url) . 'js/admin' . $this->script_suffix . '.js', array('jquery', 'underscore'), $this->_version);
+                wp_enqueue_script($this->_token . '-admin');
             }
 
             if ($_REQUEST['page'] == 'wpvr_manage_videos') {
                 wp_register_script($this->_token . '-lodash', esc_url($this->assets_url) . 'js/lodash' . $this->script_suffix . '.js', array('jquery'), $this->_version);
                 wp_enqueue_script($this->_token . '-lodash');
-
             }
-
-
         } else {
 
-            wp_register_script( $this->_token . '-admin', esc_url( $this->assets_url ) . 'js/admin' . $this->script_suffix . '.js', array( 'jquery' ), $this->_version );
-            wp_enqueue_script( $this->_token . '-admin' );
-
+            wp_register_script($this->_token . '-admin', esc_url($this->assets_url) . 'js/admin' . $this->script_suffix . '.js', array('jquery'), $this->_version);
+            wp_enqueue_script($this->_token . '-admin');
         }
 
         /**/
-
-
     } // End admin_enqueue_scripts ()
 
 
@@ -365,8 +365,9 @@ class CUTV_Channel {
      * @since   1.0.0
      * @return  void
      */
-    public function load_localisation () {
-        load_plugin_textdomain( 'cutv-plugin', false, dirname( plugin_basename( $this->file ) ) . '/lang/' );
+    public function load_localisation()
+    {
+        load_plugin_textdomain('cutv-plugin', false, dirname(plugin_basename($this->file)) . '/lang/');
     } // End load_localisation ()
 
     /**
@@ -375,13 +376,14 @@ class CUTV_Channel {
      * @since   1.0.0
      * @return  void
      */
-    public function load_plugin_textdomain () {
+    public function load_plugin_textdomain()
+    {
         $domain = 'cutv-plugin';
 
-        $locale = apply_filters( 'plugin_locale', get_locale(), $domain );
+        $locale = apply_filters('plugin_locale', get_locale(), $domain);
 
-        load_textdomain( $domain, WP_LANG_DIR . '/' . $domain . '/' . $domain . '-' . $locale . '.mo' );
-        load_plugin_textdomain( $domain, false, dirname( plugin_basename( $this->file ) ) . '/lang/' );
+        load_textdomain($domain, WP_LANG_DIR . '/' . $domain . '/' . $domain . '-' . $locale . '.mo');
+        load_plugin_textdomain($domain, false, dirname(plugin_basename($this->file)) . '/lang/');
     } // End load_plugin_textdomain ()
 
     /**
@@ -394,9 +396,10 @@ class CUTV_Channel {
      * @see CUTV_Channel()
      * @return Main CUTV_Channel instance
      */
-    public static function instance ( $file = '', $version = '1.0.0' ) {
-        if ( is_null( self::$_instance ) ) {
-            self::$_instance = new self( $file, $version );
+    public static function instance($file = '', $version = '1.0.0')
+    {
+        if (is_null(self::$_instance)) {
+            self::$_instance = new self($file, $version);
         }
         return self::$_instance;
     } // End instance ()
@@ -406,8 +409,9 @@ class CUTV_Channel {
      *
      * @since 1.0.0
      */
-    public function __clone () {
-        _doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?' ), $this->_version );
+    public function __clone()
+    {
+        _doing_it_wrong(__FUNCTION__, __('Cheatin&#8217; huh?'), $this->_version);
     } // End __clone ()
 
     /**
@@ -415,8 +419,9 @@ class CUTV_Channel {
      *
      * @since 1.0.0
      */
-    public function __wakeup () {
-        _doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?' ), $this->_version );
+    public function __wakeup()
+    {
+        _doing_it_wrong(__FUNCTION__, __('Cheatin&#8217; huh?'), $this->_version);
     } // End __wakeup ()
 
     /**
@@ -425,7 +430,8 @@ class CUTV_Channel {
      * @since   1.0.0
      * @return  void
      */
-    public function install () {
+    public function install()
+    {
         $this->_log_version_number();
     } // End install ()
 
@@ -435,64 +441,70 @@ class CUTV_Channel {
      * @since   1.0.0
      * @return  void
      */
-    private function _log_version_number () {
-        update_option( $this->_token . '_version', $this->_version );
+    private function _log_version_number()
+    {
+        update_option($this->_token . '_version', $this->_version);
     } // End _log_version_number ()
 
-    public function register_project_templates( $atts ) {
+    public function register_project_templates($atts)
+    {
 
         // Create the key used for the themes cache
-        $cache_key = 'page_templates-' . md5( get_theme_root() . '/' . get_stylesheet() );
+        $cache_key = 'page_templates-' . md5(get_theme_root() . '/' . get_stylesheet());
 
         // Retrieve the cache list.
         // If it doesn't exist, or it's empty prepare an array
         $templates = wp_get_theme()->get_page_templates();
-        if ( empty( $templates ) ) {
+        if (empty($templates)) {
             $templates = array();
         }
 
         // New cache, therefore remove the old one
-        wp_cache_delete( $cache_key , 'themes');
+        wp_cache_delete($cache_key, 'themes');
 
         // Now add our template to the list of templates by merging our templates
         // with the existing templates array from the cache.
-        $templates = array_merge( $templates, $this->templates );
+        $templates = array_merge($templates, $this->templates);
 
         // Add the modified cache to allow WordPress to pick it up for listing
         // available templates
-        wp_cache_add( $cache_key, $templates, 'themes', 1800 );
+        wp_cache_add($cache_key, $templates, 'themes', 1800);
 
         return $atts;
-
     }
 
 
     /**
      * Checks if the template is assigned to the page
      */
-    public function view_project_template( $template ) {
+    public function view_project_template($template)
+    {
 
         // Get global post
         global $post;
 
         // Return template if post is empty
-        if ( ! $post ) {
+        if (!$post) {
             return $template;
         }
 
         // Return default template if we don't have a custom one defined
-        if ( !isset( $this->templates[get_post_meta(
-                $post->ID, '_wp_page_template', true
-            )] ) ) {
+        if (!isset($this->templates[get_post_meta(
+            $post->ID,
+            '_wp_page_template',
+            true
+        )])) {
             return $template;
         }
 
-        $file = plugin_dir_path(__FILE__). get_post_meta(
-                $post->ID, '_wp_page_template', true
-            );
+        $file = plugin_dir_path(__FILE__) . get_post_meta(
+            $post->ID,
+            '_wp_page_template',
+            true
+        );
 
         // Just to be safe, we check if the file exist first
-        if ( file_exists( $file ) ) {
+        if (file_exists($file)) {
             return $file;
         } else {
             echo 'template file not found: ';
@@ -501,7 +513,5 @@ class CUTV_Channel {
 
         // Return template
         return $template;
-
     }
-
 }

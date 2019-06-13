@@ -1,10 +1,9 @@
 var ajaxurl = '/wp-admin/admin-ajax.php';
 
 var data = [];
-$(document).ready(function() {
+jQuery(document).ready(function() {
 
     $('.page-wrapper .content').before('<div id="featured-channels" class="cutv-channels-top"></div>');
-
     $('.primary-menu li:last()').append('<ul id="channel-links" class="channel-links-list"><li></li></ul>');
 
     _cutv.ajax(ajaxurl, {

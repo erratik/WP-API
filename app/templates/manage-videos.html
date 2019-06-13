@@ -51,7 +51,7 @@
 
                 </div>
             </header>
-            <main class="eight wide column">
+            <aside class="eight wide column">
 
                 <a class="ui violet basic button right icon" ng-click="openSourceDialog(source, 'run')">
                     <i class="refresh icon"></i> Run source
@@ -59,36 +59,36 @@
                 <a class="ui blue basic button right icon" href="/wp-admin/post.php?post={{source.source_id}}&action=edit" target="_blank">
                     <i class="youtube play icon"></i> Edit source
                 </a>
-            </main>
-            <div class="content videos">
+            </aside>
+            <main class="sixteen wide column">
+                <div class="content videos">
 
-                <div>
-                    <p ng-if="!videos[source.name].total && !isLoading">no videos</p>
-                </div>
+                    <p ng-if="!videos[source.name].total && !isLoading">No videos in source</p>
 
-                <div class="ui link cards">
-                    <div class="card video-{{video.ID}} {{video.selected ? 'selected' : ''}}" ng-repeat="video in videos[source.name].all | orderBy:'post_date':true | filter: query" ng-click="toggleVideoSelected(video)" ng-class="{'selected': isVideoSelected(video)}">
+                    <div class="ui link cards">
+                        <div class="card video-{{video.ID}} {{video.selected ? 'selected' : ''}}" ng-repeat="video in videos[source.name].all | orderBy:'post_date':true | filter: query" ng-click="toggleVideoSelected(video)" ng-class="{'selected': isVideoSelected(video)}">
 
-                        <div class="image">
-                            <img ng-src="{{video.thumbnail}}">
-                        </div>
-                        <div class="content">
-                            <div class="header">{{video.post_title}}</div>
-                            <div class="meta">
-                                <!-- <i class="right floated star icon" ng-click="$event.stopPropagation(); setFeatureVideo(channel.pid)"></i> -->
-                                <div>
-                                    <i class="ui icon calendar"></i> {{video.post_date}}
+                            <div class="image">
+                                <img ng-src="{{video.thumbnail}}">
+                            </div>
+                            <div class="content">
+                                <div class="header">{{video.post_title}}</div>
+                                <div class="meta">
+                                    <!-- <i class="right floated star icon" ng-click="$event.stopPropagation(); setFeatureVideo(channel.pid)"></i> -->
+                                    <div>
+                                        <i class="ui icon calendar"></i> {{video.post_date}}
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div class="ui label {{video.post_status}}" ng-class="{'green': video.post_status === 'publish', 'grey' : video.post_status === 'draft', 'purple' : video.post_status === 'pending'}">
-                                <i class="fa wpvr_video_status_icon fa-check-square "></i>{{video.post_status}}
-                            </div>
+                                <div class="ui label {{video.post_status}}" ng-class="{'green': video.post_status === 'publish', 'grey' : video.post_status === 'draft', 'purple' : video.post_status === 'pending'}">
+                                    <i class="fa wpvr_video_status_icon fa-check-square "></i>{{video.post_status}}
+                                </div>
 
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </main>
 
             <div class="modals" ng-include="'/wp-content/plugins/cutv-api/app/templates/source-modals.html'">
             </div>

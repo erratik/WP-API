@@ -22,8 +22,12 @@
     "wiredep": "^4.0.0"
   },
   "dependencies": {
+    "angular": "^1.7.8",
+    "angular-route": "^1.7.8",
+    "handlebars": "^4.1.2",
     "jquery": "^3.1.1",
     "less": "^2.7.2",
+    "ng-flow": "^2.1.4",
     "semantic-ui": "^2.2.10"
   },
   "scripts": {

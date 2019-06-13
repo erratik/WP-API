@@ -39,16 +39,20 @@ angular.module('cutvApiAdminApp')
                 ];
                 $scope.selectedAction = $scope.options[0];
                 $scope.toggles = {};
-                $scope.isLoading = true;
 
+                $scope.isLoading = true;
                 $scope.loaders = {};
                 $scope.videos = {};
                 $scope.selected = new Set();
-                $scope.channel.sources.forEach(data => {
+
+                $scope.query = '';
+
+                $scope.sortVideos = (data) => {
                     const source = data.source.wpvr_source_name;
                     const pending = data.videos.pending;
                     const publish = data.videos.publish;
                     const draft = data.videos.draft;
+
                     $scope.videos[source] = {
                         pending,
                         publish,
@@ -56,24 +60,27 @@ angular.module('cutvApiAdminApp')
                         all: pending.concat(publish, draft),
                         total: pending.length + publish.length + draft.length
                     };
-                    // $scope.videos.all = $scope.videos.all.concat($scope.videos[source].all);
+
+                    $scope.isLoading = false;
                     $scope.loaders[source] = false;
                     $scope.toggles[source] = {};
-                });
 
-                $scope.query = '';
-
-                $scope.update = () => {
-                    $scope.$emit('videosUpdated');
                 };
+                $scope.channel.sources.forEach(data => $scope.sortVideos(data));
 
-                $scope.$on('reload', () => {
-                    $scope.isLoading = false;
-                })
+                $scope.update = () => $scope.$emit('update');
+                $scope.$on('reload', (e) => {
+                    e.targetScope.channel.sources.forEach(data => $scope.sortVideos(data));
+                    Array.prototype.concat.apply([],
+                            Object.keys($scope.videos).map(sourceName => $scope.videos[sourceName].all))
+                        .filter(v => videos.includes(v.ID)).forEach(video => $scope.toggleVideoSelected(video));
+                });
 
             },
             link: function(scope, element, attrs) {
+
                 scope.isLoading = false;
+
                 scope.toggleVideoSelected = (video) => {
                     if (scope.selected.has(video.ID)) {
                         scope.selected.delete(video.ID);
@@ -83,6 +90,7 @@ angular.module('cutvApiAdminApp')
                     video.selected = !video.selected;
                     scope.selectedVideos = Array.from(scope.selected);
                 };
+
                 scope.isVideoSelected = (id) => scope.selected.has(id);
 
                 scope.toggleSourceVideos = (source, state) => {
@@ -95,26 +103,16 @@ angular.module('cutvApiAdminApp')
 
                 scope.updateVideos = (method) => {
                     scope.isLoading = true;
-                    const videoString = Array.from(scope.selected).join(',');
+                    const video_ids = Array.from(scope.selected).join(',');
                     var data = {
+                        video_ids,
                         method: method.state,
                         action: 'cutv_convert_snaptube',
-                        video_ids: videoString,
                     };
-
-                    ChannelService.handlePluginAction(data).then(() => {
-                        Array.prototype.concat.apply([],
-                                Object.keys(scope.videos).map(sourceName => scope.videos[sourceName].all))
-                            .filter(v => videoString.includes(v.ID)).forEach(video => {
-                                scope.toggleVideoSelected(video);
-                                video.post_status = method.state;
-                            });
-                    });
-
+                    ChannelService.handlePluginAction(data).then(() => scope.update(method.state, video_ids));
                 };
 
                 scope.openSourceDialog = (source, action) => {
-
                     switch (action) {
                         case 'edit':
                             $http.get(`/wp-admin/post.php?post=${source.source_id}&action=edit`).then((res) => {
@@ -130,11 +128,8 @@ angular.module('cutvApiAdminApp')
                             });
                             break;
                         default:
-
                     }
                     $(`#${action}Sources_${source.source_id}`).modal('show');
-
-
                 };
                 scope.closeSourceDialog = (source, action) => {
                     // todo: refetch channel videos

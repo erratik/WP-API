@@ -21,8 +21,7 @@ angular.module('cutvApiAdminApp')
 
         ChannelService.handlePluginAction(data)
             .then(res => {
-                const datum = res.filter(x => !!x.channel.enabled);
-                $scope.channels = datum.map(({
+                $scope.channels = res.map(({
                     channel,
                     sources
                 }) => ({
@@ -30,31 +29,21 @@ angular.module('cutvApiAdminApp')
                     sources,
                     isLoading: true
                 }));
-                return datum.map(x => x.sources);
+                return res.map(x => x.sources);
             })
-            .then(sources => {
-                const data = Array.prototype.concat.apply([], sources.map(x => x));
-                Array.prototype.concat.apply([], data.map(x => x.source))
-                    .map((source, i) => {
-                        $scope.channels[i].counts = ['publish', 'draft', 'pending'].map(status => {
-                            const count = {};
-                            count[status] = data[i].videos[status];
-                            data.reduce((_, curr) => count[status] += curr.videos[status]);
-                            return count;
-                        });
-                        $scope.channels[i].isLoading = false;
-                        return source;
-                    });
-            }).finally(() => $scope.channels = $scope.channels.map(channel => {
-                channel.isLoading = false;
-                return channel;
-            }));
+            .then(() => $scope.channels.map(channel => channel.counts = ['publish', 'draft', 'pending'].map(status => {
+                const count = {};
+                count[status] = Array.prototype.concat.apply([], channel.sources.map(x => x.videos[status])).reduce((a, b) => a + b, 0);
+                return count;
+            }))).finally(() => $scope.channels = $scope.channels.map(channel => ({
+                ...channel,
+                isLoading: false
+            })));
 
     };
 
     $scope.init();
 
-    // todo: update .spec for addChannel()
     $scope.newChannel = {
         name: null,
         enabled: false,
@@ -70,7 +59,6 @@ angular.module('cutvApiAdminApp')
             featured: $scope.newChannel.featured,
             slug: slug
         };
-
 
         return $http.post(ajaxurl, createChannelRequest).then(function(addedCategory) {
             $scope.channels.unshift(addedCategory.data);

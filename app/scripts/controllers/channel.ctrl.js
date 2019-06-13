@@ -43,8 +43,7 @@ angular.module('cutvApiAdminApp')
             };
 
             if (event) {
-                // debugger;
-                $scope.$broadcast('reload');
+                $scope.$broadcast('reload', $scope.channel);
             }
 
         });
@@ -52,7 +51,7 @@ angular.module('cutvApiAdminApp')
 
     $scope.init();
 
-    $scope.$on('videosUpdated', (e) => $scope.init(e));
+    $scope.$on('update', (e) => $scope.init(e));
 
 
 });

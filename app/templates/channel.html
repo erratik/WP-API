@@ -13,14 +13,14 @@
     <div class="ui divider"></div>
     <div class="ui tabular menu">
         <a class="item" ng-click="activeTab = 'videos'" ng-class="{'active': activeTab === 'videos' }">
-      Videos
-    </a>
+            Videos
+        </a>
         <a class="item" ng-click="activeTab = 'sources'" ng-class="{'active': activeTab === 'sources' }">
-      Sources
-    </a>
+            Sources
+        </a>
         <a class="item" ng-click="activeTab = 'display'" ng-class="{'active': activeTab === 'display' }">
-      Display
-    </a>
+            Display
+        </a>
     </div>
     <div ng-switch="activeTab">
 
@@ -28,11 +28,12 @@
 
     </div> -->
         <div id="videos">
-            <manage-videos channel="channel" sources="sources.selected" ng-if="sources" ng-switch-when="videos">
+            <manage-videos channel="channel" sources="sources.selected" ng-if="sources.selected" ng-switch-when="videos">
             </manage-videos>
         </div>
-        <div id="sources" ng-switch-default>
-            <manage-sources channel="channel" sources="sources" ng-if="sources"></manage-sources>
+        <div id="sources">
+            <manage-sources channel="channel" sources="sources" ng-if="sources" ng-switch-default>
+            </manage-sources>
         </div>
 
         <div id="display" ng-switch-when="display">
