@@ -67,14 +67,8 @@ angular.module('cutvApiAdminApp')
 
                 };
                 $scope.channel.sources.forEach(data => $scope.sortVideos(data));
-
                 $scope.update = () => $scope.$emit('update');
-                $scope.$on('reload', (e) => {
-                    e.targetScope.channel.sources.forEach(data => $scope.sortVideos(data));
-                    Array.prototype.concat.apply([],
-                            Object.keys($scope.videos).map(sourceName => $scope.videos[sourceName].all))
-                        .filter(v => videos.includes(v.ID)).forEach(video => $scope.toggleVideoSelected(video));
-                });
+                $scope.$on('reload', (e) => e.targetScope.channel.sources.forEach(data => $scope.sortVideos(data)));
 
             },
             link: function(scope, element, attrs) {
@@ -103,13 +97,13 @@ angular.module('cutvApiAdminApp')
 
                 scope.updateVideos = (method) => {
                     scope.isLoading = true;
-                    const video_ids = Array.from(scope.selected).join(',');
+                    scope.video_ids = Array.from(scope.selected).join(',');
                     var data = {
-                        video_ids,
+                        video_ids: scope.video_ids,
                         method: method.state,
                         action: 'cutv_convert_snaptube',
                     };
-                    ChannelService.handlePluginAction(data).then(() => scope.update(method.state, video_ids));
+                    ChannelService.handlePluginAction(data).then(() => scope.update());
                 };
 
                 scope.openSourceDialog = (source, action) => {
@@ -124,7 +118,15 @@ angular.module('cutvApiAdminApp')
                             $http.get(`/wp-admin/admin.php?page=wpvr&run_sources&ids=${source.source_id}`).then((res) => {
                                 var el = document.createElement('html');
                                 el.innerHTML = res.data;
-                                $(`#${action}Sources_${source.source_id}`).find('.content').html($(el.getElementsByClassName('wpvr_source_insights')).html());
+
+                                let contentHTML = el.getElementsByClassName('wpvr_source_insights');
+                                if (el.getElementsByClassName('wpvr_manage_noResults').length) {
+                                    contentHTML = el.getElementsByClassName('wpvr_manage_noResults');
+                                } else if (el.getElementsByClassName('wpvr_show_when_loaded').length) {
+                                    contentHTML = el.getElementsByClassName('wpvr_show_when_loaded');
+                                }
+
+                                $(`#${action}Sources_${source.source_id}`).find('.content').html($(contentHTML).html());
                             });
                             break;
                         default:
